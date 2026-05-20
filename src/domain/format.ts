@@ -1,0 +1,95 @@
+import type { Locale } from '@/src/i18n/translations';
+import type { Direction, Instrument, LocalizedText } from './types';
+
+export function formatMoney(value: number, currency = 'USD', digits = 2, locale: Locale = 'zh-CN') {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
+}
+
+export function formatCompactMoney(value: number, currency = 'USD', locale: Locale = 'zh-CN') {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
+export function formatNumber(value: number, digits = 2, locale: Locale = 'zh-CN') {
+  return new Intl.NumberFormat(locale, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
+}
+
+export function formatPrice(instrument: Instrument, value: number) {
+  const digits = instrument.pipSize >= 0.01 ? 3 : 5;
+  return value.toFixed(digits);
+}
+
+export function formatPercent(value: number, digits = 2) {
+  return `${value >= 0 ? '+' : ''}${value.toFixed(digits)}%`;
+}
+
+export function formatVolumeMillions(value: number, locale: Locale = 'zh-CN') {
+  return `${formatNumber(value / 1_000_000, 1, locale)}M`;
+}
+
+export function localizeText(text: LocalizedText | string, locale: Locale) {
+  return typeof text === 'string' ? text : text[locale] ?? text['zh-CN'];
+}
+
+export function directionLabel(direction: Direction, locale: Locale = 'zh-CN') {
+  if (locale === 'en-US') {
+    return direction === 'buy' ? 'Buy' : 'Sell';
+  }
+
+  return direction === 'buy' ? '买入' : '卖出';
+}
+
+export function orderTypeLabel(type: 'market' | 'limit', locale: Locale = 'zh-CN') {
+  if (locale === 'en-US') {
+    return type === 'market' ? 'Market' : 'Limit';
+  }
+
+  return type === 'market' ? '市价' : '限价';
+}
+
+export function statusLabel(status: string, locale: Locale = 'zh-CN') {
+  const labels: Record<Locale, Record<string, string>> = {
+    'en-US': {
+      active: 'Active',
+      cancelled: 'Cancelled',
+      closed: 'Closed',
+      completed: 'Completed',
+      dormant: 'Dormant',
+      filled: 'Filled',
+      funded: 'Funded',
+      invited: 'Invited',
+      pending: 'Pending',
+      rejected: 'Rejected',
+      reviewing: 'Reviewing',
+      settled: 'Settled',
+    },
+    'zh-CN': {
+      active: '活跃',
+      cancelled: '已取消',
+      closed: '已平仓',
+      completed: '已完成',
+      dormant: '沉睡',
+      filled: '已成交',
+      funded: '已入金',
+      invited: '已邀请',
+      pending: '待处理',
+      rejected: '已拒绝',
+      reviewing: '审核中',
+      settled: '已结算',
+    },
+  };
+
+  return labels[locale][status] ?? status;
+}

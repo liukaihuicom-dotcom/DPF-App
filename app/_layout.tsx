@@ -1,24 +1,23 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/components/useColorScheme';
+import { AppViewport } from '@/src/components/AppViewport';
+import { ProductControlPanel } from '@/src/components/ProductControlPanel';
+import { ToastProvider } from '@/src/feedback/Toast';
+import { ProductSettingsProvider, useProductSettings } from '@/src/settings/ProductSettings';
+import { BrokerProvider } from '@/src/state/BrokerStore';
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: '(tabs)',
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -27,7 +26,6 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -42,18 +40,49 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <ProductSettingsProvider>
+      <RootLayoutNav />
+    </ProductSettingsProvider>
+  );
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  const { palette } = useProductSettings();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
+    <ThemeProvider
+      value={{
+        ...DarkTheme,
+        colors: {
+          ...DarkTheme.colors,
+          background: palette.bg,
+          border: palette.line,
+          card: palette.panel,
+          primary: palette.brand,
+          text: palette.text,
+        },
+      }}>
+      <BrokerProvider>
+        <ToastProvider>
+          <AppViewport>
+            <Stack
+              screenOptions={{
+                contentStyle: { backgroundColor: palette.bg },
+                headerShown: false,
+              }}>
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="auth/index" />
+              <Stack.Screen name="auth/register" />
+              <Stack.Screen name="auth/forgot-password" />
+              <Stack.Screen name="instrument/[id]" />
+              <Stack.Screen name="order/[id]" />
+              <Stack.Screen name="client/[id]" />
+            </Stack>
+          </AppViewport>
+          <ProductControlPanel />
+        </ToastProvider>
+      </BrokerProvider>
     </ThemeProvider>
   );
 }
