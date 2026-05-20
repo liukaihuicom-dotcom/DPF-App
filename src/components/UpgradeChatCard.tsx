@@ -1,4 +1,3 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
@@ -12,6 +11,7 @@ import { useBroker } from '@/src/state/BrokerStore';
 import { ActionButton } from './ActionButton';
 import { Card } from './Card';
 import { NativePressable } from './NativePressable';
+import { PhosphorIcon } from './PhosphorIcon';
 import { AppText } from './Typography';
 
 type UpgradeChatCardProps = {
@@ -110,7 +110,7 @@ export function UpgradeChatCard({ request, readonly }: UpgradeChatCardProps) {
             ))}
           </View>
           <View style={StyleSheet.flatten([styles.inputShell, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-            <FontAwesome color={palette.brand} name="comment-o" size={15} />
+            <PhosphorIcon color={palette.brand} name="chat-circle" size={15} />
             <TextInput
               multiline
               onChangeText={setReason}
@@ -127,7 +127,7 @@ export function UpgradeChatCard({ request, readonly }: UpgradeChatCardProps) {
 
       {!readonly && pending ? (
         <View style={StyleSheet.flatten([styles.waitingBox, { backgroundColor: `${palette.amber}10`, borderColor: palette.amber }])}>
-          <FontAwesome color={palette.amber} name="clock-o" size={15} />
+          <PhosphorIcon color={palette.amber} name="clock" size={15} />
           <AppText tone="amber" variant="caption">
             {t('upgrade.pendingHint')}
           </AppText>

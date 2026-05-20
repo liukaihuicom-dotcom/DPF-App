@@ -52,7 +52,7 @@ export function createOrder(params: {
     requestedPrice: price,
     filledPrice: price,
     marginRequired: calculateMargin(params.instrument, params.lots, price),
-    status: 'filled',
+    status: params.type === 'limit' ? 'pending' : 'filled',
     createdAt: new Date().toLocaleString('zh-CN', {
       month: '2-digit',
       day: '2-digit',

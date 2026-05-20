@@ -1,4 +1,3 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -6,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { ActionButton } from '@/src/components/ActionButton';
 import { AuthLink, AuthShell, AuthTextField } from '@/src/components/AuthShell';
 import { NativePressable } from '@/src/components/NativePressable';
+import { PhosphorIcon } from '@/src/components/PhosphorIcon';
 import { AppText } from '@/src/components/Typography';
 import { useToast } from '@/src/feedback/Toast';
 import { notifySuccess, notifyWarning } from '@/src/feedback/haptics';
@@ -54,7 +54,7 @@ export default function RegisterScreen() {
       <AuthTextField
         autoComplete="email"
         error={emailError}
-        icon="envelope-o"
+        icon="envelope-open"
         keyboardType="email-address"
         label={t('auth.email')}
         onChangeText={setEmail}
@@ -76,7 +76,7 @@ export default function RegisterScreen() {
       <AuthTextField
         autoComplete="new-password"
         error={confirmError}
-        icon="check-circle-o"
+        icon="check-circle"
         label={t('auth.confirmPassword')}
         onChangeText={setConfirmPassword}
         placeholder={t('auth.confirmPasswordPlaceholder')}
@@ -99,7 +99,7 @@ export default function RegisterScreen() {
         onPress={() => setRiskAccepted((value) => !value)}
         style={StyleSheet.flatten([styles.riskRow, { backgroundColor: palette.panel, borderColor: riskError ? palette.danger : palette.lineSoft }])}>
         <View style={StyleSheet.flatten([styles.checkbox, { backgroundColor: riskAccepted ? palette.text : palette.panelHigh, borderColor: riskAccepted ? palette.text : palette.line }])}>
-          {riskAccepted ? <FontAwesome color={palette.panel} name="check" size={12} /> : null}
+          {riskAccepted ? <PhosphorIcon color={palette.panel} name="check" size={12} /> : null}
         </View>
         <AppText numberOfLines={3} tone="muted" variant="caption">
           {t('auth.riskAccept')}

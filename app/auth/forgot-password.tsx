@@ -1,10 +1,10 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { ActionButton } from '@/src/components/ActionButton';
 import { AuthLink, AuthShell, AuthTextField } from '@/src/components/AuthShell';
+import { PhosphorIcon } from '@/src/components/PhosphorIcon';
 import { AppText } from '@/src/components/Typography';
 import { useToast } from '@/src/feedback/Toast';
 import { notifySuccess, notifyWarning } from '@/src/feedback/haptics';
@@ -46,7 +46,7 @@ export default function ForgotPasswordScreen() {
       {sent ? (
         <View style={StyleSheet.flatten([styles.sentCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
           <View style={StyleSheet.flatten([styles.sentIcon, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}66` }])}>
-            <FontAwesome color={palette.brand} name="envelope-open-o" size={18} />
+            <PhosphorIcon color={palette.brand} name="envelope-open" size={18} />
           </View>
           <View style={styles.flex}>
             <AppText variant="subtitle">{t('auth.reset.sentTitle')}</AppText>
@@ -59,7 +59,7 @@ export default function ForgotPasswordScreen() {
         <AuthTextField
           autoComplete="email"
           error={emailError}
-          icon="envelope-o"
+          icon="envelope-open"
           keyboardType="email-address"
           label={t('auth.email')}
           onChangeText={setEmail}

@@ -1,4 +1,3 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +8,7 @@ import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
 
 import { NativePressable } from './NativePressable';
+import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
 import { AppText } from './Typography';
 
 type QuickActionSheetProps = {
@@ -32,9 +32,14 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
     onClose();
     return false;
   };
-  const actions = [
+  const actions: {
+    icon: PhosphorIconName;
+    label: string;
+    onPress: () => void;
+    tone: string;
+  }[] = [
     {
-      icon: 'exchange',
+      icon: 'arrows-left-right',
       label: t('quick.trade'),
       onPress: () => {
         if (requireSignedIn()) {
@@ -45,7 +50,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
       tone: palette.up,
     },
     {
-      icon: 'line-chart',
+      icon: 'chart-line-up',
       label: t('quick.markets'),
       onPress: () => {
         router.push('/markets');
@@ -63,7 +68,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
       tone: palette.blue,
     },
     {
-      icon: 'share-alt',
+      icon: 'share-network',
       label: t('quick.referral'),
       onPress: () => {
         if (authStatus === 'signedIn') {
@@ -78,7 +83,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
       tone: palette.amber,
     },
     {
-      icon: 'comments-o',
+      icon: 'chats-circle',
       label: t('upgrade.applyShort'),
       onPress: () => {
         if (!requireSignedIn()) {
@@ -109,7 +114,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
       tone: palette.textMuted,
     },
     {
-      icon: 'refresh',
+      icon: 'arrow-clockwise',
       label: t('quick.switchRole'),
       onPress: () => {
         setRole(role === 'trader' ? 'partner' : 'trader');
@@ -140,7 +145,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
             <AppText variant="subtitle">{t('quick.title')}</AppText>
           </View>
           <NativePressable accessibilityLabel={t('common.cancel')} minTouch={44} onPress={onClose} style={styles.closeButton}>
-            <FontAwesome color={palette.textMuted} name="close" size={16} />
+            <PhosphorIcon color={palette.textMuted} name="x" size={16} />
           </NativePressable>
         </View>
         <View style={styles.actionGrid}>
@@ -152,7 +157,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
               onPress={action.onPress}
               style={StyleSheet.flatten([styles.actionItem, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
               <View style={StyleSheet.flatten([styles.actionIcon, { backgroundColor: `${action.tone}12`, borderColor: `${action.tone}55` }])}>
-                <FontAwesome color={action.tone} name={action.icon as React.ComponentProps<typeof FontAwesome>['name']} size={17} />
+                <PhosphorIcon color={action.tone} name={action.icon} size={17} />
               </View>
               <AppText adjustsFontSizeToFit numberOfLines={1} variant="caption">
                 {action.label}

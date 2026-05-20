@@ -1,9 +1,9 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router, type Href } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { Card } from '@/src/components/Card';
 import { NativePressable } from '@/src/components/NativePressable';
+import { PhosphorIcon, type PhosphorIconName } from '@/src/components/PhosphorIcon';
 import { Screen } from '@/src/components/Screen';
 import { AppText } from '@/src/components/Typography';
 import type { DiscoverModuleId } from '@/src/domain/types';
@@ -17,19 +17,19 @@ export default function PartnerToolsScreen() {
   const tiles: DiscoverTile[] = [
     { color: palette.amber, group: 'growth', icon: 'trophy', id: 'challenge' },
     { color: palette.brand, group: 'growth', icon: 'graduation-cap', id: 'education' },
-    { color: palette.textMuted, group: 'growth', icon: 'comments', id: 'community' },
-    { color: palette.text, group: 'account', href: '/accounts', icon: 'user-circle-o', id: 'profile' },
-    { color: palette.down, group: 'account', href: '/auth', icon: 'id-card-o', id: 'onboarding' },
-    { color: palette.brand, group: 'account', href: role === 'partner' ? '/trade' : '/accounts', icon: 'share-alt', id: 'partner' },
-    { color: palette.up, group: 'trading', href: '/markets', icon: 'line-chart', id: 'markets' },
-    { color: palette.blue, group: 'trading', href: '/accounts', icon: 'user-o', id: 'accounts' },
+    { color: palette.textMuted, group: 'growth', icon: 'chats-circle', id: 'community' },
+    { color: palette.text, group: 'account', href: '/accounts', icon: 'user-circle', id: 'profile' },
+    { color: palette.down, group: 'account', href: '/auth/onboarding', icon: 'identification-card', id: 'onboarding' },
+    { color: palette.brand, group: 'account', href: role === 'partner' ? '/trade' : '/accounts', icon: 'share-network', id: 'partner' },
+    { color: palette.up, group: 'trading', href: '/markets', icon: 'chart-line-up', id: 'markets' },
+    { color: palette.blue, group: 'trading', href: '/accounts', icon: 'user', id: 'accounts' },
     { color: palette.textMuted, group: 'service', icon: 'headphones', id: 'support' },
     { color: palette.amber, group: 'service', icon: 'gift', id: 'rewards' },
   ];
   const selectedTile = tiles.find((tile) => tile.id === selectedDiscoverModuleId) ?? tiles[0];
 
   return (
-    <Screen subtitle={t('discover.subtitle')} title={t('discover.title')}>
+    <Screen title={t('discover.title')}>
       <Card highlight>
         <View style={styles.menuHero}>
           <View style={styles.copyBlock}>
@@ -61,7 +61,7 @@ export default function PartnerToolsScreen() {
             </AppText>
           </View>
           <View style={StyleSheet.flatten([styles.statusPreview, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}66` }])}>
-            <FontAwesome color={palette.brand} name={selectedTile.icon} size={16} />
+            <PhosphorIcon color={palette.brand} name={selectedTile.icon} size={16} />
             <AppText tone="brand" variant="caption">
               {t(`discover.module.${selectedDiscoverModuleId}.short`)}
             </AppText>
@@ -116,7 +116,7 @@ type DiscoverTile = {
   color: string;
   group: DiscoverTileGroup;
   href?: Href;
-  icon: React.ComponentProps<typeof FontAwesome>['name'];
+  icon: PhosphorIconName;
   id: DiscoverModuleId;
 };
 
@@ -145,7 +145,7 @@ function DiscoverSelectableTile({ onPress, selected, tile }: { onPress: () => vo
               borderColor: selected ? palette.brand : `${tile.color}55`,
             },
           ])}>
-          <FontAwesome color={selected ? palette.brand : tile.color} name={tile.icon} size={18} />
+          <PhosphorIcon color={selected ? palette.brand : tile.color} name={tile.icon} size={18} />
         </View>
         <View style={StyleSheet.flatten([styles.selectedDot, { backgroundColor: selected ? palette.brand : palette.lineSoft }])} />
       </View>

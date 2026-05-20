@@ -1,4 +1,3 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
@@ -7,10 +6,11 @@ import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 import { NativePressable } from './NativePressable';
+import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
 import { AppText } from './Typography';
 
 export type AppTopBarAction = {
-  icon: React.ComponentProps<typeof FontAwesome>['name'];
+  icon: PhosphorIconName;
   label: string;
   onPress?: () => void;
 };
@@ -36,16 +36,21 @@ export function AppTopBar({ actions, align = 'left', back, subtitle, title }: Ap
   const resolvedActions =
     actions ??
     (back
-      ? [{ icon: 'ellipsis-h', label: t('top.more'), onPress: () => showPlaceholder(t('top.more')) }]
+      ? [{ icon: 'dots-three', label: t('top.more'), onPress: () => showPlaceholder(t('top.more')) }]
       : [
-          { icon: 'search', label: t('top.search'), onPress: () => showPlaceholder(t('top.search')) },
-          { icon: 'bell-o', label: t('top.notifications'), onPress: () => showPlaceholder(t('top.notifications')) },
+          { icon: 'magnifying-glass', label: t('top.search'), onPress: () => showPlaceholder(t('top.search')) },
+          { icon: 'bell', label: t('top.notifications'), onPress: () => showPlaceholder(t('top.notifications')) },
           { icon: 'headphones', label: t('top.support'), onPress: () => showPlaceholder(t('top.support')) },
         ]);
 
   return (
-    <View style={StyleSheet.flatten([styles.bar, { backgroundColor: palette.panelHigh, borderBottomColor: palette.lineSoft }])}>
-      <View style={styles.side}>
+    <View
+      style={StyleSheet.flatten([
+        styles.bar,
+        back ? { backgroundColor: palette.panelHigh, borderBottomColor: palette.lineSoft } : { backgroundColor: palette.bg, borderBottomColor: 'transparent' },
+        !back && styles.rootBar,
+      ])}>
+      <View style={back ? styles.side : styles.rootSide}>
         {back ? (
           <NativePressable
             accessibilityLabel={t('top.back')}
@@ -59,13 +64,13 @@ export function AppTopBar({ actions, align = 'left', back, subtitle, title }: Ap
               styles.iconButton,
               { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft },
             ])}>
-            <FontAwesome color={palette.text} name="angle-left" size={22} />
+            <PhosphorIcon color={palette.text} name="caret-left" size={22} />
           </NativePressable>
         ) : null}
       </View>
 
-      <View style={StyleSheet.flatten([styles.titleWrap, align === 'center' && styles.titleCenter])}>
-        <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.navTitle} variant="subtitle">
+      <View style={StyleSheet.flatten([styles.titleWrap, align === 'center' && styles.titleCenter, !back && styles.rootTitleWrap])}>
+        <AppText adjustsFontSizeToFit numberOfLines={1} style={back ? styles.navTitle : styles.rootNavTitle} variant={back ? 'subtitle' : 'title'}>
           {title}
         </AppText>
         {subtitle ? (
@@ -75,7 +80,7 @@ export function AppTopBar({ actions, align = 'left', back, subtitle, title }: Ap
         ) : null}
       </View>
 
-      <View style={StyleSheet.flatten([styles.actions, back && styles.side])}>
+      <View style={StyleSheet.flatten([styles.actions, back && styles.side, !back && styles.rootActions])}>
         {resolvedActions.slice(0, back ? 1 : 3).map((action) => (
           <NativePressable
             accessibilityLabel={action.label}
@@ -87,7 +92,7 @@ export function AppTopBar({ actions, align = 'left', back, subtitle, title }: Ap
               styles.iconButton,
               { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft },
             ])}>
-            <FontAwesome color={action.icon === 'search' ? palette.text : palette.textMuted} name={action.icon} size={16} />
+            <PhosphorIcon color={action.icon === 'magnifying-glass' ? palette.text : palette.textMuted} name={action.icon} size={16} />
           </NativePressable>
         ))}
       </View>
@@ -121,10 +126,30 @@ const styles = StyleSheet.create({
     width: 34,
   },
   navTitle: {
-    lineHeight: 20,
+    lineHeight: 21,
+  },
+  rootNavTitle: {
+    fontSize: 26,
+    fontWeight: '700',
+    lineHeight: 32,
   },
   side: {
     minWidth: 42,
+  },
+  rootActions: {
+    minWidth: 150,
+  },
+  rootBar: {
+    borderBottomWidth: 0,
+    minHeight: 84,
+    paddingBottom: 10,
+    paddingTop: 18,
+  },
+  rootSide: {
+    display: 'none',
+  },
+  rootTitleWrap: {
+    alignItems: 'flex-start',
   },
   titleCenter: {
     alignItems: 'center',

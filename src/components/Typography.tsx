@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   caption: {
-    fontSize: 11,
+    fontSize: 12,
     lineHeight: 16,
   },
   eyebrow: {
@@ -51,25 +51,23 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   largeNumber: {
-    fontFamily: 'SpaceMono',
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: '600',
-    lineHeight: 36,
+    lineHeight: 34,
   },
   number: {
-    fontFamily: 'SpaceMono',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '500',
-    lineHeight: 24,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontWeight: '600',
     lineHeight: 22,
   },
-  title: {
-    fontSize: 22,
+  subtitle: {
+    fontSize: 15,
     fontWeight: '600',
-    lineHeight: 28,
+    lineHeight: 21,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '600',
+    lineHeight: 26,
   },
 });

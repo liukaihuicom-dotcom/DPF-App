@@ -1,4 +1,3 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -6,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { ActionButton } from '@/src/components/ActionButton';
 import { AuthLink, AuthShell, AuthTextField } from '@/src/components/AuthShell';
 import { NativePressable } from '@/src/components/NativePressable';
+import { PhosphorIcon } from '@/src/components/PhosphorIcon';
 import { AppText } from '@/src/components/Typography';
 import { useToast } from '@/src/feedback/Toast';
 import { notifySuccess, notifyWarning } from '@/src/feedback/haptics';
@@ -49,7 +49,7 @@ export default function LoginScreen() {
       <AuthTextField
         autoComplete="email"
         error={emailError}
-        icon="envelope-o"
+        icon="envelope-open"
         keyboardType="email-address"
         label={t('auth.email')}
         onChangeText={setEmail}
@@ -80,7 +80,7 @@ export default function LoginScreen() {
           toast.show({ message: t('top.placeholderMessage'), title: t('auth.socialUnavailable'), tone: 'warning' });
         }}
         style={StyleSheet.flatten([styles.socialButton, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
-        <FontAwesome color={palette.text} name="apple" size={17} />
+        <PhosphorIcon color={palette.text} name="apple-logo" size={17} />
         <AppText variant="body">{t('auth.apple')}</AppText>
       </NativePressable>
     </AuthShell>

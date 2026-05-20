@@ -1,9 +1,9 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
-import { ActionButton } from '@/src/components/ActionButton';
 import { Card } from '@/src/components/Card';
 import { Metric } from '@/src/components/Metric';
+import { NativePressable } from '@/src/components/NativePressable';
 import { Screen } from '@/src/components/Screen';
 import { Sparkline } from '@/src/components/Sparkline';
 import { AppText } from '@/src/components/Typography';
@@ -41,18 +41,22 @@ export default function InstrumentDetailScreen() {
       contentInsetBottom={16}
       stickyFooter={
         <View style={styles.tradeRow}>
-          <ActionButton
-            label={`${directionLabel('sell', locale)} ${formatPrice(instrument, instrument.bid)}`}
+          <NativePressable
+            accessibilityLabel={`${directionLabel('sell', locale)} ${formatPrice(instrument, instrument.bid)}`}
             onPress={() => openOrder('sell')}
-            style={styles.tradeButton}
-            tone="down"
-          />
-          <ActionButton
-            label={`${directionLabel('buy', locale)} ${formatPrice(instrument, instrument.ask)}`}
+            style={StyleSheet.flatten([styles.tradeButton, { backgroundColor: palette.up }])}>
+            <AppText adjustsFontSizeToFit numberOfLines={1} style={{ color: palette.white }} variant="subtitle">
+              {directionLabel('sell', locale)} {formatPrice(instrument, instrument.bid)}
+            </AppText>
+          </NativePressable>
+          <NativePressable
+            accessibilityLabel={`${directionLabel('buy', locale)} ${formatPrice(instrument, instrument.ask)}`}
             onPress={() => openOrder('buy')}
-            style={styles.tradeButton}
-            tone="up"
-          />
+            style={StyleSheet.flatten([styles.tradeButton, { backgroundColor: palette.down }])}>
+            <AppText adjustsFontSizeToFit numberOfLines={1} style={{ color: palette.white }} variant="subtitle">
+              {directionLabel('buy', locale)} {formatPrice(instrument, instrument.ask)}
+            </AppText>
+          </NativePressable>
         </View>
       }
       subtitle={localizeText(instrument.name, locale)}
@@ -152,7 +156,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   tradeButton: {
+    alignItems: 'center',
+    borderRadius: 999,
     flex: 1,
+    minHeight: 48,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   tradeRow: {
     flexDirection: 'row',

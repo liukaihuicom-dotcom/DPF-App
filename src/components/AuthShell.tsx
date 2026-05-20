@@ -1,4 +1,3 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { PropsWithChildren, ReactNode } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, TextInputProps, View } from 'react-native';
@@ -8,6 +7,7 @@ import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 import { NativePressable } from './NativePressable';
+import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
 import { AppText } from './Typography';
 
 type AuthShellProps = PropsWithChildren<{
@@ -20,7 +20,7 @@ type AuthShellProps = PropsWithChildren<{
 
 type AuthTextFieldProps = TextInputProps & {
   error?: string;
-  icon: React.ComponentProps<typeof FontAwesome>['name'];
+  icon: PhosphorIconName;
   label: string;
 };
 
@@ -43,7 +43,7 @@ export function AuthShell({ children, footer, kicker, step, subtitle, title }: A
             }
           }}
           style={StyleSheet.flatten([styles.backButton, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-          <FontAwesome color={palette.text} name="angle-left" size={23} />
+          <PhosphorIcon color={palette.text} name="caret-left" size={23} />
         </NativePressable>
         <View style={StyleSheet.flatten([styles.stepPill, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
           <AppText numberOfLines={1} tone="muted" variant="caption">
@@ -75,7 +75,7 @@ export function AuthShell({ children, footer, kicker, step, subtitle, title }: A
 
         <View style={StyleSheet.flatten([styles.securityStrip, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
           <View style={StyleSheet.flatten([styles.securityIcon, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}44` }])}>
-            <FontAwesome color={palette.brand} name="shield" size={14} />
+            <PhosphorIcon color={palette.brand} name="shield-check" size={14} />
           </View>
           <View style={styles.flex}>
             <AppText numberOfLines={1} variant="caption">
@@ -117,7 +117,7 @@ export function AuthTextField({ error, icon, label, style, ...props }: AuthTextF
         {label}
       </AppText>
       <View style={StyleSheet.flatten([styles.inputShell, { backgroundColor: palette.panel, borderColor: focusedBorder }])}>
-        <FontAwesome color={error ? palette.danger : palette.textDim} name={icon} size={15} />
+        <PhosphorIcon color={error ? palette.danger : palette.textDim} name={icon} size={15} />
         <TextInput
           autoCapitalize="none"
           placeholderTextColor={palette.textDim}
@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     gap: 10,
+    paddingBottom: 18,
     paddingHorizontal: 18,
     paddingTop: 10,
   },

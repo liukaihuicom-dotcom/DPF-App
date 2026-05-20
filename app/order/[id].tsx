@@ -237,7 +237,6 @@ const styles = StyleSheet.create({
   input: {
     borderRadius: 12,
     borderWidth: 1,
-    fontFamily: 'SpaceMono',
     fontSize: 28,
     minHeight: 58,
     paddingHorizontal: 12,

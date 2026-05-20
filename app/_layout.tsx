@@ -1,12 +1,11 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { AppViewport } from '@/src/components/AppViewport';
+import { BottomSheetProvider, GlobalBottomSheetHost } from '@/src/components/BottomSheet';
 import { ProductControlPanel } from '@/src/components/ProductControlPanel';
 import { ToastProvider } from '@/src/feedback/Toast';
 import { ProductSettingsProvider, useProductSettings } from '@/src/settings/ProductSettings';
@@ -21,24 +20,9 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
-  });
-
   useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
+    SplashScreen.hideAsync();
+  }, []);
 
   return (
     <ProductSettingsProvider>
@@ -65,22 +49,27 @@ function RootLayoutNav() {
       }}>
       <BrokerProvider>
         <ToastProvider>
-          <AppViewport>
-            <Stack
-              screenOptions={{
-                contentStyle: { backgroundColor: palette.bg },
-                headerShown: false,
-              }}>
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="auth/index" />
-              <Stack.Screen name="auth/register" />
-              <Stack.Screen name="auth/forgot-password" />
-              <Stack.Screen name="instrument/[id]" />
-              <Stack.Screen name="order/[id]" />
-              <Stack.Screen name="client/[id]" />
-            </Stack>
-          </AppViewport>
-          <ProductControlPanel />
+          <BottomSheetProvider>
+            <AppViewport>
+              <Stack
+                screenOptions={{
+                  contentStyle: { backgroundColor: palette.bg },
+                  headerShown: false,
+                }}>
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="auth/onboarding" />
+                <Stack.Screen name="auth/index" />
+                <Stack.Screen name="auth/register" />
+                <Stack.Screen name="auth/forgot-password" />
+                <Stack.Screen name="instrument/[id]" />
+                <Stack.Screen name="order/[id]" />
+                <Stack.Screen name="client/[id]" />
+                <Stack.Screen name="account-details/[id]" />
+              </Stack>
+              <GlobalBottomSheetHost />
+            </AppViewport>
+            <ProductControlPanel />
+          </BottomSheetProvider>
         </ToastProvider>
       </BrokerProvider>
     </ThemeProvider>

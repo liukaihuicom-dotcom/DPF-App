@@ -1,50 +1,31 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, router } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Card } from '@/src/components/Card';
 import { InstrumentRow } from '@/src/components/InstrumentRow';
-import { Metric } from '@/src/components/Metric';
 import { NativePressable } from '@/src/components/NativePressable';
+import { PhosphorIcon } from '@/src/components/PhosphorIcon';
 import { Screen } from '@/src/components/Screen';
+import { Sparkline } from '@/src/components/Sparkline';
 import { AppText } from '@/src/components/Typography';
-import { formatCompactMoney, formatMoney, formatPercent, formatPrice, formatVolumeMillions, localizeText } from '@/src/domain/format';
-import { partnerMetrics } from '@/src/domain/mockData';
+import { formatCompactMoney, formatMoney, formatPercent, formatPrice, localizeText } from '@/src/domain/format';
 import { getDisplayChange } from '@/src/domain/trading';
-import type { AuthStatus } from '@/src/domain/types';
-import { useToast } from '@/src/feedback/Toast';
-import { impactLight, notifyWarning } from '@/src/feedback/haptics';
+import type { Account, Instrument, InstrumentAssetClass } from '@/src/domain/types';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
 
+type MarketTabId = 'watchlist' | InstrumentAssetClass;
+
+const marketTabs: MarketTabId[] = ['watchlist', 'forex', 'metals', 'futures', 'stocks'];
+
 export default function HomeScreen() {
-  const { account, instruments, positions, role } = useBroker();
-  const { authStatus, locale, palette, t } = useProductSettings();
-  const toast = useToast();
+  const { account, instruments, positions } = useBroker();
+  const { locale, palette, t } = useProductSettings();
+  const [selectedTab, setSelectedTab] = useState<MarketTabId>('watchlist');
 
-  if (role === 'partner') {
-    return <PartnerDashboard />;
-  }
-
-  const requireSignedIn = (mode: 'partner' | 'trader') => {
-    if (authStatus === 'signedIn') {
-      return true;
-    }
-
-    void notifyWarning();
-    toast.show({
-      message: t(mode === 'partner' ? 'auth.partnerLocked' : 'auth.traderLocked'),
-      title: t('auth.lockedToastTitle'),
-      tone: 'warning',
-    });
-    return false;
-  };
-
-  const favoriteInstruments = instruments.filter((instrument) => instrument.favorite);
+  const visibleInstruments = useMemo(() => getVisibleInstruments(instruments, selectedTab), [instruments, selectedTab]);
   const topMovers = [...instruments].sort((a, b) => Math.abs(getDisplayChange(b).changePercent) - Math.abs(getDisplayChange(a).changePercent));
   const anchorInstrument = instruments.find((instrument) => instrument.symbol === 'EUR/USD') ?? instruments[0];
-  const anchorChange = getDisplayChange(anchorInstrument);
-  const anchorPositive = anchorChange.changePercent >= 0;
   const bidDepth = [0, 1, 2].map((step) => ({
     price: anchorInstrument.bid - step * anchorInstrument.pipSize * 2,
     size: [2.8, 1.9, 1.2][step],
@@ -53,171 +34,49 @@ export default function HomeScreen() {
     price: anchorInstrument.ask + step * anchorInstrument.pipSize * 2,
     size: [2.4, 1.7, 1.1][step],
   }));
-  const missions = [
-    [t('home.mission.paper'), 100],
-    [t('home.mission.watchlist'), 72],
-    [t('home.mission.riskLesson'), 54],
-    [t('home.mission.firstOrder'), 38],
-  ] as const;
-
   return (
-    <Screen subtitle={t('home.riskSubtitle')} title={t('home.traderTitle')}>
-      <AuthStatusCard mode="trader" status={authStatus} />
+    <Screen title={t('markets.title')}>
+      <AccountSummaryStrip account={account} floatingPnl={positions.reduce((total, position) => total + position.unrealizedPnl, 0)} />
+
+      <MoversCarousel instruments={topMovers.slice(0, 6)} />
 
       <View style={StyleSheet.flatten([styles.searchBar, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-        <FontAwesome color={palette.textDim} name="search" size={14} />
+        <PhosphorIcon color={palette.textDim} name="magnifying-glass" size={14} />
         <AppText numberOfLines={1} tone="dim" variant="caption">
           {locale === 'en-US' ? 'Search FX, metals, indices' : '搜索外汇、黄金、指数'}
         </AppText>
       </View>
 
-      <Card highlight style={styles.heroCard}>
-        <View style={styles.heroTop}>
-          <View style={styles.copyBlock}>
-            <AppText tone="dim" variant="eyebrow">
-              {locale === 'en-US' ? 'Demo wallet' : '模拟钱包'}
-            </AppText>
-            <AppText adjustsFontSizeToFit numberOfLines={1} variant="largeNumber">
-              {formatMoney(account.equity, account.currency, 2, locale)}
-            </AppText>
-            <AppText numberOfLines={1} tone="muted" variant="caption">
-              {t('account.availableMargin')} {formatCompactMoney(account.freeMargin, account.currency, locale)} · {t('home.positions')} {positions.length}
-            </AppText>
-          </View>
-          <View style={StyleSheet.flatten([styles.brandChip, { backgroundColor: `${palette.brand}18`, borderColor: palette.brand }])}>
-            <FontAwesome color={palette.brand} name="bolt" size={12} />
-            <AppText tone="brand" variant="caption">
-              {locale === 'en-US' ? 'Paper' : '模拟'}
-            </AppText>
-          </View>
-        </View>
+      <View style={StyleSheet.flatten([styles.marketTabs, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+        {marketTabs.map((tab) => {
+          const active = tab === selectedTab;
 
-        <View style={StyleSheet.flatten([styles.anchorQuote, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-          <View style={styles.copyBlock}>
-            <AppText variant="subtitle">{anchorInstrument.symbol}</AppText>
-            <AppText numberOfLines={1} tone="muted" variant="caption">
-              {localizeText(anchorInstrument.name, locale)}
-            </AppText>
-          </View>
-          <View style={styles.quoteRight}>
-            <AppText tone={anchorPositive ? 'up' : 'down'} variant="number">
-              {formatPrice(anchorInstrument, anchorInstrument.ask)}
-            </AppText>
-            <AppText tone={anchorPositive ? 'up' : 'down'} variant="caption">
-              {formatPercent(anchorChange.changePercent)}
-            </AppText>
-          </View>
-        </View>
-
-        <View style={styles.tradeButtons}>
-          <NativePressable
-            accessibilityRole="button"
-            onPress={() => {
-              if (requireSignedIn('trader')) {
-                void impactLight();
-                router.push(`/order/${anchorInstrument.id}?direction=buy`);
-              }
-            }}
-            style={StyleSheet.flatten([
-              styles.tradeButton,
-              { backgroundColor: authStatus === 'signedIn' ? palette.up : palette.line },
-            ])}>
-            <AppText style={{ color: palette.panel }} variant="subtitle">
-              {t('common.buy')}
-            </AppText>
-          </NativePressable>
-          <NativePressable
-            accessibilityRole="button"
-            onPress={() => {
-              if (requireSignedIn('trader')) {
-                void impactLight();
-                router.push(`/order/${anchorInstrument.id}?direction=sell`);
-              }
-            }}
-            style={StyleSheet.flatten([
-              styles.tradeButton,
-              { backgroundColor: authStatus === 'signedIn' ? palette.down : palette.line },
-            ])}>
-            <AppText style={{ color: palette.panel }} variant="subtitle">
-              {t('common.sell')}
-            </AppText>
-          </NativePressable>
-        </View>
-      </Card>
-
-      <Card>
-        <View style={styles.sectionHeader}>
-          <View style={styles.copyBlock}>
-            <AppText variant="subtitle">{t('home.mission.title')}</AppText>
-            <AppText numberOfLines={1} tone="muted" variant="caption">
-              {t('home.mission.subtitle')}
-            </AppText>
-          </View>
-          <View style={StyleSheet.flatten([styles.rewardBadge, { backgroundColor: `${palette.brand}14`, borderColor: palette.brand }])}>
-            <AppText tone="brand" variant="caption">
-              {t('home.mission.reward')}
-            </AppText>
-          </View>
-        </View>
-        <View style={styles.missionRail}>
-          {missions.map(([label, progress], index) => (
-            <View
-              key={label}
+          return (
+            <NativePressable
+              accessibilityRole="tab"
+              accessibilityState={{ selected: active }}
+              key={tab}
+              minTouch={36}
+              onPress={() => setSelectedTab(tab)}
               style={StyleSheet.flatten([
-                styles.missionPill,
-                { backgroundColor: index === 0 ? palette.text : palette.panelSoft, borderColor: index === 0 ? palette.text : palette.lineSoft },
+                styles.marketTab,
+                active && {
+                  backgroundColor: palette.panel,
+                },
               ])}>
-              <View style={StyleSheet.flatten([styles.stepDot, { backgroundColor: index === 0 ? palette.brand : palette.panel, borderColor: index === 0 ? palette.brand : palette.line }])}>
-                <AppText style={index === 0 && { color: palette.text }} variant="caption">
-                  {index + 1}
-                </AppText>
-              </View>
-              <View style={styles.copyBlock}>
-                <AppText numberOfLines={1} style={index === 0 && { color: palette.panel }} variant="caption">
-                  {label}
-                </AppText>
-                <View style={StyleSheet.flatten([styles.progressTrack, { backgroundColor: index === 0 ? `${palette.panel}33` : palette.lineSoft }])}>
-                  <View style={StyleSheet.flatten([styles.progressFill, { backgroundColor: index === 0 ? palette.brand : palette.brand, width: `${progress}%` }])} />
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
-      </Card>
-
-      <View style={styles.quickGrid}>
-        {([
-          [t('home.action.depth'), t('home.action.depthHint'), 'th-list', palette.text],
-          [t('home.action.paper'), t('home.action.paperHint'), 'trophy', palette.brand],
-          [t('home.action.learn'), t('home.action.learnHint'), 'graduation-cap', palette.amber],
-          [t('home.action.community'), t('home.action.communityHint'), 'comments', palette.textMuted],
-        ] as const).map(([label, hint, icon, color]) => (
-          <NativePressable
-            accessibilityRole="button"
-            key={label}
-            onPress={() => router.push('/partner-tools')}
-            style={StyleSheet.flatten([styles.quickTile, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-            <View style={StyleSheet.flatten([styles.actionIcon, { backgroundColor: `${color}14`, borderColor: `${color}66` }])}>
-              <FontAwesome color={color} name={icon as React.ComponentProps<typeof FontAwesome>['name']} size={15} />
-            </View>
-            <View style={styles.copyBlock}>
-              <AppText numberOfLines={1} variant="body">
-                {label}
+              <AppText
+                adjustsFontSizeToFit
+                numberOfLines={1}
+                style={styles.marketTabText}
+                tone={active ? 'default' : 'dim'}
+                variant="caption">
+                {t(`markets.tab.${tab}`)}
               </AppText>
-              <AppText numberOfLines={1} tone="muted" variant="caption">
-                {hint}
-              </AppText>
-            </View>
-          </NativePressable>
-        ))}
+            </NativePressable>
+          );
+        })}
       </View>
 
-      <View style={styles.sectionTitle}>
-        <AppText variant="subtitle">{t('home.favoriteMarkets')}</AppText>
-        <AppText tone="dim" variant="caption">
-          {t('home.watchlistCaption')}
-        </AppText>
-      </View>
       <Card compact>
         <View style={styles.marketHeader}>
           <AppText tone="dim" variant="caption">
@@ -230,19 +89,7 @@ export default function HomeScreen() {
             %
           </AppText>
         </View>
-        {favoriteInstruments.map((instrument) => (
-          <InstrumentRow instrument={instrument} key={instrument.id} />
-        ))}
-      </Card>
-
-      <View style={styles.sectionTitle}>
-        <AppText variant="subtitle">{t('home.topMovers')}</AppText>
-        <AppText tone="dim" variant="caption">
-          {t('home.moversCaption')}
-        </AppText>
-      </View>
-      <Card compact>
-        {topMovers.slice(0, 4).map((instrument) => (
+        {visibleInstruments.map((instrument) => (
           <InstrumentRow instrument={instrument} key={instrument.id} />
         ))}
       </Card>
@@ -260,213 +107,115 @@ export default function HomeScreen() {
           <DepthSide color={palette.down} instrument={anchorInstrument} label={t('home.depthBid')} levels={bidDepth} />
           <DepthSide color={palette.up} instrument={anchorInstrument} label={t('home.depthAsk')} levels={askDepth} />
         </View>
-        <Link asChild href={`/instrument/${anchorInstrument.id}`}>
-          <NativePressable
-            accessibilityRole="button"
-            onPress={(event) => {
-              if (!requireSignedIn('trader')) {
-                event.preventDefault();
-              }
-            }}
-            style={StyleSheet.flatten([
-              styles.blackCta,
-              { backgroundColor: authStatus === 'signedIn' ? palette.text : palette.line },
-            ])}>
-            <AppText style={{ color: palette.panel }} variant="body">
-              {authStatus === 'signedIn' ? t('home.convertCta') : t('auth.action.continue')}
-            </AppText>
-            <FontAwesome color={palette.panel} name="angle-right" size={18} />
-          </NativePressable>
-        </Link>
       </Card>
     </Screen>
   );
 }
 
-function PartnerDashboard() {
-  const { authStatus, locale, palette, t } = useProductSettings();
-  const toast = useToast();
-  const requireSignedIn = () => {
-    if (authStatus === 'signedIn') {
-      return true;
-    }
-
-    void notifyWarning();
-    toast.show({
-      message: t('auth.partnerLocked'),
-      title: t('auth.lockedToastTitle'),
-      tone: 'warning',
-    });
-    return false;
-  };
-  const funnel = [
-    [t('partner.funnel.visit'), 430],
-    [t('partner.funnel.submitted'), 214],
-    [t('partner.funnel.funded'), 136],
-    [t('partner.funnel.active'), 74],
-  ] as const;
+function MoversCarousel({ instruments }: { instruments: Instrument[] }) {
+  const { locale, palette, t } = useProductSettings();
 
   return (
-    <Screen subtitle={t('partner.dashboardSubtitle')} title={t('partner.dashboardTitle')}>
-      <AuthStatusCard mode="partner" status={authStatus} />
-
-      <Card highlight style={styles.heroCard}>
-        <View style={styles.heroTop}>
-          <View style={styles.copyBlock}>
-            <AppText tone="dim" variant="eyebrow">
-              {t('partner.referralCode')}
-            </AppText>
-            <AppText numberOfLines={1} variant="title">
-              {partnerMetrics.referralCode}
-            </AppText>
-            <AppText numberOfLines={1} tone="muted" variant="caption">
-              {partnerMetrics.referralLink}
-            </AppText>
-          </View>
-          <View style={StyleSheet.flatten([styles.qrBox, { backgroundColor: palette.text }])}>
-            <FontAwesome color={palette.panel} name="qrcode" size={24} />
-          </View>
-        </View>
-        <NativePressable
-          accessibilityRole="button"
-          onPress={() => {
-            if (requireSignedIn()) {
-              void impactLight();
-              router.push('/partner-tools');
-            }
-          }}
-          style={StyleSheet.flatten([
-            styles.blackCta,
-            { backgroundColor: authStatus === 'signedIn' ? palette.text : palette.line },
-          ])}>
-          <AppText style={{ color: palette.panel }} variant="body">
-            {authStatus === 'signedIn' ? (locale === 'en-US' ? 'Open growth toolkit' : '打开推广工具') : t('auth.action.continue')}
-          </AppText>
-          <FontAwesome color={palette.panel} name="angle-right" size={18} />
-        </NativePressable>
-      </Card>
-
-      <View style={styles.metricStrip}>
-        <MetricCard label={t('partner.monthClients')} value={`${partnerMetrics.clients}`} />
-        <MetricCard label={t('partner.monthVolume')} value={formatVolumeMillions(partnerMetrics.monthlyVolume, locale)} />
-        <MetricCard label={t('partner.pendingCommission')} value={formatCompactMoney(partnerMetrics.pendingCommission, 'USD', locale)} />
+    <View style={styles.moversBlock}>
+      <View style={styles.moversHeader}>
+        <AppText variant="subtitle">{t('home.topMovers')}</AppText>
+        <AppText tone="dim" variant="caption">
+          {t('home.moversCaption')}
+        </AppText>
       </View>
+      <ScrollView
+        contentContainerStyle={styles.moversRail}
+        horizontal
+        showsHorizontalScrollIndicator={false}>
+        {instruments.map((instrument) => {
+          const { changePercent } = getDisplayChange(instrument);
+          const positive = changePercent >= 0;
+          const tone = positive ? 'up' : 'down';
+          const color = positive ? palette.up : palette.down;
 
-      <Card>
-        <View style={styles.sectionHeader}>
-          <View style={styles.copyBlock}>
-            <AppText variant="subtitle">{t('partner.funnel')}</AppText>
-            <AppText tone="muted" variant="caption">
-              {locale === 'en-US' ? 'Visits to first active demo trade' : '从访问开户链接到首笔模拟交易'}
-            </AppText>
-          </View>
-          <AppText tone="brand" variant="number">
-            {partnerMetrics.conversionRate.toFixed(1)}%
-          </AppText>
-        </View>
-        {funnel.map(([label, value], index) => (
-          <View key={label} style={styles.funnelRow}>
-            <View style={StyleSheet.flatten([styles.stepDot, { backgroundColor: index < 2 ? palette.text : `${palette.brand}18`, borderColor: index < 2 ? palette.text : palette.brand }])}>
-              <AppText style={{ color: index < 2 ? palette.panel : palette.brand }} variant="caption">
-                {index + 1}
-              </AppText>
-            </View>
-            <View style={styles.copyBlock}>
-              <View style={styles.progressLabel}>
-                <AppText numberOfLines={1} variant="caption">
-                  {label}
+          return (
+            <View
+              key={instrument.id}
+              style={StyleSheet.flatten([styles.moverCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+              <View style={styles.moverTop}>
+                <View style={styles.moverIdentity}>
+                  <AppText numberOfLines={1} variant="subtitle">
+                    {instrument.symbol}
+                  </AppText>
+                  <AppText numberOfLines={1} tone="muted" variant="caption">
+                    {localizeText(instrument.name, locale)}
+                  </AppText>
+                </View>
+                <View style={StyleSheet.flatten([styles.moverBadge, { backgroundColor: `${color}12` }])}>
+                  <AppText tone={tone} variant="caption">
+                    {formatPercent(changePercent)}
+                  </AppText>
+                </View>
+              </View>
+              <Sparkline color={color} height={30} values={instrument.sparkline} width={116} />
+              <View style={styles.moverBottom}>
+                <AppText tone="dim" variant="caption">
+                  Ask
                 </AppText>
-                <AppText tone="muted" variant="caption">
-                  {value}
+                <AppText tone={tone} variant="number">
+                  {formatPrice(instrument, instrument.ask)}
                 </AppText>
               </View>
-              <View style={StyleSheet.flatten([styles.progressTrack, { backgroundColor: palette.panelSoft }])}>
-                <View style={StyleSheet.flatten([styles.progressFill, { backgroundColor: index < 2 ? palette.text : palette.brand, width: `${(value / 430) * 100}%` }])} />
-              </View>
             </View>
-          </View>
-        ))}
-      </Card>
-
-      <Card>
-        <View style={styles.sectionHeader}>
-          <View style={styles.copyBlock}>
-            <AppText variant="subtitle">{t('partner.nextAction')}</AppText>
-            <AppText numberOfLines={2} tone="muted" variant="caption">
-              {t('partner.nextActionHint')}
-            </AppText>
-          </View>
-        </View>
-        <View style={styles.partnerTasks}>
-          {([
-            [t('partner.convert.invite'), 'share-alt', 100],
-            [t('partner.convert.activate'), 'check-circle', 66],
-            [t('partner.convert.deposit'), 'bank', 42],
-            [t('partner.convert.trade'), 'line-chart', 31],
-          ] as const).map(([label, icon, progress]) => (
-            <View key={label} style={StyleSheet.flatten([styles.partnerTask, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-              <FontAwesome color={palette.brand} name={icon as React.ComponentProps<typeof FontAwesome>['name']} size={15} />
-              <AppText numberOfLines={1} variant="caption">
-                {label}
-              </AppText>
-              <AppText tone="dim" variant="caption">
-                {progress}%
-              </AppText>
-            </View>
-          ))}
-        </View>
-      </Card>
-    </Screen>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 }
 
-function AuthStatusCard({ mode, status }: { mode: 'trader' | 'partner'; status: AuthStatus }) {
-  const { palette, t } = useProductSettings();
-  const signedIn = status === 'signedIn';
-  const progress: Record<AuthStatus, number> = {
-    guest: 12,
-    signedIn: 100,
-  };
-  const icon: Record<AuthStatus, React.ComponentProps<typeof FontAwesome>['name']> = {
-    guest: 'globe',
-    signedIn: 'check-circle',
-  };
+function getVisibleInstruments(instruments: Instrument[], tab: MarketTabId) {
+  if (tab === 'watchlist') {
+    return instruments.filter((instrument) => instrument.favorite);
+  }
+
+  return instruments.filter((instrument) => instrument.assetClass === tab);
+}
+
+function AccountSummaryStrip({ account, floatingPnl }: { account: Account; floatingPnl: number }) {
+  const { locale, palette, t } = useProductSettings();
+  const pnlTone = floatingPnl >= 0 ? 'up' : 'down';
 
   return (
-    <Card style={signedIn ? styles.authCompactCard : styles.authCard}>
-      <View style={styles.authRow}>
-        <View style={StyleSheet.flatten([styles.authMark, { backgroundColor: signedIn ? `${palette.brand}18` : palette.text, borderColor: signedIn ? palette.brand : palette.text }])}>
-          <FontAwesome color={signedIn ? palette.brand : palette.panel} name={icon[status]} size={18} />
-        </View>
-        <View style={styles.copyBlock}>
-          <AppText variant="subtitle">{t(`auth.card.${status}.title`)}</AppText>
-          <AppText numberOfLines={2} tone="muted" variant="caption">
-            {signedIn ? t(`auth.card.${status}.body`) : mode === 'partner' ? t('auth.partnerLocked') : t('auth.traderLocked')}
+    <View style={StyleSheet.flatten([styles.accountStrip, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+      <View style={styles.accountSummaryMain}>
+        <View style={styles.accountIdentityBlock}>
+          <AppText numberOfLines={1} tone="dim" variant="eyebrow">
+            {t('account.currentTrading')}
           </AppText>
+          <View style={styles.accountIdRow}>
+            <View style={StyleSheet.flatten([styles.accountStripDot, { backgroundColor: palette.brand }])} />
+            <AppText adjustsFontSizeToFit numberOfLines={1} variant="subtitle">
+              {account.accountId}
+            </AppText>
+          </View>
+        </View>
+
+        <View style={styles.accountMetricRow}>
+          <View style={styles.accountStripItem}>
+            <AppText adjustsFontSizeToFit numberOfLines={1} tone="dim" variant="eyebrow">
+              {t('account.equity')}
+            </AppText>
+            <AppText adjustsFontSizeToFit numberOfLines={1} variant="number">
+              {formatCompactMoney(account.equity, account.currency, locale)}
+            </AppText>
+          </View>
+          <View style={styles.accountStripItem}>
+            <AppText adjustsFontSizeToFit numberOfLines={1} tone="dim" variant="eyebrow">
+              {t('portfolio.unrealizedPnl')}
+            </AppText>
+            <AppText adjustsFontSizeToFit numberOfLines={1} tone={pnlTone} variant="number">
+              {formatMoney(floatingPnl, account.currency, 0, locale)}
+            </AppText>
+          </View>
         </View>
       </View>
-      {!signedIn ? (
-        <>
-          <View style={StyleSheet.flatten([styles.emailFieldPreview, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-            <AppText tone="muted" variant="caption">
-              {t('auth.emailPlaceholder')}
-            </AppText>
-          </View>
-          <View style={StyleSheet.flatten([styles.authProgressTrack, { backgroundColor: palette.panelSoft }])}>
-            <View style={StyleSheet.flatten([styles.authProgressFill, { backgroundColor: palette.brand, width: `${progress[status]}%` }])} />
-          </View>
-          <NativePressable
-            accessibilityRole="button"
-            onPress={() => router.push('/auth')}
-            style={StyleSheet.flatten([styles.blackCta, { backgroundColor: palette.text }])}>
-            <AppText style={{ color: palette.panel }} variant="body">
-              {t('auth.action.register')}
-            </AppText>
-            <FontAwesome color={palette.panel} name="angle-right" size={18} />
-          </NativePressable>
-        </>
-      ) : null}
-    </Card>
+    </View>
   );
 }
 
@@ -503,84 +252,45 @@ function DepthSide({
   );
 }
 
-function MetricCard({ label, value }: { label: string; value: string }) {
-  const { palette } = useProductSettings();
-
-  return (
-    <View style={StyleSheet.flatten([styles.metricCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-      <Metric label={label} value={value} />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  actionIcon: {
-    alignItems: 'center',
-    borderRadius: 8,
+  accountStrip: {
+    borderRadius: 16,
     borderWidth: 1,
-    height: 30,
-    justifyContent: 'center',
-    width: 30,
+    minHeight: 58,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
-  authCard: {
-    gap: 12,
-  },
-  authCompactCard: {
-    gap: 0,
-    paddingVertical: 12,
-  },
-  authMark: {
-    alignItems: 'center',
-    borderRadius: 8,
-    borderWidth: 1,
-    height: 42,
-    justifyContent: 'center',
-    width: 42,
-  },
-  authProgressFill: {
-    borderRadius: 999,
-    height: 7,
-  },
-  authProgressTrack: {
-    borderRadius: 999,
-    height: 7,
-    overflow: 'hidden',
-  },
-  authRow: {
-    alignItems: 'center',
+  accountIdRow: {
+    alignItems: 'baseline',
     flexDirection: 'row',
-    gap: 12,
-  },
-  anchorQuote: {
-    alignItems: 'center',
-    borderRadius: 8,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 12,
-    padding: 12,
-  },
-  blackCta: {
-    alignItems: 'center',
-    borderRadius: 999,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-    minHeight: 44,
-    paddingHorizontal: 16,
-  },
-  brandChip: {
-    alignItems: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  copyBlock: {
-    flex: 1,
-    gap: 4,
+    gap: 7,
     minWidth: 0,
+  },
+  accountIdentityBlock: {
+    flex: 1,
+    gap: 2,
+    minWidth: 0,
+  },
+  accountMetricRow: {
+    flex: 1.15,
+    flexDirection: 'row',
+    gap: 10,
+    minWidth: 0,
+  },
+  accountStripItem: {
+    flex: 1,
+    gap: 3,
+    minWidth: 0,
+  },
+  accountStripDot: {
+    borderRadius: 999,
+    height: 7,
+    width: 7,
+  },
+  accountSummaryMain: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 12,
   },
   depthBook: {
     flexDirection: 'row',
@@ -607,125 +317,73 @@ const styles = StyleSheet.create({
     height: 7,
     overflow: 'hidden',
   },
-  emailFieldPreview: {
-    borderRadius: 8,
-    borderWidth: 1,
-    justifyContent: 'center',
-    minHeight: 40,
-    paddingHorizontal: 12,
-  },
-  funnelRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 10,
-    marginTop: 10,
-    minHeight: 42,
-  },
-  heroCard: {
-    gap: 14,
-  },
-  heroTop: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'space-between',
-  },
   marketHeader: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingBottom: 4,
   },
-  metricCard: {
-    borderRadius: 8,
-    borderWidth: 1,
-    flex: 1,
-    minWidth: 96,
-    padding: 10,
+  moverBadge: {
+    borderRadius: 999,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
   },
-  metricStrip: {
+  moverBottom: {
+    gap: 1,
+  },
+  moverCard: {
+    borderRadius: 14,
+    borderWidth: 1,
+    gap: 8,
+    minHeight: 126,
+    padding: 12,
+    width: 156,
+  },
+  moverIdentity: {
+    flex: 1,
+    gap: 1,
+    minWidth: 0,
+  },
+  moversBlock: {
+    gap: 8,
+    marginHorizontal: -16,
+  },
+  moversHeader: {
+    alignItems: 'center',
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 10,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
   },
-  missionPill: {
-    alignItems: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 8,
-    minHeight: 42,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
+  moversRail: {
+    gap: 10,
+    paddingHorizontal: 16,
   },
-  missionRail: {
-    gap: 8,
-  },
-  partnerTask: {
-    alignItems: 'center',
-    borderRadius: 8,
-    borderWidth: 1,
-    flex: 1,
-    gap: 5,
-    minWidth: 72,
-    padding: 10,
-  },
-  partnerTasks: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  pressed: {
-    opacity: 0.72,
-  },
-  progressFill: {
-    borderRadius: 999,
-    height: 6,
-  },
-  progressLabel: {
-    alignItems: 'center',
+  moverTop: {
+    alignItems: 'flex-start',
     flexDirection: 'row',
     gap: 8,
     justifyContent: 'space-between',
   },
-  progressTrack: {
+  marketTab: {
+    alignItems: 'center',
     borderRadius: 999,
-    height: 6,
-    overflow: 'hidden',
+    flex: 1,
+    minWidth: 0,
+    paddingHorizontal: 7,
+    paddingVertical: 8,
   },
-  qrBox: {
-    alignItems: 'center',
-    borderRadius: 8,
-    height: 48,
-    justifyContent: 'center',
-    width: 48,
-  },
-  quickGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  quickTile: {
-    alignItems: 'center',
-    borderRadius: 8,
-    borderWidth: 1,
-    flexBasis: '48%',
-    flexDirection: 'row',
-    flexGrow: 1,
-    gap: 10,
-    minHeight: 58,
-    padding: 10,
-  },
-  quoteRight: {
-    alignItems: 'flex-end',
-    minWidth: 100,
-  },
-  rewardBadge: {
+  marketTabs: {
     borderRadius: 999,
     borderWidth: 1,
-    maxWidth: 148,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    flexDirection: 'row',
+    gap: 4,
+    padding: 4,
+  },
+  marketTabText: {
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
   },
   searchBar: {
     alignItems: 'center',
@@ -749,24 +407,5 @@ const styles = StyleSheet.create({
     gap: 10,
     justifyContent: 'space-between',
     marginTop: 2,
-  },
-  stepDot: {
-    alignItems: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
-    height: 26,
-    justifyContent: 'center',
-    width: 26,
-  },
-  tradeButton: {
-    alignItems: 'center',
-    borderRadius: 999,
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 44,
-  },
-  tradeButtons: {
-    flexDirection: 'row',
-    gap: 10,
   },
 });

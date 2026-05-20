@@ -29,10 +29,13 @@ export type LocalizedText = {
   'zh-CN': string;
 };
 
+export type InstrumentAssetClass = 'forex' | 'metals' | 'futures' | 'stocks';
+
 export type Instrument = {
   id: string;
   symbol: string;
   name: LocalizedText;
+  assetClass: InstrumentAssetClass;
   baseCurrency: string;
   quoteCurrency: string;
   bid: number;
@@ -86,6 +89,11 @@ export type Transaction = {
 };
 
 export type Account = {
+  accountId: string;
+  label: LocalizedText;
+  mode: LocalizedText;
+  server: string;
+  leverageProfile: string;
   currency: string;
   balance: number;
   equity: number;

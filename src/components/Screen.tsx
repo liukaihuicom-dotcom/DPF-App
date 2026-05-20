@@ -12,6 +12,7 @@ type ScreenProps = PropsWithChildren<{
   contentInsetBottom?: number;
   dismissKeyboardOnTap?: boolean;
   keyboardAware?: boolean;
+  overlay?: ReactNode;
   rightActions?: AppTopBarAction[];
   scroll?: boolean;
   subtitle?: string;
@@ -27,6 +28,7 @@ export function Screen({
   contentInsetBottom = 0,
   dismissKeyboardOnTap,
   keyboardAware,
+  overlay,
   rightActions,
   scroll = true,
   stickyFooter,
@@ -36,7 +38,7 @@ export function Screen({
 }: ScreenProps) {
   const palette = useThemePalette();
   const header = topBar ?? (title ? <AppTopBar actions={rightActions} align={align} back={back} subtitle={subtitle} title={title} /> : null);
-  const bottomPadding = stickyFooter ? 104 + contentInsetBottom : 32 + contentInsetBottom;
+  const bottomPadding = stickyFooter ? 122 + contentInsetBottom : 32 + contentInsetBottom;
   const wrapDismiss = (node: ReactNode) =>
     dismissKeyboardOnTap ? (
       <Pressable accessible={false} onPress={Keyboard.dismiss} style={styles.flex}>
@@ -60,15 +62,18 @@ export function Screen({
   );
 
   const content = (
-    <SafeAreaView edges={['top']} style={StyleSheet.flatten([styles.safe, { backgroundColor: palette.bg }])}>
-      {header}
-      {wrapDismiss(body)}
-      {stickyFooter ? (
-        <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.footerSafe, { backgroundColor: palette.panelHigh, borderTopColor: palette.lineSoft }])}>
-          <View style={styles.footer}>{stickyFooter}</View>
-        </SafeAreaView>
-      ) : null}
-    </SafeAreaView>
+    <View style={StyleSheet.flatten([styles.safe, { backgroundColor: palette.bg }])}>
+      <SafeAreaView edges={['top']} style={styles.flex}>
+        {header}
+        {wrapDismiss(body)}
+        {stickyFooter ? (
+          <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.footerSafe, { backgroundColor: palette.panelHigh, borderTopColor: palette.lineSoft }])}>
+            <View style={styles.footer}>{stickyFooter}</View>
+          </SafeAreaView>
+        ) : null}
+      </SafeAreaView>
+      {overlay}
+    </View>
   );
 
   if (keyboardAware) {
@@ -85,6 +90,7 @@ export function Screen({
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
+    position: 'relative',
   },
   body: {
     flex: 1,
@@ -99,6 +105,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     gap: 8,
+    paddingBottom: 18,
     paddingHorizontal: 16,
     paddingTop: 12,
   },

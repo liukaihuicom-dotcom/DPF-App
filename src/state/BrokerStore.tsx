@@ -1,4 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
+import { Platform } from 'react-native';
 
 import { initialAccount, initialUpgradeRequest, instruments as initialInstruments, partnerClients as initialPartnerClients } from '@/src/domain/mockData';
 import {
@@ -35,6 +36,8 @@ type BrokerStore = {
   rejectUpgradeRequest: (clientId: string) => void;
   getPartnerClientProfile: (clientId: string) => PartnerClient | undefined;
   placeOrder: (input: PlaceOrderInput) => Order | null;
+  modifyOrder: (orderId: string) => void;
+  deleteOrder: (orderId: string) => void;
   closePosition: (positionId: string) => void;
   findInstrument: (id: string) => Instrument | undefined;
 };
@@ -42,7 +45,7 @@ type BrokerStore = {
 const BrokerContext = createContext<BrokerStore | null>(null);
 
 function readStoredUpgradeState() {
-  if (typeof window === 'undefined') {
+  if (Platform.OS !== 'web' || typeof window === 'undefined' || !window.localStorage) {
     return null;
   }
 
@@ -79,7 +82,7 @@ export function BrokerProvider({ children }: PropsWithChildren) {
   }, [instruments]);
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (Platform.OS !== 'web' || typeof window === 'undefined' || !window.localStorage) {
       return;
     }
 
@@ -96,10 +99,12 @@ export function BrokerProvider({ children }: PropsWithChildren) {
     }
 
     const order = createOrder({ ...input, instrument });
-    const position = createPosition(order);
 
     setOrders((current) => [order, ...current]);
-    setPositions((current) => [position, ...current]);
+    if (order.status === 'filled') {
+      const position = createPosition(order);
+      setPositions((current) => [position, ...current]);
+    }
     return order;
   };
 
@@ -140,6 +145,24 @@ export function BrokerProvider({ children }: PropsWithChildren) {
 
       return current.filter((item) => item.id !== positionId);
     });
+  };
+
+  const modifyOrder = (orderId: string) => {
+    setOrders((current) =>
+      current.map((order) =>
+        order.id === orderId
+          ? {
+              ...order,
+              lots: Number((order.lots + 0.01).toFixed(2)),
+              marginRequired: Number((order.marginRequired * 1.002).toFixed(2)),
+            }
+          : order,
+      ),
+    );
+  };
+
+  const deleteOrder = (orderId: string) => {
+    setOrders((current) => current.filter((order) => order.id !== orderId));
   };
 
   const submitUpgradeRequest = (reason: string) => {
@@ -244,6 +267,8 @@ export function BrokerProvider({ children }: PropsWithChildren) {
       rejectUpgradeRequest,
       getPartnerClientProfile: (clientId: string) => partnerClients.find((client) => client.id === clientId),
       placeOrder,
+      modifyOrder,
+      deleteOrder,
       closePosition,
       findInstrument: (id: string) => instruments.find((instrument) => instrument.id === id),
     }),

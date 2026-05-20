@@ -1,10 +1,10 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useThemePalette } from '@/src/settings/ProductSettings';
 
 import { AppText } from './Typography';
+import { PhosphorIcon } from './PhosphorIcon';
 
 type BackBarProps = {
   label: string;
@@ -19,7 +19,7 @@ export function BackBar({ label }: BackBarProps) {
         accessibilityRole="button"
         onPress={() => router.back()}
         style={StyleSheet.flatten([styles.button, { backgroundColor: palette.panelSoft, borderColor: palette.line }])}>
-        <FontAwesome color={palette.text} name="angle-left" size={22} />
+        <PhosphorIcon color={palette.text} name="caret-left" size={22} />
       </Pressable>
       <AppText numberOfLines={1} variant="subtitle">
         {label}

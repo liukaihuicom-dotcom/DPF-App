@@ -7,7 +7,7 @@ export function AppViewport({ children }: PropsWithChildren) {
   const palette = useThemePalette();
 
   if (Platform.OS !== 'web') {
-    return <>{children}</>;
+    return <View style={StyleSheet.flatten([styles.native, { backgroundColor: palette.bg }])}>{children}</View>;
   }
 
   return (
@@ -24,7 +24,13 @@ const styles = StyleSheet.create({
     flex: 1,
     maxWidth: 430,
     overflow: 'hidden',
+    position: 'relative',
     width: '100%',
+  },
+  native: {
+    flex: 1,
+    overflow: 'hidden',
+    position: 'relative',
   },
   stage: {
     alignItems: 'center',

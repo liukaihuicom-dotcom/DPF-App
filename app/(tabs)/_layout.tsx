@@ -1,17 +1,17 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
+import { PhosphorIcon, type PhosphorIconName } from '@/src/components/PhosphorIcon';
 import type { DiscoverModuleId } from '@/src/domain/types';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 import { AppText } from '@/src/components/Typography';
 
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
+  name: PhosphorIconName;
   color: string;
 }) {
-  return <FontAwesome size={20} style={{ marginBottom: -2 }} {...props} />;
+  return <PhosphorIcon size={20} style={{ marginBottom: -2 }} {...props} />;
 }
 
 export default function TabLayout() {
@@ -23,7 +23,7 @@ export default function TabLayout() {
       accessibilityRole="text"
       style={styles.statusButton}>
       <View style={StyleSheet.flatten([styles.statusIcon, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}66` }])}>
-        <FontAwesome color={palette.brand} name={selectedModule.icon} size={15} />
+        <PhosphorIcon color={palette.brand} name={selectedModule.icon} size={15} />
       </View>
       <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.statusLabel} tone="brand" variant="caption">
         {t(`discover.module.${selectedDiscoverModuleId}.short`)}
@@ -48,36 +48,29 @@ export default function TabLayout() {
           paddingTop: 6,
         },
         tabBarLabelStyle: {
-          fontSize: 9,
+          fontSize: 10,
           letterSpacing: 0,
         },
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: t('tabs.watchlist'),
-          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="star-o" />,
-        }}
-      />
-      <Tabs.Screen
-        name="markets"
-        options={{
           title: t('tabs.markets'),
-          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="line-chart" />,
+          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="chart-line-up" />,
         }}
       />
       <Tabs.Screen
         name="trade"
         options={{
           title: t('tabs.trade'),
-          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="exchange" />,
+          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="list-checks" />,
         }}
       />
       <Tabs.Screen
         name="accounts"
         options={{
           title: t('tabs.accounts'),
-          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="user-o" />,
+          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="user-circle" />,
         }}
       />
       <Tabs.Screen
@@ -100,6 +93,7 @@ export default function TabLayout() {
           tabBarIcon: () => null,
         }}
       />
+      <Tabs.Screen name="markets" options={{ href: null }} />
       <Tabs.Screen name="portfolio" options={{ href: null }} />
       <Tabs.Screen name="account" options={{ href: null }} />
       <Tabs.Screen name="partner-tools" options={{ href: null }} />
@@ -108,15 +102,15 @@ export default function TabLayout() {
 }
 
 function getDiscoverModuleMeta(moduleId: DiscoverModuleId) {
-  const iconByModule: Record<DiscoverModuleId, React.ComponentProps<typeof FontAwesome>['name']> = {
-    accounts: 'user-o',
+  const iconByModule: Record<DiscoverModuleId, PhosphorIconName> = {
+    accounts: 'user',
     challenge: 'trophy',
-    community: 'comments',
+    community: 'chats-circle',
     education: 'graduation-cap',
-    markets: 'line-chart',
-    onboarding: 'id-card-o',
-    partner: 'share-alt',
-    profile: 'user-circle-o',
+    markets: 'chart-line-up',
+    onboarding: 'identification-card',
+    partner: 'share-network',
+    profile: 'user-circle',
     rewards: 'gift',
     support: 'headphones',
   };
@@ -143,8 +137,8 @@ const styles = StyleSheet.create({
     width: 28,
   },
   statusLabel: {
-    fontSize: 9,
-    lineHeight: 13,
+    fontSize: 10,
+    lineHeight: 14,
     maxWidth: 52,
   },
 });

@@ -1,4 +1,3 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
@@ -9,6 +8,7 @@ import { themePalettes, type ThemeMode } from '@/src/theme/colors';
 import type { AuthStatus, Role } from '@/src/domain/types';
 
 import { NativePressable } from './NativePressable';
+import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
 import { AppText } from './Typography';
 
 const themeModes = Object.keys(themePalettes) as ThemeMode[];
@@ -46,7 +46,7 @@ export function ProductControlPanel() {
                 <AppText variant="subtitle">{t('control.panel')}</AppText>
               </View>
               <NativePressable accessibilityRole="button" minTouch={44} onPress={() => setOpen(false)} style={styles.iconButton}>
-                <FontAwesome color={palette.textMuted} name="close" size={16} />
+                <PhosphorIcon color={palette.textMuted} name="x" size={16} />
               </NativePressable>
             </View>
 
@@ -58,40 +58,40 @@ export function ProductControlPanel() {
                 minTouch={42}
                 onPress={() => {
                   setOpen(false);
-                  router.push('/auth');
+                  router.push('/auth/onboarding');
                 }}
                 style={StyleSheet.flatten([styles.authShortcut, { backgroundColor: palette.text, borderColor: palette.text }])}>
                 <AppText style={{ color: palette.panel }} variant="body">
                   {t('auth.openLogin')}
                 </AppText>
-                <FontAwesome color={palette.panel} name="angle-right" size={16} />
+                <PhosphorIcon color={palette.panel} name="caret-right" size={16} />
               </NativePressable>
             ) : null}
 
             <View style={styles.formGrid}>
               <ControlSelect
-                icon="user-o"
+                icon="user"
                 label={t('control.accountStatus')}
                 onChange={(value) => setAuthStatus(value as AuthStatus)}
                 options={authStatuses.map((item) => ({ label: t(`auth.status.${item}`), value: item }))}
                 value={authStatus}
               />
               <ControlSelect
-                icon="exchange"
+                icon="arrows-left-right"
                 label={t('control.role')}
                 onChange={(value) => setRole(value as Role)}
                 options={roles.map((item) => ({ label: item === 'trader' ? t('role.trader') : t('role.partner'), value: item }))}
                 value={role}
               />
               <ControlSelect
-                icon="adjust"
+                icon="sliders-horizontal"
                 label={t('control.theme')}
                 onChange={(value) => setThemeMode(value as ThemeMode)}
                 options={themeModes.map((item) => ({ label: t(`theme.${item}`), value: item }))}
                 value={themeMode}
               />
               <ControlSelect
-                icon="language"
+                icon="globe"
                 label={t('control.language')}
                 onChange={(value) => setLocale(value as typeof locale)}
                 options={localeOptions.map((item) => ({ label: item.label, value: item.value }))}
@@ -108,7 +108,7 @@ export function ProductControlPanel() {
         minTouch={48}
         onPress={() => setOpen((value) => !value)}
         style={StyleSheet.flatten([styles.fab, { backgroundColor: palette.panelHigh, borderColor: palette.brand }])}>
-        <FontAwesome color={palette.brand} name="sliders" size={20} />
+        <PhosphorIcon color={palette.brand} name="sliders-horizontal" size={20} />
       </NativePressable>
     </View>
   );
@@ -116,7 +116,7 @@ export function ProductControlPanel() {
 
 function AuthPreview({ status }: { status: AuthStatus }) {
   const { palette, t } = useProductSettings();
-  const iconByStatus: Record<AuthStatus, React.ComponentProps<typeof FontAwesome>['name']> = {
+  const iconByStatus: Record<AuthStatus, PhosphorIconName> = {
     guest: 'globe',
     signedIn: 'check',
   };
@@ -130,7 +130,7 @@ function AuthPreview({ status }: { status: AuthStatus }) {
       <View style={styles.authIllustration}>
         <View style={StyleSheet.flatten([styles.orbit, { borderColor: `${palette.brand}55` }])} />
         <View style={StyleSheet.flatten([styles.mailTile, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}66` }])}>
-          <FontAwesome color={palette.brand} name={iconByStatus[status]} size={18} />
+          <PhosphorIcon color={palette.brand} name={iconByStatus[status]} size={18} />
         </View>
       </View>
       <AppText tone="dim" variant="eyebrow">
@@ -154,7 +154,7 @@ function ControlSelect({
   options,
   value,
 }: {
-  icon: React.ComponentProps<typeof FontAwesome>['name'];
+  icon: PhosphorIconName;
   label: string;
   onChange: (value: string) => void;
   options: { label: string; value: string }[];
@@ -170,7 +170,7 @@ function ControlSelect({
       </AppText>
       <View style={StyleSheet.flatten([styles.selectShell, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
         <View style={StyleSheet.flatten([styles.selectIcon, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-          <FontAwesome color={palette.brand} name={icon} size={13} />
+          <PhosphorIcon color={palette.brand} name={icon} size={13} />
         </View>
         <View style={styles.selectValue}>
           {Platform.OS === 'web' ? (
@@ -191,7 +191,7 @@ function ControlSelect({
             </AppText>
           )}
         </View>
-        <FontAwesome color={palette.textDim} name="angle-down" size={15} />
+        <PhosphorIcon color={palette.textDim} name="caret-down" size={15} />
       </View>
     </View>
   );
