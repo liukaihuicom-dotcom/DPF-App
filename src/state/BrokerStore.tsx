@@ -6,7 +6,6 @@ import {
   applyQuote,
   createOrder,
   createPosition,
-  moveQuote,
   recalculateAccount,
   refreshPositions,
 } from '@/src/domain/trading';
@@ -34,6 +33,7 @@ type BrokerStore = {
   upgradeRequest: UpgradeRequest;
   positions: Position[];
   orders: Order[];
+  quoteStatus: 'connecting' | 'connected' | 'failed';
   submitUpgradeRequest: (reason: string) => void;
   approveUpgradeRequest: (clientId: string) => void;
   rejectUpgradeRequest: (clientId: string) => void;
@@ -81,37 +81,27 @@ function readStoredUpgradeState() {
 export function BrokerProvider({ children }: PropsWithChildren) {
   const { role, setRole } = useProductSettings();
   const storedUpgradeState = readStoredUpgradeState();
-  const [tick, setTick] = useState(0);
   const [instruments, setInstruments] = useState(initialInstruments);
   const [baseAccount, setBaseAccount] = useState(initialAccount);
   const [partnerClients, setPartnerClients] = useState<PartnerClient[]>(storedUpgradeState?.partnerClients ?? initialPartnerClients);
   const [upgradeRequest, setUpgradeRequest] = useState<UpgradeRequest>(storedUpgradeState?.upgradeRequest ?? initialUpgradeRequest);
   const [positions, setPositions] = useState<Position[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [liveQuoteConnected, setLiveQuoteConnected] = useState(false);
-  const [lastLiveQuoteAt, setLastLiveQuoteAt] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTick((value) => value + 1);
-      const liveQuoteFresh = liveQuoteConnected && Date.now() - lastLiveQuoteAt < 8000;
-      setInstruments((current) =>
-        current.map((instrument) => (liveQuoteFresh && isSubscribedQuoteSymbol(instrument) ? instrument : moveQuote(instrument, tick + 1))),
-      );
-    }, 2400);
-
-    return () => clearInterval(timer);
-  }, [lastLiveQuoteAt, liveQuoteConnected, tick]);
+  const [quoteStatus, setQuoteStatus] = useState<'connecting' | 'connected' | 'failed'>('connecting');
 
   useEffect(() => {
     if (typeof WebSocket === 'undefined') {
+      setQuoteStatus('failed');
       return;
     }
 
     const socket = new WebSocket(QUOTE_WS_URL);
+    const failureTimer = setTimeout(() => {
+      setQuoteStatus('failed');
+    }, 8000);
 
     socket.onopen = () => {
-      setLiveQuoteConnected(true);
+      setQuoteStatus('connecting');
       socket.send(JSON.stringify({ action: 3, data: { symbols: QUOTE_SYMBOLS }, type: 2 }));
     };
 
@@ -126,7 +116,7 @@ export function BrokerProvider({ children }: PropsWithChildren) {
           return;
         }
 
-        setLastLiveQuoteAt(Date.now());
+        setQuoteStatus('connected');
         setInstruments((current) =>
           current.map((instrument) => (normalizeQuoteSymbol(instrument.symbol) === normalizeQuoteSymbol(symbol) ? applyQuote(instrument, bid, ask) : instrument)),
         );
@@ -136,14 +126,15 @@ export function BrokerProvider({ children }: PropsWithChildren) {
     };
 
     socket.onerror = () => {
-      setLiveQuoteConnected(false);
+      setQuoteStatus('failed');
     };
 
     socket.onclose = () => {
-      setLiveQuoteConnected(false);
+      setQuoteStatus('failed');
     };
 
     return () => {
+      clearTimeout(failureTimer);
       socket.close();
     };
   }, []);
@@ -333,6 +324,7 @@ export function BrokerProvider({ children }: PropsWithChildren) {
       upgradeRequest,
       positions,
       orders,
+      quoteStatus,
       submitUpgradeRequest,
       approveUpgradeRequest,
       rejectUpgradeRequest,
@@ -343,7 +335,7 @@ export function BrokerProvider({ children }: PropsWithChildren) {
       closePosition,
       findInstrument: (id: string) => instruments.find((instrument) => instrument.id === id),
     }),
-    [account, instruments, orders, partnerClients, positions, role, upgradeRequest],
+    [account, instruments, orders, partnerClients, positions, quoteStatus, role, upgradeRequest],
   );
 
   return <BrokerContext.Provider value={value}>{children}</BrokerContext.Provider>;

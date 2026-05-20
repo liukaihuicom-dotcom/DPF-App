@@ -19,7 +19,7 @@ type MarketTabId = 'watchlist' | InstrumentAssetClass;
 const marketTabs: MarketTabId[] = ['watchlist', 'forex', 'metals', 'futures', 'stocks'];
 
 export default function HomeScreen() {
-  const { account, instruments, positions } = useBroker();
+  const { account, instruments, positions, quoteStatus } = useBroker();
   const { locale, palette, t } = useProductSettings();
   const [selectedTab, setSelectedTab] = useState<MarketTabId>('watchlist');
 
@@ -38,7 +38,9 @@ export default function HomeScreen() {
     <Screen title={t('markets.title')}>
       <AccountSummaryStrip account={account} floatingPnl={positions.reduce((total, position) => total + position.unrealizedPnl, 0)} />
 
-      <MoversCarousel instruments={topMovers.slice(0, 6)} />
+      {quoteStatus !== 'connected' ? <QuoteStatusCard status={quoteStatus} /> : null}
+
+      {quoteStatus === 'connected' ? <MoversCarousel instruments={topMovers.slice(0, 6)} /> : null}
 
       <View style={StyleSheet.flatten([styles.searchBar, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
         <PhosphorIcon color={palette.textDim} name="magnifying-glass" size={14} />
@@ -77,38 +79,71 @@ export default function HomeScreen() {
         })}
       </View>
 
-      <Card compact>
-        <View style={styles.marketHeader}>
-          <AppText tone="dim" variant="caption">
-            {locale === 'en-US' ? 'Symbol' : '品种'}
-          </AppText>
-          <AppText tone="dim" variant="caption">
-            Bid / Ask
-          </AppText>
-          <AppText tone="dim" variant="caption">
-            %
-          </AppText>
-        </View>
-        {visibleInstruments.map((instrument) => (
-          <InstrumentRow instrument={instrument} key={instrument.id} />
-        ))}
-      </Card>
-
-      <Card>
-        <View style={styles.sectionHeader}>
-          <View>
-            <AppText variant="subtitle">{t('home.depthTitle')}</AppText>
-            <AppText tone="muted" variant="caption">
-              {anchorInstrument.symbol} · {t('home.depthSubtitle')}
+      {quoteStatus === 'connected' ? (
+        <Card compact>
+          <View style={styles.marketHeader}>
+            <AppText tone="dim" variant="caption">
+              {locale === 'en-US' ? 'Symbol' : '品种'}
+            </AppText>
+            <AppText tone="dim" variant="caption">
+              Bid / Ask
+            </AppText>
+            <AppText tone="dim" variant="caption">
+              %
             </AppText>
           </View>
-        </View>
-        <View style={styles.depthBook}>
-          <DepthSide color={palette.down} instrument={anchorInstrument} label={t('home.depthBid')} levels={bidDepth} />
-          <DepthSide color={palette.up} instrument={anchorInstrument} label={t('home.depthAsk')} levels={askDepth} />
-        </View>
-      </Card>
+          {visibleInstruments.map((instrument) => (
+            <InstrumentRow instrument={instrument} key={instrument.id} />
+          ))}
+        </Card>
+      ) : null}
+
+      {quoteStatus === 'connected' ? (
+        <Card>
+          <View style={styles.sectionHeader}>
+            <View>
+              <AppText variant="subtitle">{t('home.depthTitle')}</AppText>
+              <AppText tone="muted" variant="caption">
+                {anchorInstrument.symbol} · {t('home.depthSubtitle')}
+              </AppText>
+            </View>
+          </View>
+          <View style={styles.depthBook}>
+            <DepthSide color={palette.down} instrument={anchorInstrument} label={t('home.depthBid')} levels={bidDepth} />
+            <DepthSide color={palette.up} instrument={anchorInstrument} label={t('home.depthAsk')} levels={askDepth} />
+          </View>
+        </Card>
+      ) : null}
     </Screen>
+  );
+}
+
+function QuoteStatusCard({ status }: { status: 'connecting' | 'connected' | 'failed' }) {
+  const { locale, palette } = useProductSettings();
+  const failed = status === 'failed';
+
+  return (
+    <Card>
+      <View style={styles.quoteStatusContent}>
+        <View style={StyleSheet.flatten([styles.quoteStatusIcon, { backgroundColor: failed ? `${palette.danger}12` : `${palette.brand}12` }])}>
+          <PhosphorIcon color={failed ? palette.danger : palette.brand} name={failed ? 'info' : 'clock'} size={20} />
+        </View>
+        <View style={styles.quoteStatusText}>
+          <AppText tone={failed ? 'danger' : 'default'} variant="subtitle">
+            {failed ? (locale === 'en-US' ? 'Quote connection failed' : '报价连接失败') : locale === 'en-US' ? 'Connecting quotes' : '正在连接报价'}
+          </AppText>
+          <AppText tone="muted" variant="caption">
+            {failed
+              ? locale === 'en-US'
+                ? 'Unable to receive live quotes from Dupoin WebTrade. Please check the network and try again.'
+                : '无法接收 Dupoin WebTrade 实时报价，请检查网络后重试。'
+              : locale === 'en-US'
+                ? 'Waiting for the first live bid / ask update.'
+                : '等待首条实时 Bid / Ask 报价。'}
+          </AppText>
+        </View>
+      </View>
+    </Card>
   );
 }
 
@@ -322,6 +357,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingBottom: 4,
+  },
+  quoteStatusContent: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 12,
+  },
+  quoteStatusIcon: {
+    alignItems: 'center',
+    borderRadius: 999,
+    height: 42,
+    justifyContent: 'center',
+    width: 42,
+  },
+  quoteStatusText: {
+    flex: 1,
+    gap: 3,
+    minWidth: 0,
   },
   moverBadge: {
     borderRadius: 999,
