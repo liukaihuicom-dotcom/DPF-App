@@ -131,3 +131,18 @@ export function moveQuote(instrument: Instrument, tick: number): Instrument {
     sparkline: [...instrument.sparkline.slice(-9), nextMid],
   };
 }
+
+export function applyQuote(instrument: Instrument, bid: number, ask: number): Instrument {
+  const nextMid = (bid + ask) / 2;
+  const digits = instrument.pipSize >= 0.01 ? 3 : 5;
+
+  return {
+    ...instrument,
+    ask: Number(ask.toFixed(digits)),
+    bid: Number(bid.toFixed(digits)),
+    dayHigh: Math.max(instrument.dayHigh, nextMid),
+    dayLow: Math.min(instrument.dayLow, nextMid),
+    sparkline: [...instrument.sparkline.slice(-9), nextMid],
+    spread: Number(((ask - bid) / instrument.pipSize).toFixed(1)),
+  };
+}

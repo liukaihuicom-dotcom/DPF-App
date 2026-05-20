@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 
 import { initialAccount, initialUpgradeRequest, instruments as initialInstruments, partnerClients as initialPartnerClients } from '@/src/domain/mockData';
 import {
+  applyQuote,
   createOrder,
   createPosition,
   moveQuote,
@@ -13,6 +14,8 @@ import type { Account, Direction, Instrument, Order, OrderType, PartnerClient, P
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 const UPGRADE_STORAGE_KEY = 'broker-fx-upgrade-state';
+const QUOTE_WS_URL = 'wss://ws.dupoin.co.id/api/webtrade/v2/ws?login=0&sid=0';
+const QUOTE_SYMBOLS = ['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD', 'USDJPY', 'USDCAD', 'USDCHF'];
 
 type PlaceOrderInput = {
   instrumentId: string;
@@ -44,6 +47,24 @@ type BrokerStore = {
 
 const BrokerContext = createContext<BrokerStore | null>(null);
 
+type DupoinQuoteMessage = {
+  t?: number;
+  d?: {
+    m?: string;
+    s?: string;
+    b?: { p?: number }[];
+    a?: { p?: number }[];
+  };
+};
+
+function normalizeQuoteSymbol(symbol: string) {
+  return symbol.replace('/', '').toUpperCase();
+}
+
+function isSubscribedQuoteSymbol(instrument: Instrument) {
+  return QUOTE_SYMBOLS.includes(normalizeQuoteSymbol(instrument.symbol));
+}
+
 function readStoredUpgradeState() {
   if (Platform.OS !== 'web' || typeof window === 'undefined' || !window.localStorage) {
     return null;
@@ -67,15 +88,65 @@ export function BrokerProvider({ children }: PropsWithChildren) {
   const [upgradeRequest, setUpgradeRequest] = useState<UpgradeRequest>(storedUpgradeState?.upgradeRequest ?? initialUpgradeRequest);
   const [positions, setPositions] = useState<Position[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [liveQuoteConnected, setLiveQuoteConnected] = useState(false);
+  const [lastLiveQuoteAt, setLastLiveQuoteAt] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTick((value) => value + 1);
-      setInstruments((current) => current.map((instrument) => moveQuote(instrument, tick + 1)));
+      const liveQuoteFresh = liveQuoteConnected && Date.now() - lastLiveQuoteAt < 8000;
+      setInstruments((current) =>
+        current.map((instrument) => (liveQuoteFresh && isSubscribedQuoteSymbol(instrument) ? instrument : moveQuote(instrument, tick + 1))),
+      );
     }, 2400);
 
     return () => clearInterval(timer);
-  }, [tick]);
+  }, [lastLiveQuoteAt, liveQuoteConnected, tick]);
+
+  useEffect(() => {
+    if (typeof WebSocket === 'undefined') {
+      return;
+    }
+
+    const socket = new WebSocket(QUOTE_WS_URL);
+
+    socket.onopen = () => {
+      setLiveQuoteConnected(true);
+      socket.send(JSON.stringify({ action: 3, data: { symbols: QUOTE_SYMBOLS }, type: 2 }));
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(String(event.data)) as DupoinQuoteMessage;
+        const symbol = message.d?.s ?? message.d?.m;
+        const bid = message.d?.b?.[0]?.p;
+        const ask = message.d?.a?.[0]?.p;
+
+        if (message.t !== 2 || !symbol || typeof bid !== 'number' || typeof ask !== 'number') {
+          return;
+        }
+
+        setLastLiveQuoteAt(Date.now());
+        setInstruments((current) =>
+          current.map((instrument) => (normalizeQuoteSymbol(instrument.symbol) === normalizeQuoteSymbol(symbol) ? applyQuote(instrument, bid, ask) : instrument)),
+        );
+      } catch {
+        // Ignore malformed quote payloads and keep the last known quote.
+      }
+    };
+
+    socket.onerror = () => {
+      setLiveQuoteConnected(false);
+    };
+
+    socket.onclose = () => {
+      setLiveQuoteConnected(false);
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   useEffect(() => {
     setPositions((current) => refreshPositions(current, instruments));
