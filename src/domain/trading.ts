@@ -132,9 +132,10 @@ export function moveQuote(instrument: Instrument, tick: number): Instrument {
   };
 }
 
-export function applyQuote(instrument: Instrument, bid: number, ask: number): Instrument {
+export function applyQuote(instrument: Instrument, bid: number, ask: number, options?: { updateSparkline?: boolean }): Instrument {
   const nextMid = (bid + ask) / 2;
   const digits = instrument.pipSize >= 0.01 ? 3 : 5;
+  const updateSparkline = options?.updateSparkline ?? true;
 
   return {
     ...instrument,
@@ -142,7 +143,7 @@ export function applyQuote(instrument: Instrument, bid: number, ask: number): In
     bid: Number(bid.toFixed(digits)),
     dayHigh: Math.max(instrument.dayHigh, nextMid),
     dayLow: Math.min(instrument.dayLow, nextMid),
-    sparkline: [...instrument.sparkline.slice(-9), nextMid],
+    sparkline: updateSparkline ? [...instrument.sparkline.slice(-9), nextMid] : instrument.sparkline,
     spread: Number(((ask - bid) / instrument.pipSize).toFixed(1)),
   };
 }

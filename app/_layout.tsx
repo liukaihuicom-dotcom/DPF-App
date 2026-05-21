@@ -2,7 +2,10 @@ import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppViewport } from '@/src/components/AppViewport';
 import { BottomSheetProvider, GlobalBottomSheetHost } from '@/src/components/BottomSheet';
@@ -25,9 +28,13 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ProductSettingsProvider>
-      <RootLayoutNav />
-    </ProductSettingsProvider>
+    <GestureHandlerRootView style={styles.root}>
+      <SafeAreaProvider>
+        <ProductSettingsProvider>
+          <RootLayoutNav />
+        </ProductSettingsProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -66,8 +73,8 @@ function RootLayoutNav() {
                 <Stack.Screen name="client/[id]" />
                 <Stack.Screen name="account-details/[id]" />
               </Stack>
-              <GlobalBottomSheetHost />
             </AppViewport>
+            <GlobalBottomSheetHost />
             <ProductControlPanel />
           </BottomSheetProvider>
         </ToastProvider>
@@ -75,3 +82,9 @@ function RootLayoutNav() {
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+});

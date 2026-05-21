@@ -2,6 +2,7 @@ import { createContext, PropsWithChildren, useCallback, useContext, useMemo, use
 import { View } from 'react-native';
 
 import { useThemePalette } from '@/src/settings/ProductSettings';
+import { shadows } from '@/src/theme/colors';
 
 import { AppText } from '../components/Typography';
 
@@ -52,12 +53,12 @@ export function ToastProvider({ children }: PropsWithChildren) {
       {children}
       {toast ? (
         <View
-          pointerEvents="box-none"
           style={{
             alignItems: 'center',
             left: 0,
             paddingHorizontal: 14,
             paddingTop: 18,
+            pointerEvents: 'box-none',
             position: 'absolute',
             right: 0,
             top: 0,
@@ -70,18 +71,14 @@ export function ToastProvider({ children }: PropsWithChildren) {
               borderColor: palette.line,
               borderRadius: 16,
               borderWidth: 1,
-              elevation: 12,
               flexDirection: 'row',
               gap: 10,
               maxWidth: 420,
               minHeight: 52,
               paddingHorizontal: 12,
               paddingVertical: 10,
-              shadowColor: '#000000',
-              shadowOffset: { width: 0, height: 10 },
-              shadowOpacity: 0.14,
-              shadowRadius: 24,
               width: '100%',
+              ...shadows.toast,
             }}>
             <View
               style={{

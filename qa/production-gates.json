@@ -1,0 +1,20 @@
+{
+  "version": "0.1.0",
+  "gates": [
+    "business",
+    "permission",
+    "state",
+    "design-system",
+    "component-api",
+    "interaction",
+    "field",
+    "api",
+    "i18n",
+    "a11y",
+    "performance",
+    "security",
+    "handoff",
+    "runtime"
+  ]
+}
+

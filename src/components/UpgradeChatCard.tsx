@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { localizeText } from '@/src/domain/format';
 import type { UpgradeRequest } from '@/src/domain/types';
@@ -12,6 +12,8 @@ import { ActionButton } from './ActionButton';
 import { Card } from './Card';
 import { NativePressable } from './NativePressable';
 import { PhosphorIcon } from './PhosphorIcon';
+import { StatusPill } from './StatusPill';
+import { TextField } from './TextField';
 import { AppText } from './Typography';
 
 type UpgradeChatCardProps = {
@@ -54,18 +56,7 @@ export function UpgradeChatCard({ request, readonly }: UpgradeChatCardProps) {
             {t('upgrade.superior')}: {activeRequest.superiorName}
           </AppText>
         </View>
-        <View
-          style={StyleSheet.flatten([
-            styles.statusPill,
-            {
-              backgroundColor: approved ? `${palette.down}12` : pending ? `${palette.amber}12` : palette.panelSoft,
-              borderColor: approved ? palette.down : pending ? palette.amber : palette.line,
-            },
-          ])}>
-          <AppText tone={approved ? 'down' : pending ? 'amber' : 'muted'} variant="caption">
-            {t(`upgrade.status.${activeRequest.status}`)}
-          </AppText>
-        </View>
+        <StatusPill compact label={t(`upgrade.status.${activeRequest.status}`)} tone={approved ? 'success' : pending ? 'warning' : 'neutral'} />
       </View>
 
       <View style={styles.messages}>
@@ -109,18 +100,15 @@ export function UpgradeChatCard({ request, readonly }: UpgradeChatCardProps) {
               </NativePressable>
             ))}
           </View>
-          <View style={StyleSheet.flatten([styles.inputShell, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-            <PhosphorIcon color={palette.brand} name="chat-circle" size={15} />
-            <TextInput
-              multiline
-              onChangeText={setReason}
-              placeholder={t('upgrade.reasonPlaceholder')}
-              placeholderTextColor={palette.textDim}
-              selectionColor={palette.brand}
-              style={StyleSheet.flatten([styles.input, { color: palette.text }])}
-              value={reason}
-            />
-          </View>
+          <TextField
+            icon="chat-circle"
+            inputStyle={styles.reasonInput}
+            label={t('upgrade.chatRequest')}
+            multiline
+            onChangeText={setReason}
+            placeholder={t('upgrade.reasonPlaceholder')}
+            value={reason}
+          />
           <ActionButton label={t('upgrade.submit')} onPress={submit} tone="brand" />
         </View>
       ) : null}
@@ -158,21 +146,6 @@ const styles = StyleSheet.create({
     gap: 12,
     justifyContent: 'space-between',
   },
-  input: {
-    flex: 1,
-    fontSize: 13,
-    minHeight: 54,
-    padding: 0,
-    textAlignVertical: 'top',
-  },
-  inputShell: {
-    alignItems: 'flex-start',
-    borderRadius: 12,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 10,
-    padding: 12,
-  },
   messageBubble: {
     borderRadius: 14,
     borderWidth: 1,
@@ -191,11 +164,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
-  statusPill: {
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+  reasonInput: {
+    fontSize: 13,
+    minHeight: 54,
   },
   waitingBox: {
     alignItems: 'center',

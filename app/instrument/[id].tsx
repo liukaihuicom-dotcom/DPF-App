@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Card } from '@/src/components/Card';
 import { Metric } from '@/src/components/Metric';
 import { NativePressable } from '@/src/components/NativePressable';
+import { getQuoteChangeVisual } from '@/src/components/quoteVisuals';
 import { Screen } from '@/src/components/Screen';
 import { Sparkline } from '@/src/components/Sparkline';
 import { AppText } from '@/src/components/Typography';
@@ -28,7 +29,7 @@ export default function InstrumentDetailScreen() {
   }
 
   const { change, changePercent } = getDisplayChange(instrument);
-  const positive = changePercent >= 0;
+  const quoteVisual = getQuoteChangeVisual(changePercent, palette);
   const sampleLots = instrument.symbol === 'XAU/USD' ? 0.2 : 0.1;
   const openOrder = (direction: 'buy' | 'sell') => {
     void impactLight();
@@ -72,7 +73,7 @@ export default function InstrumentDetailScreen() {
             {localizeText(instrument.name, locale)} · {localizeText(instrument.tradingHours, locale)}
           </AppText>
         </View>
-        <AppText tone={positive ? 'up' : 'down'} variant="number">
+        <AppText tone={quoteVisual.tone} variant="number">
           {formatPercent(changePercent)}
         </AppText>
       </View>
@@ -83,7 +84,7 @@ export default function InstrumentDetailScreen() {
             <AppText tone="dim" variant="caption">
               {t('common.bid')}
             </AppText>
-            <AppText tone={positive ? 'up' : 'down'} variant="largeNumber">
+            <AppText tone={quoteVisual.tone} variant="largeNumber">
               {formatPrice(instrument, instrument.bid)}
             </AppText>
           </View>
@@ -91,16 +92,16 @@ export default function InstrumentDetailScreen() {
             <AppText tone="dim" variant="caption">
               {t('common.ask')}
             </AppText>
-            <AppText tone={positive ? 'up' : 'down'} variant="number">
+            <AppText tone={quoteVisual.tone} variant="number">
               {formatPrice(instrument, instrument.ask)}
             </AppText>
           </View>
         </View>
         <View style={styles.chartWrap}>
-          <Sparkline color={positive ? palette.up : palette.down} height={96} values={instrument.sparkline} width={320} />
+          <Sparkline color={quoteVisual.color} height={96} values={instrument.sparkline} width={320} />
         </View>
-        <AppText tone={positive ? 'up' : 'down'} variant="caption">
-          {t('instrument.dayChange')} {change >= 0 ? '+' : ''}
+        <AppText tone={quoteVisual.tone} variant="caption">
+          {t('instrument.dayChange')} {change > 0 ? '+' : ''}
           {formatPrice(instrument, change)}
         </AppText>
       </Card>

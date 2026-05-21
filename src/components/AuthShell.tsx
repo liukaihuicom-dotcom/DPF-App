@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { PropsWithChildren, ReactNode } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, TextInputProps, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInputProps, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { impactLight } from '@/src/feedback/haptics';
@@ -8,6 +8,7 @@ import { useProductSettings } from '@/src/settings/ProductSettings';
 
 import { NativePressable } from './NativePressable';
 import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
+import { TextField } from './TextField';
 import { AppText } from './Typography';
 
 type AuthShellProps = PropsWithChildren<{
@@ -108,31 +109,7 @@ export function AuthShell({ children, footer, kicker, step, subtitle, title }: A
 }
 
 export function AuthTextField({ error, icon, label, style, ...props }: AuthTextFieldProps) {
-  const { palette } = useProductSettings();
-  const focusedBorder = error ? palette.danger : palette.line;
-
-  return (
-    <View style={styles.fieldWrap}>
-      <AppText tone="muted" variant="caption">
-        {label}
-      </AppText>
-      <View style={StyleSheet.flatten([styles.inputShell, { backgroundColor: palette.panel, borderColor: focusedBorder }])}>
-        <PhosphorIcon color={error ? palette.danger : palette.textDim} name={icon} size={15} />
-        <TextInput
-          autoCapitalize="none"
-          placeholderTextColor={palette.textDim}
-          selectionColor={palette.brand}
-          style={StyleSheet.flatten([styles.input, { color: palette.text }, style])}
-          {...props}
-        />
-      </View>
-      {error ? (
-        <AppText tone="danger" variant="caption">
-          {error}
-        </AppText>
-      ) : null}
-    </View>
-  );
+  return <TextField autoCapitalize="none" error={error} icon={icon} inputStyle={style} label={label} {...props} />;
 }
 
 export function AuthLink({ label, onPress }: { label: string; onPress: () => void }) {
@@ -167,9 +144,6 @@ const styles = StyleSheet.create({
     gap: 18,
     paddingHorizontal: 18,
   },
-  fieldWrap: {
-    gap: 7,
-  },
   flex: {
     flex: 1,
     minWidth: 0,
@@ -185,21 +159,6 @@ const styles = StyleSheet.create({
   },
   form: {
     gap: 16,
-  },
-  input: {
-    flex: 1,
-    fontSize: 14,
-    minHeight: 46,
-    padding: 0,
-  },
-  inputShell: {
-    alignItems: 'center',
-    borderRadius: 12,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 10,
-    minHeight: 52,
-    paddingHorizontal: 14,
   },
   linkButton: {
     alignItems: 'center',

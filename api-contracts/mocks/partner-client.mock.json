@@ -1,0 +1,14 @@
+{
+  "id": "client-001",
+  "name": "Demo Client",
+  "status": "active",
+  "role": "trader",
+  "upgradeStatus": "none",
+  "superiorName": "Dupoin IB Desk",
+  "joinedAt": "2026-04-18",
+  "netDeposit": 62500,
+  "monthlyVolume": 18400000,
+  "openPositions": 5,
+  "country": "SG"
+}
+

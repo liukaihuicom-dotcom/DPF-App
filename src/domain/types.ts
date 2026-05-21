@@ -2,6 +2,10 @@ export type Role = 'trader' | 'partner';
 
 export type AuthStatus = 'guest' | 'signedIn';
 
+export type TradingAccountUsageOverride = 'auto' | 'normal' | 'warning' | 'abnormal';
+
+export type TradingAccountUsageStatus = 'normal' | 'warning' | 'abnormal';
+
 export type DiscoverModuleId =
   | 'challenge'
   | 'education'

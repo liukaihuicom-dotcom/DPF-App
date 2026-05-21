@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "position.schema.json",
+  "title": "Position",
+  "type": "object",
+  "required": ["id", "instrumentId", "symbol", "direction", "lots", "openPrice", "currentPrice", "marginUsed", "unrealizedPnl", "openedAt"],
+  "properties": {
+    "id": { "type": "string" },
+    "instrumentId": { "type": "string" },
+    "symbol": { "type": "string" },
+    "direction": { "type": "string", "enum": ["buy", "sell"] },
+    "lots": { "type": "number" },
+    "openPrice": { "type": "number" },
+    "currentPrice": { "type": "number" },
+    "marginUsed": { "type": "number" },
+    "unrealizedPnl": { "type": "number" },
+    "openedAt": { "type": "string" }
+  }
+}
+

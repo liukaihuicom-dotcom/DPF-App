@@ -8,6 +8,7 @@ import { NativePressable } from '@/src/components/NativePressable';
 import { PhosphorIcon, type PhosphorIconName } from '@/src/components/PhosphorIcon';
 import { Screen } from '@/src/components/Screen';
 import { Sparkline } from '@/src/components/Sparkline';
+import { StatusPill, type StatusPillTone } from '@/src/components/StatusPill';
 import { AppText } from '@/src/components/Typography';
 import { buildTradingAccountProfiles, getAccountStatusLabel } from '@/src/domain/accountProfiles';
 import { directionLabel, formatMoney, formatNumber } from '@/src/domain/format';
@@ -18,11 +19,16 @@ import { useBroker } from '@/src/state/BrokerStore';
 export default function AccountDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { account, positions } = useBroker();
-  const { locale, palette } = useProductSettings();
+  const { locale, palette, tradingAccountCountPreset, tradingAccountDataPreset, tradingAccountScenario, tradingAccountStatusPreset } = useProductSettings();
   const bottomSheet = useBottomSheet();
   const toast = useToast();
-  const profiles = buildTradingAccountProfiles(account, positions);
+  const profiles = buildTradingAccountProfiles(account, positions, tradingAccountScenario, {
+    countPreset: tradingAccountCountPreset,
+    dataPreset: tradingAccountDataPreset,
+    statusPreset: tradingAccountStatusPreset,
+  });
   const profile = profiles.find((item) => item.id === id) ?? profiles[0];
+  const statusTone: StatusPillTone = profile.group === 'demo' ? 'brand' : profile.group === 'readOnly' ? 'warning' : 'success';
   const closedPnlPeriods = buildClosedPnlPeriods(profile.realizedPnl);
   const positionRows = positions.length > 0
     ? positions.map((position) => ({
@@ -35,7 +41,10 @@ export default function AccountDetailsScreen() {
       }))
     : getDetailDemoPositions(locale);
   const openMoreMenu = () => {
-    bottomSheet.show(
+    bottomSheet.show({
+      title: locale === 'en-US' ? 'More actions' : '更多操作',
+      subtitle: `${profile.accountNo} · ${profile.currency}`,
+      content: (
       <AccountMoreSheet
         onSelect={(label, tone) => {
           bottomSheet.hide();
@@ -45,8 +54,9 @@ export default function AccountDetailsScreen() {
             tone,
           });
         }}
-      />,
-    );
+      />
+      ),
+    });
   };
 
   return (
@@ -63,12 +73,7 @@ export default function AccountDetailsScreen() {
           <View style={styles.detailTitleBlock}>
             <View style={styles.detailTitleRow}>
               <AppText variant="subtitle">{profile.accountNo}</AppText>
-              <View style={StyleSheet.flatten([styles.activeBadge, { backgroundColor: `${palette.down}14` }])}>
-                <View style={StyleSheet.flatten([styles.statusDot, { backgroundColor: palette.down }])} />
-                <AppText tone="down" variant="eyebrow">
-                  {getAccountStatusLabel(profile.group, locale)}
-                </AppText>
-              </View>
+              <StatusPill compact label={getAccountStatusLabel(profile.group, locale)} tone={statusTone} />
             </View>
             <AppText tone="muted" variant="caption">
               {profile.platform} · {profile.currency} · {profile.type}
@@ -164,10 +169,7 @@ export default function AccountDetailsScreen() {
       <Card>
         <View style={styles.cardTitleRow}>
           <AppText variant="subtitle">{locale === 'en-US' ? 'Closed PnL' : '已平仓盈亏'}</AppText>
-          <View style={StyleSheet.flatten([styles.comparePill, { borderColor: palette.line }])}>
-            <AppText variant="caption">{locale === 'en-US' ? 'Symbols (5)' : '品种 (5)'}</AppText>
-            <PhosphorIcon color={palette.text} name="caret-down" size={12} />
-          </View>
+          <StatusPill compact icon="caret-down" label={locale === 'en-US' ? 'Symbols (5)' : '品种 (5)'} tone="neutral" />
         </View>
         <AppText tone={profile.realizedPnl >= 0 ? 'down' : 'up'} variant="subtitle">
           {formatMoney(profile.realizedPnl, profile.currency, 2, locale)}
@@ -188,12 +190,13 @@ export default function AccountDetailsScreen() {
         </View>
         <View style={styles.periodRow}>
           {closedPnlPeriods.map((item) => (
-            <View key={item.period} style={StyleSheet.flatten([styles.periodPill, { backgroundColor: palette.panelSoft }])}>
-              <AppText variant="caption">{item.period}</AppText>
-              <AppText tone={item.value >= 0 ? 'down' : 'up'} variant="caption">
-                {formatMoney(item.value, profile.currency, 2, locale)}
-              </AppText>
-            </View>
+            <StatusPill
+              compact
+              key={item.period}
+              label={`${item.period} ${formatMoney(item.value, profile.currency, 2, locale)}`}
+              style={styles.periodPill}
+              tone={item.value >= 0 ? 'down' : 'up'}
+            />
           ))}
         </View>
       </Card>
@@ -276,11 +279,11 @@ function MarginGauge({ value }: { value: number }) {
       <View style={styles.gaugeStage}>
         <Svg height={106} width={240}>
           <Path d="M 34 96 A 86 86 0 0 1 206 96" fill="none" stroke={palette.lineSoft} strokeLinecap="round" strokeWidth={14} />
-          <Path d="M 34 96 A 86 86 0 0 1 65 30" fill="none" stroke="#E25568" strokeLinecap="butt" strokeWidth={14} />
-          <Path d="M 69 28 A 86 86 0 0 1 102 13" fill="none" stroke="#F0A63A" strokeLinecap="butt" strokeWidth={14} />
-          <Path d="M 108 12 A 86 86 0 0 1 132 12" fill="none" stroke="#AEB6C2" strokeLinecap="butt" strokeWidth={14} />
-          <Path d="M 138 13 A 86 86 0 0 1 171 28" fill="none" stroke="#28A36A" strokeLinecap="butt" strokeWidth={14} />
-          <Path d="M 175 30 A 86 86 0 0 1 206 96" fill="none" stroke="#087A50" strokeLinecap="butt" strokeWidth={14} />
+          <Path d="M 34 96 A 86 86 0 0 1 65 30" fill="none" stroke={palette.danger} strokeLinecap="butt" strokeWidth={14} />
+          <Path d="M 69 28 A 86 86 0 0 1 102 13" fill="none" stroke={palette.amber} strokeLinecap="butt" strokeWidth={14} />
+          <Path d="M 108 12 A 86 86 0 0 1 132 12" fill="none" stroke={palette.textDim} strokeLinecap="butt" strokeWidth={14} />
+          <Path d="M 138 13 A 86 86 0 0 1 171 28" fill="none" stroke={palette.down} strokeLinecap="butt" strokeWidth={14} />
+          <Path d="M 175 30 A 86 86 0 0 1 206 96" fill="none" stroke={palette.down} strokeLinecap="butt" strokeWidth={14} />
           {[34, 65, 102, 120, 138, 175, 206].map((x, index) => (
             <Line key={`${x}-${index}`} opacity={0.22} stroke={palette.textDim} strokeLinecap="round" strokeWidth={2} x1={x} x2={x} y1={92} y2={98} />
           ))}
@@ -293,9 +296,7 @@ function MarginGauge({ value }: { value: number }) {
         </View>
       </View>
       <AppText variant="subtitle">{safetyTitle}</AppText>
-      <View style={StyleSheet.flatten([styles.safePill, { backgroundColor: `${palette.down}14` }])}>
-        <AppText tone="down" variant="caption">{safeLabel} · {formatNumber(value, 2, locale)}%</AppText>
-      </View>
+      <StatusPill compact label={`${safeLabel} · ${formatNumber(value, 2, locale)}%`} tone="success" />
     </View>
   );
 }
@@ -420,14 +421,6 @@ const styles = StyleSheet.create({
     minHeight: 58,
     width: '31.7%',
   },
-  activeBadge: {
-    alignItems: 'center',
-    borderRadius: 4,
-    flexDirection: 'row',
-    gap: 3,
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-  },
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -444,15 +437,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 10,
-  },
-  comparePill: {
-    alignItems: 'center',
-    borderRadius: 6,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 5,
   },
   dayCell: {
     alignItems: 'center',
@@ -544,11 +528,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   periodPill: {
-    alignItems: 'center',
-    borderRadius: 8,
     flex: 1,
-    gap: 2,
-    paddingVertical: 8,
+    justifyContent: 'center',
   },
   periodRow: {
     flexDirection: 'row',
@@ -578,19 +559,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 4,
   },
-  safePill: {
-    borderRadius: 5,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
   smallMetric: {
     flex: 1,
     gap: 2,
-  },
-  statusDot: {
-    borderRadius: 999,
-    height: 5,
-    width: 5,
   },
   symbolLegendDot: {
     borderRadius: 999,

@@ -1,11 +1,12 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ActionButton } from '@/src/components/ActionButton';
 import { Card } from '@/src/components/Card';
 import { Metric } from '@/src/components/Metric';
 import { Screen } from '@/src/components/Screen';
+import { TextField } from '@/src/components/TextField';
 import { AppText } from '@/src/components/Typography';
 import { NativePressable } from '@/src/components/NativePressable';
 import { directionLabel, formatMoney, formatPrice, localizeText, orderTypeLabel } from '@/src/domain/format';
@@ -172,19 +173,15 @@ export default function OrderTicketScreen() {
             {t('order.lotHint', { baseCurrency: instrument.baseCurrency, contractSize: instrument.contractSize })}
           </AppText>
         </View>
-        <TextInput
+        <TextField
+          error={errorText}
+          inputStyle={styles.lotInput}
           keyboardType="decimal-pad"
+          label={t('common.lots')}
+          labelHidden
           onChangeText={setLotsText}
           placeholder="0.10"
-          placeholderTextColor={palette.textDim}
-          style={StyleSheet.flatten([
-            styles.input,
-            {
-              backgroundColor: palette.panel,
-              borderColor: palette.line,
-              color: palette.text,
-            },
-          ])}
+          shellStyle={styles.lotInputShell}
           value={lotsText}
         />
         <View style={styles.presetRow}>
@@ -234,12 +231,13 @@ const styles = StyleSheet.create({
   footerStack: {
     gap: 8,
   },
-  input: {
-    borderRadius: 12,
-    borderWidth: 1,
+  lotInput: {
     fontSize: 28,
+    lineHeight: 34,
+  },
+  lotInputShell: {
+    borderColor: undefined,
     minHeight: 58,
-    paddingHorizontal: 12,
   },
   lotHeader: {
     alignItems: 'center',

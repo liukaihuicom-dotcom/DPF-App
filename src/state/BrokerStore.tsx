@@ -1,4 +1,5 @@
-import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 import { initialAccount, initialUpgradeRequest, instruments as initialInstruments, partnerClients as initialPartnerClients } from '@/src/domain/mockData';
@@ -13,8 +14,11 @@ import type { Account, Direction, Instrument, Order, OrderType, PartnerClient, P
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 const UPGRADE_STORAGE_KEY = 'broker-fx-upgrade-state';
-const QUOTE_WS_URL = 'wss://ws.dupoin.co.id/api/webtrade/v2/ws?login=0&sid=0';
-const QUOTE_SYMBOLS = ['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD', 'USDJPY', 'USDCAD', 'USDCHF'];
+const LOCAL_QUOTE_PROXY_PORT = 8091;
+const QUOTE_CONNECTION_TIMEOUT_MS = 8000;
+const QUOTE_RECONNECT_DELAY_MS = 2500;
+const SPARKLINE_SAMPLE_INTERVAL_MS = 30_000;
+const QUOTE_SYMBOLS = ['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD', 'USDJPY', 'USDCAD', 'USDCHF', 'XAUUSD'];
 
 type PlaceOrderInput = {
   instrumentId: string;
@@ -49,6 +53,8 @@ const BrokerContext = createContext<BrokerStore | null>(null);
 
 type DupoinQuoteMessage = {
   t?: number;
+  type?: string;
+  status?: 'connecting' | 'connected' | 'failed';
   d?: {
     m?: string;
     s?: string;
@@ -63,6 +69,21 @@ function normalizeQuoteSymbol(symbol: string) {
 
 function isSubscribedQuoteSymbol(instrument: Instrument) {
   return QUOTE_SYMBOLS.includes(normalizeQuoteSymbol(instrument.symbol));
+}
+
+function getQuoteSocketUrl() {
+  if (Platform.OS === 'web' && typeof window !== 'undefined' && window.location?.hostname) {
+    return `ws://${window.location.hostname}:${LOCAL_QUOTE_PROXY_PORT}`;
+  }
+
+  const hostUri = Constants.expoConfig?.hostUri ?? Constants.manifest2?.extra?.expoClient?.hostUri ?? Constants.manifest?.debuggerHost;
+  const host = typeof hostUri === 'string' ? hostUri.split(':')[0] : null;
+
+  if (host) {
+    return `ws://${host}:${LOCAL_QUOTE_PROXY_PORT}`;
+  }
+
+  return `ws://localhost:${LOCAL_QUOTE_PROXY_PORT}`;
 }
 
 function readStoredUpgradeState() {
@@ -88,6 +109,7 @@ export function BrokerProvider({ children }: PropsWithChildren) {
   const [positions, setPositions] = useState<Position[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [quoteStatus, setQuoteStatus] = useState<'connecting' | 'connected' | 'failed'>('connecting');
+  const sparklineSampledAtRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
     if (typeof WebSocket === 'undefined') {
@@ -95,47 +117,156 @@ export function BrokerProvider({ children }: PropsWithChildren) {
       return;
     }
 
-    const socket = new WebSocket(QUOTE_WS_URL);
-    const failureTimer = setTimeout(() => {
-      setQuoteStatus('failed');
-    }, 8000);
+    let socket: WebSocket | null = null;
+    let failureTimer: ReturnType<typeof setTimeout> | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let closedByCleanup = false;
 
-    socket.onopen = () => {
-      setQuoteStatus('connecting');
-      socket.send(JSON.stringify({ action: 3, data: { symbols: QUOTE_SYMBOLS }, type: 2 }));
-    };
-
-    socket.onmessage = (event) => {
-      try {
-        const message = JSON.parse(String(event.data)) as DupoinQuoteMessage;
-        const symbol = message.d?.s ?? message.d?.m;
-        const bid = message.d?.b?.[0]?.p;
-        const ask = message.d?.a?.[0]?.p;
-
-        if (message.t !== 2 || !symbol || typeof bid !== 'number' || typeof ask !== 'number') {
-          return;
-        }
-
-        setQuoteStatus('connected');
-        setInstruments((current) =>
-          current.map((instrument) => (normalizeQuoteSymbol(instrument.symbol) === normalizeQuoteSymbol(symbol) ? applyQuote(instrument, bid, ask) : instrument)),
-        );
-      } catch {
-        // Ignore malformed quote payloads and keep the last known quote.
+    const clearFailureTimer = () => {
+      if (failureTimer) {
+        clearTimeout(failureTimer);
+        failureTimer = null;
       }
     };
 
-    socket.onerror = () => {
-      setQuoteStatus('failed');
+    const startFailureTimer = () => {
+      clearFailureTimer();
+      failureTimer = setTimeout(() => {
+        failureTimer = null;
+        setQuoteStatus('failed');
+        closeCurrentSocket();
+        scheduleReconnect();
+      }, QUOTE_CONNECTION_TIMEOUT_MS);
     };
 
-    socket.onclose = () => {
-      setQuoteStatus('failed');
+    const clearReconnectTimer = () => {
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
     };
+
+    const scheduleReconnect = () => {
+      if (closedByCleanup || reconnectTimer) {
+        return;
+      }
+
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        connectQuoteSocket();
+      }, QUOTE_RECONNECT_DELAY_MS);
+    };
+
+    const closeCurrentSocket = () => {
+      const currentSocket = socket;
+      socket = null;
+
+      if (!currentSocket) {
+        return;
+      }
+
+      currentSocket.onopen = null;
+      currentSocket.onmessage = null;
+      currentSocket.onerror = null;
+      currentSocket.onclose = null;
+
+      if (currentSocket.readyState === WebSocket.CONNECTING || currentSocket.readyState === WebSocket.OPEN) {
+        currentSocket.close();
+      }
+    };
+
+    const handleQuoteMessage = (symbol: string, bid: number, ask: number) => {
+      clearFailureTimer();
+      clearReconnectTimer();
+      setQuoteStatus('connected');
+
+      const quoteSymbol = normalizeQuoteSymbol(symbol);
+      const sampledAt = Date.now();
+      const lastSampledAt = sparklineSampledAtRef.current[quoteSymbol] ?? 0;
+      const updateSparkline = sampledAt - lastSampledAt >= SPARKLINE_SAMPLE_INTERVAL_MS;
+
+      if (updateSparkline) {
+        sparklineSampledAtRef.current[quoteSymbol] = sampledAt;
+      }
+
+      setInstruments((current) =>
+        current.map((instrument) => (normalizeQuoteSymbol(instrument.symbol) === quoteSymbol ? applyQuote(instrument, bid, ask, { updateSparkline }) : instrument)),
+      );
+    };
+
+    function connectQuoteSocket() {
+      closeCurrentSocket();
+      setQuoteStatus('connecting');
+      startFailureTimer();
+
+      const nextSocket = new WebSocket(getQuoteSocketUrl());
+      socket = nextSocket;
+
+      nextSocket.onopen = () => {
+        setQuoteStatus('connecting');
+        startFailureTimer();
+      };
+
+      nextSocket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(String(event.data)) as DupoinQuoteMessage;
+
+          if (message.type === 'quote-status') {
+            if (message.status === 'failed') {
+              clearFailureTimer();
+              setQuoteStatus('failed');
+            } else if (message.status === 'connecting') {
+              setQuoteStatus('connecting');
+              startFailureTimer();
+            } else if (message.status === 'connected') {
+              clearFailureTimer();
+              clearReconnectTimer();
+              setQuoteStatus('connected');
+            }
+            return;
+          }
+
+          const symbol = message.d?.s ?? message.d?.m;
+          const bid = message.d?.b?.[0]?.p;
+          const ask = message.d?.a?.[0]?.p;
+
+          if (message.t !== 2 || !symbol || typeof bid !== 'number' || typeof ask !== 'number') {
+            return;
+          }
+
+          handleQuoteMessage(symbol, bid, ask);
+        } catch {
+          // Ignore malformed quote payloads and keep the last known quote.
+        }
+      };
+
+      nextSocket.onerror = () => {
+        setQuoteStatus('failed');
+        scheduleReconnect();
+      };
+
+      nextSocket.onclose = () => {
+        if (socket === nextSocket) {
+          socket = null;
+        }
+
+        clearFailureTimer();
+
+        if (!closedByCleanup) {
+          setQuoteStatus('failed');
+          scheduleReconnect();
+        }
+      };
+    }
+
+    connectQuoteSocket();
 
     return () => {
-      clearTimeout(failureTimer);
-      socket.close();
+      closedByCleanup = true;
+      clearFailureTimer();
+      clearReconnectTimer();
+
+      closeCurrentSocket();
     };
   }, []);
 

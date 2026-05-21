@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useToast } from '@/src/feedback/Toast';
-import { impactLight, notifyWarning } from '@/src/feedback/haptics';
+import { impactLight, notifySuccess, notifyWarning } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
 
@@ -17,7 +17,7 @@ type QuickActionSheetProps = {
 };
 
 export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
-  const { instruments, role, setRole, submitUpgradeRequest, upgradeRequest } = useBroker();
+  const { instruments, role, submitUpgradeRequest, upgradeRequest } = useBroker();
   const { authStatus, palette, t } = useProductSettings();
   const toast = useToast();
   const anchor = instruments.find((instrument) => instrument.symbol === 'EUR/USD') ?? instruments[0];
@@ -32,6 +32,38 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
     onClose();
     return false;
   };
+  const runPartnerFlow = () => {
+    if (!requireSignedIn()) {
+      return;
+    }
+
+    if (role === 'partner' || upgradeRequest.status === 'approved') {
+      void impactLight();
+      router.push('/partner-tools');
+      onClose();
+      return;
+    }
+
+    if (upgradeRequest.status === 'pending') {
+      void notifyWarning();
+      toast.show({ message: t('upgrade.pendingHint'), title: t('upgrade.status.pending'), tone: 'warning' });
+      router.push('/accounts');
+      onClose();
+      return;
+    }
+
+    submitUpgradeRequest(t('upgrade.defaultReason'));
+    void notifySuccess();
+    toast.show({ message: t('upgrade.pendingHint'), title: t('upgrade.submitted'), tone: 'success' });
+    router.push('/accounts');
+    onClose();
+  };
+  const partnerLabel =
+    role === 'partner' || upgradeRequest.status === 'approved'
+      ? t('control.simulator.action.partnerOpen')
+      : upgradeRequest.status === 'pending'
+        ? t('control.simulator.action.partnerStatus')
+        : t('control.simulator.action.partnerApply');
   const actions: {
     icon: PhosphorIconName;
     label: string;
@@ -69,17 +101,8 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
     },
     {
       icon: 'share-network',
-      label: t('quick.referral'),
-      onPress: () => {
-        if (authStatus === 'signedIn') {
-          setRole('partner');
-          router.push('/discover');
-          onClose();
-          return;
-        }
-
-        requireSignedIn();
-      },
+      label: partnerLabel,
+      onPress: runPartnerFlow,
       tone: palette.amber,
     },
     {
@@ -113,17 +136,6 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
       },
       tone: palette.textMuted,
     },
-    {
-      icon: 'arrow-clockwise',
-      label: t('quick.switchRole'),
-      onPress: () => {
-        setRole(role === 'trader' ? 'partner' : 'trader');
-        void impactLight();
-        toast.show({ title: role === 'trader' ? t('role.partner') : t('role.trader'), message: t('quick.switchRoleDone') });
-        onClose();
-      },
-      tone: palette.cyan,
-    },
   ];
 
   if (!open) {
@@ -131,13 +143,13 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
   }
 
   return (
-    <View pointerEvents="box-none" style={styles.host}>
-      <NativePressable accessibilityLabel={t('common.cancel')} onPress={onClose} style={styles.scrim} />
+    <View style={styles.host}>
+      <NativePressable accessibilityLabel={t('common.cancel')} onPress={onClose} style={StyleSheet.flatten([styles.scrim, { backgroundColor: `${palette.bg}CC` }])} />
       <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.sheet, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
         <View style={styles.handleWrap}>
           <View style={StyleSheet.flatten([styles.handle, { backgroundColor: palette.line }])} />
         </View>
-        <View style={styles.sheetHead}>
+        <View style={StyleSheet.flatten([styles.sheetHead, { borderBottomColor: palette.lineSoft }])}>
           <View>
             <AppText tone="dim" variant="eyebrow">
               {t('tabs.quick')}
@@ -148,7 +160,8 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
             <PhosphorIcon color={palette.textMuted} name="x" size={16} />
           </NativePressable>
         </View>
-        <View style={styles.actionGrid}>
+        <View style={styles.sheetContent}>
+          <View style={styles.actionGrid}>
           {actions.map((action) => (
             <NativePressable
               accessibilityRole="button"
@@ -164,6 +177,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
               </AppText>
             </NativePressable>
           ))}
+          </View>
         </View>
       </SafeAreaView>
     </View>
@@ -212,13 +226,13 @@ const styles = StyleSheet.create({
   host: {
     bottom: 0,
     left: 0,
+    pointerEvents: 'box-none',
     position: 'absolute',
     right: 0,
     top: 0,
     zIndex: 70,
   },
   scrim: {
-    backgroundColor: 'rgba(0,0,0,0.18)',
     bottom: 0,
     left: 0,
     position: 'absolute',
@@ -228,7 +242,7 @@ const styles = StyleSheet.create({
   sheet: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    borderWidth: 1,
+    borderTopWidth: 1,
     bottom: 0,
     left: 0,
     paddingBottom: 8,
@@ -238,9 +252,16 @@ const styles = StyleSheet.create({
   },
   sheetHead: {
     alignItems: 'center',
+    borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    minHeight: 62,
+    paddingBottom: 12,
     paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingTop: 6,
+  },
+  sheetContent: {
+    minHeight: 194,
+    paddingBottom: 12,
   },
 });

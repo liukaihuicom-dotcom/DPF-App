@@ -3,9 +3,11 @@ import { StyleSheet, Text, TextProps } from 'react-native';
 
 import { useThemePalette } from '@/src/settings/ProductSettings';
 
+export type AppTextTone = 'default' | 'muted' | 'dim' | 'up' | 'down' | 'amber' | 'blue' | 'cyan' | 'brand' | 'danger';
+
 type AppTextProps = PropsWithChildren<
   TextProps & {
-    tone?: 'default' | 'muted' | 'dim' | 'up' | 'down' | 'amber' | 'blue' | 'cyan' | 'brand' | 'danger';
+    tone?: AppTextTone;
     variant?: 'eyebrow' | 'title' | 'subtitle' | 'body' | 'caption' | 'number' | 'largeNumber';
   }
 >;

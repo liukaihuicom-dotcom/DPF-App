@@ -1,11 +1,8 @@
 import { Tabs } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
 
 import { PhosphorIcon, type PhosphorIconName } from '@/src/components/PhosphorIcon';
 import type { DiscoverModuleId } from '@/src/domain/types';
 import { useProductSettings } from '@/src/settings/ProductSettings';
-
-import { AppText } from '@/src/components/Typography';
 
 function TabBarIcon(props: {
   name: PhosphorIconName;
@@ -17,19 +14,6 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const { palette, selectedDiscoverModuleId, t } = useProductSettings();
   const selectedModule = getDiscoverModuleMeta(selectedDiscoverModuleId);
-  const StatusButton = () => (
-    <View
-      accessibilityLabel={`${t('tabs.status')}: ${t(`discover.module.${selectedDiscoverModuleId}.short`)}`}
-      accessibilityRole="text"
-      style={styles.statusButton}>
-      <View style={StyleSheet.flatten([styles.statusIcon, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}66` }])}>
-        <PhosphorIcon color={palette.brand} name={selectedModule.icon} size={15} />
-      </View>
-      <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.statusLabel} tone="brand" variant="caption">
-        {t(`discover.module.${selectedDiscoverModuleId}.short`)}
-      </AppText>
-    </View>
-  );
 
   return (
     <Tabs
@@ -70,7 +54,7 @@ export default function TabLayout() {
         name="accounts"
         options={{
           title: t('tabs.accounts'),
-          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="user-circle" />,
+          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="bank" />,
         }}
       />
       <Tabs.Screen
@@ -82,15 +66,10 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="quick"
-        listeners={{
-          tabPress: (event) => {
-            event.preventDefault();
-          },
-        }}
         options={{
           title: t(`discover.module.${selectedDiscoverModuleId}.short`),
-          tabBarButton: StatusButton,
-          tabBarIcon: () => null,
+          tabBarAccessibilityLabel: `${t('tabs.status')}: ${t(`discover.module.${selectedDiscoverModuleId}.short`)}`,
+          tabBarIcon: ({ color }) => <TabBarIcon color={color} name={selectedModule.icon} />,
         }}
       />
       <Tabs.Screen name="markets" options={{ href: null }} />
@@ -119,26 +98,3 @@ function getDiscoverModuleMeta(moduleId: DiscoverModuleId) {
     icon: iconByModule[moduleId],
   };
 }
-
-const styles = StyleSheet.create({
-  statusButton: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 44,
-    padding: 0,
-  },
-  statusIcon: {
-    alignItems: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
-    height: 28,
-    justifyContent: 'center',
-    width: 28,
-  },
-  statusLabel: {
-    fontSize: 10,
-    lineHeight: 14,
-    maxWidth: 52,
-  },
-});

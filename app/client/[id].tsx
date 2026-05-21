@@ -5,6 +5,7 @@ import { ActionButton } from '@/src/components/ActionButton';
 import { Card } from '@/src/components/Card';
 import { Metric } from '@/src/components/Metric';
 import { Screen } from '@/src/components/Screen';
+import { StatusPill } from '@/src/components/StatusPill';
 import { AppText } from '@/src/components/Typography';
 import { UpgradeChatCard } from '@/src/components/UpgradeChatCard';
 import { formatMoney, formatVolumeMillions, localizeText, statusLabel } from '@/src/domain/format';
@@ -16,7 +17,7 @@ import { useBroker } from '@/src/state/BrokerStore';
 export default function ClientProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { approveUpgradeRequest, getPartnerClientProfile, upgradeRequest } = useBroker();
-  const { locale, palette, t } = useProductSettings();
+  const { locale, t } = useProductSettings();
   const toast = useToast();
   const client = id ? getPartnerClientProfile(id) : undefined;
 
@@ -59,18 +60,11 @@ export default function ClientProfileScreen() {
               {t('upgrade.currentRole')}: {client.role === 'partner' ? t('role.partner') : t('role.trader')}
             </AppText>
           </View>
-          <View
-            style={StyleSheet.flatten([
-              styles.statusPill,
-              {
-                backgroundColor: client.upgradeStatus === 'approved' ? `${palette.down}18` : client.upgradeStatus === 'pending' ? `${palette.amber}18` : palette.panelSoft,
-                borderColor: client.upgradeStatus === 'approved' ? palette.down : client.upgradeStatus === 'pending' ? palette.amber : palette.line,
-              },
-            ])}>
-            <AppText tone={client.upgradeStatus === 'approved' ? 'down' : client.upgradeStatus === 'pending' ? 'amber' : 'muted'} variant="caption">
-              {t(`upgrade.status.${client.upgradeStatus}`)}
-            </AppText>
-          </View>
+          <StatusPill
+            compact
+            label={t(`upgrade.status.${client.upgradeStatus}`)}
+            tone={client.upgradeStatus === 'approved' ? 'success' : client.upgradeStatus === 'pending' ? 'warning' : 'neutral'}
+          />
         </View>
         <View style={styles.metricRow}>
           <Metric label={t('partner.netDeposit')} value={formatMoney(client.netDeposit, 'USD', 2, locale)} />
@@ -116,11 +110,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     gap: 10,
-  },
-  statusPill: {
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
   },
 });

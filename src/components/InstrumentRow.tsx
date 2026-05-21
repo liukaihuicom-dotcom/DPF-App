@@ -7,6 +7,7 @@ import type { Instrument } from '@/src/domain/types';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 import { NativePressable } from './NativePressable';
+import { getQuoteChangeVisual } from './quoteVisuals';
 import { Sparkline } from './Sparkline';
 import { AppText } from './Typography';
 
@@ -17,8 +18,7 @@ type InstrumentRowProps = {
 export function InstrumentRow({ instrument }: InstrumentRowProps) {
   const { locale, palette } = useProductSettings();
   const { changePercent } = getDisplayChange(instrument);
-  const positive = changePercent >= 0;
-  const tone = positive ? 'up' : 'down';
+  const quoteVisual = getQuoteChangeVisual(changePercent, palette);
 
   return (
     <Link asChild href={`/instrument/${instrument.id}`}>
@@ -34,12 +34,12 @@ export function InstrumentRow({ instrument }: InstrumentRowProps) {
             {localizeText(instrument.name, locale)} · {instrument.leverage}x
           </AppText>
         </View>
-        <Sparkline color={positive ? palette.up : palette.down} values={instrument.sparkline} />
+        <Sparkline color={quoteVisual.color} values={instrument.sparkline} />
         <View style={styles.quote}>
-          <AppText tone={tone} variant="number">
+          <AppText tone={quoteVisual.tone} variant="number">
             {formatPrice(instrument, instrument.ask)}
           </AppText>
-          <AppText tone={tone} variant="caption">
+          <AppText tone={quoteVisual.tone} variant="caption">
             {formatPercent(changePercent)}
           </AppText>
         </View>

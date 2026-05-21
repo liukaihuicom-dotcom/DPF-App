@@ -5,12 +5,14 @@ import { useState } from 'react';
 import { ActionButton } from '@/src/components/ActionButton';
 import { useBottomSheet } from '@/src/components/BottomSheet';
 import { Card } from '@/src/components/Card';
+import { KeyValueList, type KeyValueListItem } from '@/src/components/KeyValueList';
 import { Metric } from '@/src/components/Metric';
 import { NativePressable } from '@/src/components/NativePressable';
 import { PhosphorIcon } from '@/src/components/PhosphorIcon';
 import { Screen } from '@/src/components/Screen';
+import { StatusPill, type StatusPillTone } from '@/src/components/StatusPill';
 import { AppText } from '@/src/components/Typography';
-import { buildTradingAccountProfiles, getAccountStatusLabel, type TradingAccountProfile, type TradingAccountStatus } from '@/src/domain/accountProfiles';
+import { buildTradingAccountProfiles, getAccountStatusLabel, tradingAccountStatusGroups, type TradingAccountProfile } from '@/src/domain/accountProfiles';
 import {
   directionLabel,
   formatMoney,
@@ -33,53 +35,69 @@ export default function PortfolioScreen() {
 
 export function TraderPortfolioScreen() {
   const { account, closePosition, deleteOrder, findInstrument, modifyOrder, orders, positions } = useBroker();
-  const { locale, palette, t } = useProductSettings();
+  const { locale, palette, t, tradingAccountCountPreset, tradingAccountDataPreset, tradingAccountScenario, tradingAccountStatusPreset } = useProductSettings();
   const toast = useToast();
   const bottomSheet = useBottomSheet();
-  const [selectedAccountId, setSelectedAccountId] = useState('active-main');
+  const [selectedAccountId, setSelectedAccountId] = useState('demo-main');
   const [orderView, setOrderView] = useState<'history' | 'pending' | 'positions'>('positions');
   const pnl = positions.reduce((total, position) => total + position.unrealizedPnl, 0);
-  const accountProfiles = buildTradingAccountProfiles(account, positions);
+  const accountProfiles = buildTradingAccountProfiles(account, positions, tradingAccountScenario, {
+    countPreset: tradingAccountCountPreset,
+    dataPreset: tradingAccountDataPreset,
+    statusPreset: tradingAccountStatusPreset,
+  });
   const selectedAccount = accountProfiles.find((profile) => profile.id === selectedAccountId) ?? accountProfiles[0];
   const accountSuffix = selectedAccount.accountNo.slice(-4);
-  const marginLevel = account.marginLevel > 0 ? formatNumber(account.marginLevel, 2, locale) : '0.00';
-  const positionRows =
-    positions.length > 0
-      ? positions.map((position) => {
-          const instrument = findInstrument(position.instrumentId);
-          return {
-            closable: true,
-            currentPrice: instrument ? formatPrice(instrument, position.currentPrice) : formatNumber(position.currentPrice, 2, locale),
-            direction: position.direction,
-            id: position.id,
-            lots: formatNumber(position.lots, 2, locale),
-            openPrice: instrument ? formatPrice(instrument, position.openPrice) : formatNumber(position.openPrice, 2, locale),
-            pnl: position.unrealizedPnl,
-            symbol: position.symbol,
-          };
-        })
-      : getDemoPositionRows(locale);
+  const selectedMarginLevel = selectedAccount.marginLevel > 0 ? formatNumber(selectedAccount.marginLevel, 2, locale) : '0.00';
+  const positionRows = positions.map((position) => {
+    const instrument = findInstrument(position.instrumentId);
+    return {
+      closable: true,
+      currentPrice: instrument ? formatPrice(instrument, position.currentPrice) : formatNumber(position.currentPrice, 2, locale),
+      direction: position.direction,
+      id: position.id,
+      lots: formatNumber(position.lots, 2, locale),
+      openPrice: instrument ? formatPrice(instrument, position.openPrice) : formatNumber(position.openPrice, 2, locale),
+      pnl: position.unrealizedPnl,
+      symbol: position.symbol,
+    };
+  });
   const orderRows: PendingOrderRow[] =
-    orders.length > 0
-      ? orders.map((order) => {
-          const instrument = findInstrument(order.instrumentId);
-          const price = instrument ? formatPrice(instrument, order.filledPrice || order.requestedPrice) : formatNumber(order.filledPrice || order.requestedPrice, 2, locale);
-          const statusTone: PendingOrderRow['statusTone'] =
-            order.status === 'pending' ? 'amber' : order.status === 'closed' ? 'muted' : order.direction === 'buy' ? 'down' : 'up';
-          return {
-            canEdit: true,
-            direction: order.direction,
-            id: order.id,
-            lots: formatNumber(order.lots, 2, locale),
-            priceRange: `${price} - ${price}`,
-            status: statusLabel(order.status, locale),
-            statusTone,
-            symbol: order.symbol,
-            type: order.type,
-          };
-        })
-      : getDemoOrderRows(locale);
+    orders.map((order) => {
+      const instrument = findInstrument(order.instrumentId);
+      const price = instrument ? formatPrice(instrument, order.filledPrice || order.requestedPrice) : formatNumber(order.filledPrice || order.requestedPrice, 2, locale);
+      const statusTone: PendingOrderRow['statusTone'] =
+        order.status === 'pending' ? 'amber' : order.status === 'closed' ? 'muted' : order.direction === 'buy' ? 'down' : 'up';
+      return {
+        canEdit: order.status === 'pending',
+        direction: order.direction,
+        id: order.id,
+        lots: formatNumber(order.lots, 2, locale),
+        priceRange: `${price} - ${price}`,
+        status: statusLabel(order.status, locale),
+        statusTone,
+        symbol: order.symbol,
+        type: order.type,
+      };
+    });
   const historyRows = getHistoryOrderRows(locale);
+  const pendingOrderRows = orderRows.filter((order) => order.canEdit);
+  const totalOpenLots = positions.reduce((total, position) => total + position.lots, 0);
+  const totalPendingLots = orders.filter((order) => order.status === 'pending').reduce((total, order) => total + order.lots, 0);
+  const accountMetricItems: KeyValueListItem[] = [
+    { id: 'balance', label: t('account.balance'), value: formatMoney(selectedAccount.balance, selectedAccount.currency, 2, locale) },
+    { id: 'equity', label: t('account.equity'), value: formatMoney(selectedAccount.equity, selectedAccount.currency, 2, locale) },
+    { id: 'used-margin', label: t('account.usedMargin'), tone: 'amber', value: formatMoney(selectedAccount.usedMargin, selectedAccount.currency, 2, locale) },
+    { id: 'available-margin', label: t('account.availableMargin'), value: formatMoney(selectedAccount.freeMargin, selectedAccount.currency, 2, locale) },
+    { id: 'margin-level', label: `${t('account.marginRate')} (%)`, value: selectedMarginLevel },
+    {
+      id: 'floating-pnl',
+      label: t('portfolio.unrealizedPnl'),
+      tone: selectedAccount.unrealizedPnl >= 0 ? 'down' : 'up',
+      value: formatMoney(selectedAccount.unrealizedPnl, selectedAccount.currency, 2, locale),
+    },
+    { id: 'total-lots', label: t('portfolio.totalLots'), value: formatNumber(totalOpenLots + totalPendingLots, 2, locale) },
+  ];
   const confirmClose = (positionId: string, symbol: string) => {
     const close = () => {
       closePosition(positionId);
@@ -106,133 +124,169 @@ export function TraderPortfolioScreen() {
     ]);
   };
   const openAccountSwitcher = () => {
-    bottomSheet.show(
-      <AccountSwitchSheet
-        accounts={accountProfiles}
-        onSelect={(nextId) => {
-          setSelectedAccountId(nextId);
-          bottomSheet.hide();
-        }}
-        selectedId={selectedAccount.id}
-      />,
-    );
+    bottomSheet.show({
+      title: locale === 'en-US' ? 'Accounts' : '账户切换',
+      subtitle: locale === 'en-US' ? 'Choose the trading account for this portfolio view.' : '选择当前持仓视图使用的交易账户。',
+      content: (
+        <AccountSwitchSheet
+          accounts={accountProfiles}
+          onSelect={(nextId) => {
+            setSelectedAccountId(nextId);
+            bottomSheet.hide();
+          }}
+          selectedId={selectedAccount.id}
+        />
+      ),
+    });
   };
   const openAccountMenu = () => {
-    bottomSheet.show(
-      <AccountMenuSheet
-        account={selectedAccount}
-        onViewDetails={() => {
-          bottomSheet.hide();
-          router.push(`/account-details/${selectedAccount.id}`);
-        }}
-      />,
-    );
+    bottomSheet.show({
+      title: locale === 'en-US' ? 'Account menu' : '账户菜单',
+      subtitle: `${selectedAccount.accountNo} · ${selectedAccount.currency}`,
+      content: (
+        <AccountMenuSheet
+          account={selectedAccount}
+          onViewDetails={() => {
+            bottomSheet.hide();
+            router.push(`/account-details/${selectedAccount.id}`);
+          }}
+        />
+      ),
+    });
   };
   const openPositionOptions = () => {
-    bottomSheet.show(
-      <PositionOptionsSheet
-        onAction={(title) => {
-          toast.show({
-            message: locale === 'en-US' ? 'Demo action only. No live position was changed.' : '当前为演示操作，未改变真实持仓。',
-            title,
-            tone: 'default',
-          });
-        }}
-      />,
-    );
+    bottomSheet.show({
+      title: locale === 'en-US' ? 'Position options' : '持仓选项',
+      subtitle: locale === 'en-US' ? 'Display mode and bulk demo actions.' : '显示模式与批量演示操作。',
+      content: (
+        <PositionOptionsSheet
+          onAction={(title) => {
+            toast.show({
+              message: locale === 'en-US' ? 'Demo action only. No live position was changed.' : '当前为演示操作，未改变真实持仓。',
+              title,
+              tone: 'default',
+            });
+            bottomSheet.hide();
+          }}
+        />
+      ),
+    });
   };
   const openPositionDetail = (position: (typeof positionRows)[number]) => {
-    bottomSheet.show(
-      <PositionDetailSheet
-        onClose={() => {
-          bottomSheet.hide();
-          if (position.closable) {
-            confirmClose(position.id, position.symbol);
-          } else {
+    bottomSheet.show({
+      title: locale === 'en-US' ? 'Position detail' : '持仓详情',
+      subtitle: `${position.symbol} · ${directionLabel(position.direction, locale)} ${position.lots}`,
+      content: <PositionDetailSheet position={position} />,
+      footer: [
+        {
+          label: locale === 'en-US' ? 'Modify Position' : '修改持仓',
+          onPress: () => {
             toast.show({
-              message: locale === 'en-US' ? 'Demo rows cannot be closed.' : '演示持仓暂不支持平仓。',
-              title: locale === 'en-US' ? 'Demo position' : '演示持仓',
-              tone: 'warning',
+              message: locale === 'en-US' ? 'Modify position is a demo action in this MVP.' : '当前为演示修改入口，暂不修改持仓。',
+              title: locale === 'en-US' ? 'Modify Position' : '修改持仓',
+              tone: 'default',
             });
-          }
-        }}
-        onModify={() => {
-          toast.show({
-            message: locale === 'en-US' ? 'Modify position is a demo action in this MVP.' : '当前为演示修改入口，暂不修改持仓。',
-            title: locale === 'en-US' ? 'Modify Position' : '修改持仓',
-            tone: 'default',
-          });
-        }}
-        position={position}
-      />,
-    );
+          },
+          tone: 'neutral',
+        },
+        {
+          label: locale === 'en-US' ? 'Close Position' : '平仓',
+          onPress: () => {
+            if (position.closable) {
+              confirmClose(position.id, position.symbol);
+            } else {
+              toast.show({
+                message: locale === 'en-US' ? 'Demo rows cannot be closed.' : '演示持仓暂不支持平仓。',
+                title: locale === 'en-US' ? 'Demo position' : '演示持仓',
+                tone: 'warning',
+              });
+            }
+          },
+          tone: 'up',
+        },
+      ],
+    });
   };
   const openClosedOrderDetail = (order: HistoryOrderRow) => {
-    bottomSheet.show(<ClosedOrderDetailSheet order={order} />);
+    bottomSheet.show({
+      title: locale === 'en-US' ? 'History order detail' : '历史订单详情',
+      subtitle: `${order.symbol} · ${order.direction} ${order.lots}`,
+      content: <ClosedOrderDetailSheet order={order} />,
+    });
   };
   const openPendingOrderDetail = (order: (typeof orderRows)[number]) => {
-    bottomSheet.show(
-      <PendingOrderDetailSheet
-        onDelete={() => {
-          bottomSheet.hide();
-          if (!order.canEdit) {
-            toast.show({
-              message: locale === 'en-US' ? 'Demo pending rows cannot be deleted.' : '演示挂单暂不支持删除。',
-              title: locale === 'en-US' ? 'Demo order' : '演示订单',
-              tone: 'warning',
-            });
-            return;
-          }
+    bottomSheet.show({
+      title: locale === 'en-US' ? 'Pending order detail' : '挂单详情',
+      subtitle: `${order.symbol} · ${directionLabel(order.direction, locale)} ${order.lots}`,
+      content: <PendingOrderDetailSheet order={order} />,
+      footer: [
+        {
+          label: locale === 'en-US' ? 'Modify Order' : '修改订单',
+          onPress: () => {
+            if (!order.canEdit) {
+              toast.show({
+                message: locale === 'en-US' ? 'Demo pending rows cannot be modified.' : '演示挂单暂不支持修改。',
+                title: locale === 'en-US' ? 'Demo order' : '演示订单',
+                tone: 'warning',
+              });
+              return;
+            }
 
-          deleteOrder(order.id);
-          toast.show({
-            message: locale === 'en-US' ? `${order.symbol} pending order was deleted in this local demo.` : `${order.symbol} 挂单已在本地演示中删除。`,
-            title: locale === 'en-US' ? 'Order deleted' : '订单已删除',
-            tone: 'success',
-          });
-        }}
-        onModify={() => {
-          bottomSheet.hide();
-          if (!order.canEdit) {
+            modifyOrder(order.id);
             toast.show({
-              message: locale === 'en-US' ? 'Demo pending rows cannot be modified.' : '演示挂单暂不支持修改。',
-              title: locale === 'en-US' ? 'Demo order' : '演示订单',
-              tone: 'warning',
+              message: locale === 'en-US' ? `${order.symbol} lots were adjusted in this local demo.` : `${order.symbol} 手数已在本地演示中调整。`,
+              title: locale === 'en-US' ? 'Order modified' : '订单已修改',
+              tone: 'success',
             });
-            return;
-          }
+          },
+          tone: 'neutral',
+        },
+        {
+          label: locale === 'en-US' ? 'Delete Order' : '删除订单',
+          onPress: () => {
+            if (!order.canEdit) {
+              toast.show({
+                message: locale === 'en-US' ? 'Demo pending rows cannot be deleted.' : '演示挂单暂不支持删除。',
+                title: locale === 'en-US' ? 'Demo order' : '演示订单',
+                tone: 'warning',
+              });
+              return;
+            }
 
-          modifyOrder(order.id);
-          toast.show({
-            message: locale === 'en-US' ? `${order.symbol} lots were adjusted in this local demo.` : `${order.symbol} 手数已在本地演示中调整。`,
-            title: locale === 'en-US' ? 'Order modified' : '订单已修改',
-            tone: 'success',
-          });
-        }}
-        order={order}
-      />,
-    );
+            deleteOrder(order.id);
+            toast.show({
+              message: locale === 'en-US' ? `${order.symbol} pending order was deleted in this local demo.` : `${order.symbol} 挂单已在本地演示中删除。`,
+              title: locale === 'en-US' ? 'Order deleted' : '订单已删除',
+              tone: 'success',
+            });
+          },
+          tone: 'up',
+        },
+      ],
+    });
   };
 
   return (
-    <Screen title={t('portfolio.title')}>
+    <Screen>
       <Card compact style={styles.accountPanel}>
-        <View style={styles.accountPanelTop}>
-          <View style={styles.accountPanelSpacer} />
-          <View style={styles.accountCenter}>
-            <AppText tone={account.equity >= 0 ? 'down' : 'up'} variant="largeNumber">
-              {formatMoney(account.equity, account.currency, 2, locale)}
+        <View style={styles.accountPanelHeader}>
+          <View style={styles.accountTitleBlock}>
+            <AppText tone="dim" variant="eyebrow">
+              {t('account.currentTrading')}
             </AppText>
             <NativePressable
               accessibilityLabel={locale === 'en-US' ? 'Switch trading account' : '切换交易账号'}
-              minTouch={36}
+              minTouch={44}
               onPress={openAccountSwitcher}
               style={styles.accountSelector}>
-              <AppText numberOfLines={1} variant="subtitle">
-                {locale === 'en-US' ? `Margin Account (${accountSuffix})` : `保证金账户 (${accountSuffix})`}
+              <AppText adjustsFontSizeToFit numberOfLines={1} variant="title">
+                {selectedAccount.accountNo}
               </AppText>
               <PhosphorIcon color={palette.text} name="caret-down" size={18} />
             </NativePressable>
+            <AppText numberOfLines={1} tone="muted" variant="caption">
+              {locale === 'en-US' ? `Margin Account (${accountSuffix})` : `保证金账户 (${accountSuffix})`} · {selectedAccount.currency} · {selectedAccount.platform}
+            </AppText>
           </View>
           <NativePressable
             accessibilityLabel={locale === 'en-US' ? 'Account menu' : '账户菜单'}
@@ -243,16 +297,32 @@ export function TraderPortfolioScreen() {
           </NativePressable>
         </View>
 
-        <View style={styles.accountStats}>
-          <AccountStat label={t('account.balance')} value={formatNumber(account.balance, 2, locale)} />
-          <AccountStat label={t('account.equity')} value={formatNumber(account.equity, 2, locale)} />
-          <AccountStat label={t('account.usedMargin')} value={formatNumber(account.usedMargin, 2, locale)} />
-          <AccountStat label={t('account.availableMargin')} value={formatNumber(account.freeMargin, 2, locale)} />
-          <AccountStat label={`${t('account.marginRate')} (%)`} value={marginLevel} />
+        <View style={styles.accountHeroRow}>
+          <View style={styles.accountHeroMetric}>
+            <AppText adjustsFontSizeToFit numberOfLines={1} tone={selectedAccount.equity >= 0 ? 'down' : 'up'} variant="largeNumber">
+              {formatMoney(selectedAccount.equity, selectedAccount.currency, 2, locale)}
+            </AppText>
+            <AppText tone="muted" variant="caption">
+              {t('account.equity')}
+            </AppText>
+          </View>
+          <StatusPill
+            icon={selectedAccount.usedMargin > 0 ? 'chart-line-up' : 'bank'}
+            label={selectedAccount.usedMargin > 0 ? t('portfolio.accountStatusActive') : t('portfolio.accountStatusReady')}
+            tone={selectedAccount.usedMargin > 0 ? 'success' : 'brand'}
+          />
         </View>
+
+        <View style={StyleSheet.flatten([styles.accountDivider, { backgroundColor: palette.lineSoft }])} />
+
+        <KeyValueList items={accountMetricItems} />
       </Card>
 
-      <OrderViewTabs current={orderView} onChange={setOrderView} />
+      <OrderViewTabs
+        counts={{ history: historyRows.length, pending: pendingOrderRows.length, positions: positionRows.length }}
+        current={orderView}
+        onChange={setOrderView}
+      />
 
       {orderView === 'positions' ? (
         <>
@@ -261,69 +331,77 @@ export function TraderPortfolioScreen() {
             onPress={openPositionOptions}
             title={t('portfolio.current')}
           />
-          <Card compact style={styles.listCard}>
-            {positionRows.map((position, index) => (
-              <NativePressable
-                accessibilityLabel={`${position.symbol} ${directionLabel(position.direction, locale)}`}
-                key={position.id}
-                minTouch={64}
-                onPress={() => openPositionDetail(position)}
-                style={StyleSheet.flatten([styles.tradeRow, index < positionRows.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: 1 }])}>
-                <TradeDirectionIcon direction={position.direction} />
-                <View style={styles.tradeRowMain}>
-                  <View style={styles.inlineTitle}>
-                    <AppText numberOfLines={1} variant="subtitle">
-                      {position.symbol}
-                    </AppText>
-                    <AppText numberOfLines={1} tone={position.direction === 'buy' ? 'down' : 'up'} variant="subtitle">
-                      {directionLabel(position.direction, locale).toLowerCase()} {position.lots}
+          {positionRows.length > 0 ? (
+            <Card compact style={styles.listCard}>
+              {positionRows.map((position, index) => (
+                <NativePressable
+                  accessibilityLabel={`${position.symbol} ${directionLabel(position.direction, locale)}`}
+                  key={position.id}
+                  minTouch={64}
+                  onPress={() => openPositionDetail(position)}
+                  style={StyleSheet.flatten([styles.tradeRow, index < positionRows.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: 1 }])}>
+                  <TradeDirectionIcon direction={position.direction} />
+                  <View style={styles.tradeRowMain}>
+                    <View style={styles.inlineTitle}>
+                      <AppText numberOfLines={1} variant="subtitle">
+                        {position.symbol}
+                      </AppText>
+                      <AppText numberOfLines={1} tone={position.direction === 'buy' ? 'down' : 'up'} variant="subtitle">
+                        {directionLabel(position.direction, locale).toLowerCase()} {position.lots}
+                      </AppText>
+                    </View>
+                    <AppText numberOfLines={1} tone="muted" variant="caption">
+                      {position.openPrice} - {position.currentPrice}
                     </AppText>
                   </View>
-                  <AppText numberOfLines={1} tone="muted" variant="caption">
-                    {position.openPrice} - {position.currentPrice}
+                  <AppText tone={position.pnl >= 0 ? 'down' : 'up'} variant="number">
+                    {formatNumber(position.pnl, 2, locale)}
                   </AppText>
-                </View>
-                <AppText tone={position.pnl >= 0 ? 'down' : 'up'} variant="number">
-                  {formatNumber(position.pnl, 2, locale)}
-                </AppText>
-              </NativePressable>
-            ))}
-          </Card>
+                </NativePressable>
+              ))}
+            </Card>
+          ) : (
+            <EmptyOrderState body={t('portfolio.emptyPositions')} title={t('portfolio.noCurrentPositions')} />
+          )}
         </>
       ) : null}
 
       {orderView === 'pending' ? (
         <>
           <OrderSectionHeader title={t('portfolio.orderRecords')} />
-          <Card compact>
-            {orderRows.map((order, index) => (
-              <NativePressable
-                accessibilityLabel={`${order.symbol} ${directionLabel(order.direction, locale)} ${order.type}`}
-                key={order.id}
-                minTouch={64}
-                onPress={() => openPendingOrderDetail(order)}
-                style={StyleSheet.flatten([styles.tradeRow, index < orderRows.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: 1 }])}>
-                <TradeDirectionIcon direction={order.direction} />
-                <View style={styles.tradeRowMain}>
-                  <View style={styles.inlineTitle}>
-                    <AppText numberOfLines={1} variant="subtitle">
-                      {order.symbol}
-                    </AppText>
-                    <AppText numberOfLines={1} tone={order.direction === 'buy' ? 'down' : 'up'} variant="subtitle">
-                      {directionLabel(order.direction, locale).toLowerCase()} {order.type === 'limit' ? 'limit ' : ''}{order.lots}
+          {pendingOrderRows.length > 0 ? (
+            <Card compact style={styles.listCard}>
+              {pendingOrderRows.map((order, index) => (
+                <NativePressable
+                  accessibilityLabel={`${order.symbol} ${directionLabel(order.direction, locale)} ${order.type}`}
+                  key={order.id}
+                  minTouch={64}
+                  onPress={() => openPendingOrderDetail(order)}
+                  style={StyleSheet.flatten([styles.tradeRow, index < pendingOrderRows.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: 1 }])}>
+                  <TradeDirectionIcon direction={order.direction} />
+                  <View style={styles.tradeRowMain}>
+                    <View style={styles.inlineTitle}>
+                      <AppText numberOfLines={1} variant="subtitle">
+                        {order.symbol}
+                      </AppText>
+                      <AppText numberOfLines={1} tone={order.direction === 'buy' ? 'down' : 'up'} variant="subtitle">
+                        {directionLabel(order.direction, locale).toLowerCase()} {order.type === 'limit' ? 'limit ' : ''}{order.lots}
+                      </AppText>
+                    </View>
+                    <AppText numberOfLines={1} tone="muted" variant="caption">
+                      {order.priceRange}
                     </AppText>
                   </View>
-                  <AppText numberOfLines={1} tone="muted" variant="caption">
-                    {order.priceRange}
+                  <AppText tone={order.statusTone === 'amber' ? 'amber' : order.statusTone === 'up' ? 'up' : order.statusTone === 'down' ? 'down' : 'dim'} variant="subtitle">
+                    {order.status}
                   </AppText>
-                </View>
-                <AppText tone={order.statusTone === 'amber' ? 'amber' : order.statusTone === 'up' ? 'up' : order.statusTone === 'down' ? 'down' : 'dim'} variant="subtitle">
-                  {order.status}
-                </AppText>
-                <PhosphorIcon color={palette.textDim} name="caret-right" size={14} />
-              </NativePressable>
-            ))}
-          </Card>
+                  <PhosphorIcon color={palette.textDim} name="caret-right" size={14} />
+                </NativePressable>
+              ))}
+            </Card>
+          ) : (
+            <EmptyOrderState body={t('portfolio.emptyOrders')} title={t('portfolio.noPendingOrders')} />
+          )}
         </>
       ) : null}
 
@@ -333,9 +411,11 @@ export function TraderPortfolioScreen() {
 }
 
 function OrderViewTabs({
+  counts,
   current,
   onChange,
 }: {
+  counts: Record<'history' | 'pending' | 'positions', number>;
   current: 'history' | 'pending' | 'positions';
   onChange: (view: 'history' | 'pending' | 'positions') => void;
 }) {
@@ -358,7 +438,7 @@ function OrderViewTabs({
             onPress={() => onChange(item.id)}
             style={styles.orderTabButton}>
             <AppText style={{ color: selected ? palette.text : palette.textMuted }} variant="subtitle">
-              {item.label}
+              {item.label} {counts[item.id]}
             </AppText>
             <View style={StyleSheet.flatten([styles.orderTabIndicator, { backgroundColor: selected ? palette.text : 'transparent' }])} />
           </NativePressable>
@@ -371,7 +451,8 @@ function OrderViewTabs({
 function AccountMenuSheet({ account, onViewDetails }: { account: TradingAccountProfile; onViewDetails: () => void }) {
   const { locale, palette } = useProductSettings();
   const status = getAccountStatusLabel(account.group, locale);
-  const readOnly = account.group === 'readOnly';
+  const statusTone: StatusPillTone = account.group === 'demo' ? 'brand' : account.group === 'readOnly' ? 'warning' : 'success';
+  const statusIcon = account.group === 'readOnly' ? 'lock' : account.group === 'demo' ? 'user-circle' : 'check-circle';
   const actionItems = [
     { color: palette.down, icon: 'bank' as const, label: 'Deposit' },
     { color: palette.amber, icon: 'arrow-clockwise' as const, label: 'Withdraw' },
@@ -393,12 +474,7 @@ function AccountMenuSheet({ account, onViewDetails }: { account: TradingAccountP
         <AppText tone="muted" variant="subtitle">
           Margin Account · {account.currency}
         </AppText>
-        <View style={StyleSheet.flatten([styles.menuStatusBadge, { backgroundColor: readOnly ? `${palette.amber}18` : `${palette.down}14` }])}>
-          <PhosphorIcon color={readOnly ? palette.amber : palette.down} name={readOnly ? 'lock' : 'check-circle'} size={16} />
-          <AppText style={{ color: readOnly ? palette.amber : palette.down }} variant="body">
-            {status}
-          </AppText>
-        </View>
+        <StatusPill icon={statusIcon} label={status} tone={statusTone} />
       </View>
 
       <View style={styles.menuActionGrid}>
@@ -526,15 +602,7 @@ type PendingOrderRow = {
   type: 'market' | 'limit';
 };
 
-function PendingOrderDetailSheet({
-  onDelete,
-  onModify,
-  order,
-}: {
-  onDelete: () => void;
-  onModify: () => void;
-  order: PendingOrderRow;
-}) {
+function PendingOrderDetailSheet({ order }: { order: PendingOrderRow }) {
   const { locale, palette } = useProductSettings();
   const direction = directionLabel(order.direction, locale).toLowerCase();
   const details = [
@@ -570,39 +638,17 @@ function PendingOrderDetailSheet({
           </View>
         ))}
       </View>
-
-      <View style={StyleSheet.flatten([styles.positionActionCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-        <NativePressable accessibilityLabel={locale === 'en-US' ? 'Modify order' : '修改订单'} minTouch={62} onPress={onModify} style={styles.positionActionButton}>
-          <AppText variant="title">{locale === 'en-US' ? 'Modify Order' : '修改订单'}</AppText>
-          <PhosphorIcon color={palette.text} name="sliders-horizontal" size={28} />
-        </NativePressable>
-        <View style={StyleSheet.flatten([styles.positionActionDivider, { backgroundColor: palette.lineSoft }])} />
-        <NativePressable accessibilityLabel={locale === 'en-US' ? 'Delete order' : '删除订单'} minTouch={62} onPress={onDelete} style={styles.positionActionButton}>
-          <AppText style={{ color: palette.up }} variant="title">
-            {locale === 'en-US' ? 'Delete Order' : '删除订单'}
-          </AppText>
-          <PhosphorIcon color={palette.up} name="x" size={28} />
-        </NativePressable>
-      </View>
     </ScrollView>
   );
 }
 
-function PositionDetailSheet({
-  onClose,
-  onModify,
-  position,
-}: {
-  onClose: () => void;
-  onModify: () => void;
-  position: PositionDetailRow;
-}) {
+function PositionDetailSheet({ position }: { position: PositionDetailRow }) {
   const { locale, palette } = useProductSettings();
   const direction = directionLabel(position.direction, locale).toLowerCase();
   const details = [
     { label: locale === 'en-US' ? 'Symbol' : '品种', value: position.symbol },
     { label: locale === 'en-US' ? 'Direction' : '交易方向', value: `${direction} ${position.lots}` },
-    { label: 'Ticket', value: '#3339900' },
+    { label: 'Ticket', value: `${'#'}3339900` },
     { label: 'Commission', value: '-10.00' },
     { label: 'Swap', value: '-7.00' },
     { label: 'Open Time', value: '05/01/2026 14:22:39' },
@@ -633,20 +679,6 @@ function PositionDetailSheet({
             </AppText>
           </View>
         ))}
-      </View>
-
-      <View style={StyleSheet.flatten([styles.positionActionCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-        <NativePressable accessibilityLabel="Modify Position" minTouch={62} onPress={onModify} style={styles.positionActionButton}>
-          <AppText variant="title">Modify Position</AppText>
-          <PhosphorIcon color={palette.text} name="sliders-horizontal" size={28} />
-        </NativePressable>
-        <View style={StyleSheet.flatten([styles.positionActionDivider, { backgroundColor: palette.lineSoft }])} />
-        <NativePressable accessibilityLabel="Close Position" minTouch={62} onPress={onClose} style={styles.positionActionButton}>
-          <AppText style={{ color: palette.up }} variant="title">
-            Close Position
-          </AppText>
-          <PhosphorIcon color={palette.up} name="x" size={28} />
-        </NativePressable>
       </View>
     </ScrollView>
   );
@@ -701,9 +733,9 @@ function HistoryOrdersView({ onOpenOrder, orders }: { onOpenOrder: (order: Histo
           <FilterPill icon="clock" label="Last 30 days" />
         </View>
       </View>
-      <MiniBarChart color="#FF7A1A" maxValue={100} values={[10, 42, 3, 16, 9, 28, 9, 26]} />
+      <MiniBarChart color={palette.amber} maxValue={100} values={[10, 42, 3, 16, 9, 28, 9, 26]} />
       <View style={styles.chartLegend}>
-        <View style={StyleSheet.flatten([styles.legendDot, { backgroundColor: '#FF7A1A' }])} />
+        <View style={StyleSheet.flatten([styles.legendDot, { backgroundColor: palette.amber }])} />
         <AppText tone="muted" variant="body">Standard lots</AppText>
       </View>
 
@@ -731,10 +763,7 @@ function HistoryOrdersView({ onOpenOrder, orders }: { onOpenOrder: (order: Histo
             <View style={styles.tradeRowMain}>
               <View style={styles.inlineTitle}>
                 {order.direction === 'sell' ? (
-                  <View style={StyleSheet.flatten([styles.sellBadge, { backgroundColor: `${palette.down}14` }])}>
-                    <PhosphorIcon color={palette.down} name="chart-line-up" size={14} />
-                    <AppText tone="down" variant="caption">Sell</AppText>
-                  </View>
+                  <StatusPill compact icon="chart-line-up" label="Sell" tone="down" />
                 ) : null}
                 <AppText variant="subtitle">{order.symbol}</AppText>
                 <AppText tone={order.direction === 'buy' ? 'down' : 'up'} variant="subtitle">
@@ -754,13 +783,7 @@ function HistoryOrdersView({ onOpenOrder, orders }: { onOpenOrder: (order: Histo
 }
 
 function FilterPill({ icon, label }: { icon: 'bank' | 'clock' | 'sliders-horizontal'; label: string }) {
-  const { palette } = useProductSettings();
-  return (
-    <View style={StyleSheet.flatten([styles.filterPill, { backgroundColor: palette.panel, borderColor: palette.line }])}>
-      <PhosphorIcon color={palette.text} name={icon} size={15} />
-      <AppText variant="body">{label}</AppText>
-    </View>
-  );
+  return <StatusPill icon={icon} label={label} tone="neutral" />;
 }
 
 function MiniBarChart({ color, maxValue, values }: { color: string; maxValue?: number; values: number[] }) {
@@ -803,7 +826,7 @@ function ClosedOrderDetailSheet({ order }: { order: HistoryOrderRow }) {
 
   return (
     <ScrollView contentContainerStyle={styles.closedOrderSheet} showsVerticalScrollIndicator={false} style={styles.closedOrderScroll}>
-      <AppText variant="title">Ticket #14808934</AppText>
+      <AppText variant="title">Ticket {'#'}14808934</AppText>
       <View style={StyleSheet.flatten([styles.closedOrderCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
         <View style={styles.closedOrderTop}>
           <View>
@@ -916,35 +939,27 @@ function AccountSwitchSheet({
   selectedId: string;
 }) {
   const { locale, palette } = useProductSettings();
-  const groups: { id: TradingAccountStatus; title: string }[] = [
-    { id: 'active', title: 'Active' },
-    { id: 'readOnly', title: 'Read Only' },
-    { id: 'disabled', title: 'Disabled' },
-    { id: 'demo', title: 'Demo' },
-    { id: 'archived', title: 'Archived' },
-  ];
 
   return (
     <View style={styles.sheetBody}>
-      <View style={styles.sheetHeader}>
-        <View style={styles.sheetHeaderSide} />
-        <AppText variant="title">Accounts</AppText>
-        <NativePressable minTouch={44} style={StyleSheet.flatten([styles.sheetAddButton, { backgroundColor: palette.panel }])}>
+      <View style={styles.sheetAddRow}>
+        <NativePressable minTouch={44} style={StyleSheet.flatten([styles.sheetAddButton, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
           <PhosphorIcon color={palette.text} name="user-plus" size={22} />
+          <AppText variant="caption">{locale === 'en-US' ? 'Add account' : '添加账户'}</AppText>
         </NativePressable>
       </View>
 
       <ScrollView contentContainerStyle={styles.sheetContent} showsVerticalScrollIndicator={false}>
-        {groups.map((group) => {
-          const groupedAccounts = accounts.filter((profile) => profile.group === group.id);
+        {tradingAccountStatusGroups.map((group) => {
+          const groupedAccounts = accounts.filter((profile) => profile.group === group);
           if (groupedAccounts.length === 0) {
             return null;
           }
 
           return (
-            <View key={group.id} style={styles.sheetGroup}>
+            <View key={group} style={styles.sheetGroup}>
               <AppText tone="muted" variant="subtitle">
-                {group.title} ({groupedAccounts.length})
+                {getAccountStatusLabel(group, locale)} ({groupedAccounts.length})
               </AppText>
               {groupedAccounts.map((profile) => (
                 <SwitchAccountCard
@@ -964,8 +979,8 @@ function AccountSwitchSheet({
 
 function SwitchAccountCard({ onPress, profile, selected }: { onPress: () => void; profile: TradingAccountProfile; selected: boolean }) {
   const { locale, palette } = useProductSettings();
-  const status = profile.group !== 'active' && profile.group !== 'demo' ? getAccountStatusLabel(profile.group, locale) : '';
-  const statusTone = profile.group === 'disabled' || profile.group === 'archived' ? palette.up : palette.amber;
+  const status = profile.group !== 'active' ? getAccountStatusLabel(profile.group, locale) : '';
+  const statusTone: StatusPillTone = profile.group === 'demo' ? 'brand' : profile.group === 'disabled' || profile.group === 'archived' ? 'danger' : 'warning';
 
   return (
     <NativePressable
@@ -984,13 +999,7 @@ function SwitchAccountCard({ onPress, profile, selected }: { onPress: () => void
           <View style={styles.switchTitleBlock}>
             <View style={styles.switchTitleRow}>
               <AppText variant="subtitle">{profile.accountNo}</AppText>
-              {status ? (
-                <View style={StyleSheet.flatten([styles.switchStatusBadge, { backgroundColor: `${statusTone}14` }])}>
-                  <AppText style={{ color: statusTone }} variant="caption">
-                    {status}
-                  </AppText>
-                </View>
-              ) : null}
+              {status ? <StatusPill compact label={status} tone={statusTone} /> : null}
             </View>
             <AppText tone="muted" variant="caption">
               🇺🇸 {profile.currency} · {profile.platform} · {profile.type}
@@ -1022,12 +1031,21 @@ function SwitchAccountCard({ onPress, profile, selected }: { onPress: () => void
   );
 }
 
-function AccountStat({ label, value }: { label: string; value: string }) {
+function EmptyOrderState({ body, title }: { body: string; title: string }) {
+  const { palette } = useProductSettings();
+
   return (
-    <View style={styles.accountStatRow}>
-      <AppText variant="body">{label}</AppText>
-      <AppText variant="body">{value}</AppText>
-    </View>
+    <Card compact style={styles.emptyStateCard}>
+      <View style={StyleSheet.flatten([styles.emptyStateIcon, { backgroundColor: palette.panelSoft }])}>
+        <PhosphorIcon color={palette.textDim} name="ticket" size={24} />
+      </View>
+      <View style={styles.emptyStateText}>
+        <AppText variant="subtitle">{title}</AppText>
+        <AppText tone="muted" variant="caption">
+          {body}
+        </AppText>
+      </View>
+    </Card>
   );
 }
 
@@ -1057,23 +1075,6 @@ function TradeDirectionIcon({ direction }: { direction: 'buy' | 'sell' }) {
   );
 }
 
-function getDemoPositionRows(locale: 'en-US' | 'zh-CN') {
-  return [
-    { closable: false, currentPrice: '1888.87', direction: 'buy' as const, id: 'demo-pos-1', lots: '5.01', openPrice: '1887.87', pnl: 500, symbol: 'XAUUSD' },
-    { closable: false, currentPrice: '1888.87', direction: 'buy' as const, id: 'demo-pos-2', lots: formatNumber(5, 0, locale), openPrice: '1887.87', pnl: -450, symbol: 'XAUUSD' },
-    { closable: false, currentPrice: '1888.87', direction: 'sell' as const, id: 'demo-pos-3', lots: formatNumber(5, 0, locale), openPrice: '1887.87', pnl: -450, symbol: 'XAUUSD' },
-    { closable: false, currentPrice: '1888.87', direction: 'sell' as const, id: 'demo-pos-4', lots: '2.54', openPrice: '1887.87', pnl: -450, symbol: 'XAUUSD' },
-  ];
-}
-
-function getDemoOrderRows(locale: 'en-US' | 'zh-CN'): PendingOrderRow[] {
-  const pending = locale === 'en-US' ? 'Pending' : 'Pending';
-  return [
-    { canEdit: false, direction: 'buy' as const, id: 'demo-order-1', lots: '5.01', priceRange: '1887.87 - 1888.87', status: pending, statusTone: 'amber', symbol: 'XAUUSD', type: 'limit' as const },
-    { canEdit: false, direction: 'buy' as const, id: 'demo-order-2', lots: '5.01', priceRange: '1887.87 - 1888.87', status: pending, statusTone: 'amber', symbol: 'XAUUSD', type: 'limit' as const },
-  ];
-}
-
 function getHistoryOrderRows(_locale: 'en-US' | 'zh-CN'): HistoryOrderRow[] {
   return [
     { closeTime: '15/04/2023 12:27:28', commission: 0, dealId: '90002333', delta: '△=10', direction: 'buy', id: 'hist-1', lots: '5.00', openTime: '15/04/2023 12:00:00', pnl: 500, priceRange: '1887.87 - 1888.87', symbol: 'XAUUSD', swap: -0.9 },
@@ -1086,7 +1087,7 @@ function getHistoryOrderRows(_locale: 'en-US' | 'zh-CN'): HistoryOrderRow[] {
 
 function PartnerClientsScreen() {
   const { partnerClients, upgradeRequest } = useBroker();
-  const { locale, palette, t } = useProductSettings();
+  const { locale, t } = useProductSettings();
   const active = partnerClients.filter((client) => client.status === 'active').length;
   const volume = partnerClients.reduce((total, client) => total + client.monthlyVolume, 0);
   const pending = partnerClients.filter((client) => client.upgradeStatus === 'pending').length;
@@ -1120,24 +1121,17 @@ function PartnerClientsScreen() {
               </AppText>
             </View>
             <View style={styles.badgeStack}>
-              <View style={StyleSheet.flatten([styles.statusPill, { backgroundColor: palette.panelSoft, borderColor: palette.line }])}>
-                <AppText tone={client.status === 'active' ? 'down' : client.status === 'funded' ? 'blue' : 'muted'} variant="caption">
-                  {statusLabel(client.status, locale)}
-                </AppText>
-              </View>
+              <StatusPill
+                compact
+                label={statusLabel(client.status, locale)}
+                tone={client.status === 'active' ? 'success' : client.status === 'funded' ? 'info' : 'neutral'}
+              />
               {client.upgradeStatus !== 'none' ? (
-                <View
-                  style={StyleSheet.flatten([
-                    styles.statusPill,
-                    {
-                      backgroundColor: client.upgradeStatus === 'approved' ? `${palette.down}18` : client.upgradeStatus === 'pending' ? `${palette.amber}18` : palette.panelSoft,
-                      borderColor: client.upgradeStatus === 'approved' ? palette.down : client.upgradeStatus === 'pending' ? palette.amber : palette.line,
-                    },
-                  ])}>
-                  <AppText tone={client.upgradeStatus === 'approved' ? 'down' : client.upgradeStatus === 'pending' ? 'amber' : 'muted'} variant="caption">
-                    {t(`upgrade.status.${client.upgradeStatus}`)}
-                  </AppText>
-                </View>
+                <StatusPill
+                  compact
+                  label={t(`upgrade.status.${client.upgradeStatus}`)}
+                  tone={client.upgradeStatus === 'approved' ? 'success' : client.upgradeStatus === 'pending' ? 'warning' : 'neutral'}
+                />
               ) : null}
             </View>
           </View>
@@ -1154,50 +1148,50 @@ function PartnerClientsScreen() {
 }
 
 const styles = StyleSheet.create({
-  accountCenter: {
+  accountDivider: {
+    height: 1,
+  },
+  accountHeroMetric: {
     alignItems: 'center',
-    flex: 1,
-    gap: 4,
+    gap: 2,
+    maxWidth: '100%',
     minWidth: 0,
+  },
+  accountHeroRow: {
+    alignItems: 'center',
+    gap: 8,
+    justifyContent: 'center',
   },
   accountMenuButton: {
     alignItems: 'center',
     borderRadius: 999,
     height: 44,
     justifyContent: 'center',
+    position: 'absolute',
+    right: 0,
+    top: 0,
     width: 44,
   },
   accountPanel: {
-    borderRadius: 0,
-    borderWidth: 0,
-    gap: 18,
-    marginHorizontal: -16,
-    paddingHorizontal: 24,
-    paddingVertical: 18,
+    gap: 14,
   },
-  accountPanelSpacer: {
-    width: 44,
-  },
-  accountPanelTop: {
+  accountPanelHeader: {
     alignItems: 'center',
-    flexDirection: 'row',
-    gap: 10,
+    justifyContent: 'center',
+    minHeight: 64,
   },
   accountSelector: {
     alignItems: 'center',
+    alignSelf: 'center',
     flexDirection: 'row',
     gap: 6,
-    justifyContent: 'center',
-    maxWidth: 260,
+    minHeight: 30,
   },
-  accountStatRow: {
+  accountTitleBlock: {
     alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    minHeight: 25,
-  },
-  accountStats: {
     gap: 3,
+    maxWidth: '74%',
+    minWidth: 0,
   },
   badgeStack: {
     alignItems: 'flex-end',
@@ -1299,15 +1293,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  filterPill: {
-    alignItems: 'center',
-    borderRadius: 6,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 6,
-    minHeight: 34,
-    paddingHorizontal: 9,
-  },
   grid: {
     flexDirection: 'row',
     gap: 10,
@@ -1364,15 +1349,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 16,
   },
-  menuStatusBadge: {
-    alignItems: 'center',
-    borderRadius: 8,
-    flexDirection: 'row',
-    gap: 6,
-    marginTop: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
   inlineTitle: {
     alignItems: 'baseline',
     flexDirection: 'row',
@@ -1381,6 +1357,24 @@ const styles = StyleSheet.create({
   },
   listCard: {
     paddingVertical: 0,
+  },
+  emptyStateCard: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 12,
+    minHeight: 92,
+  },
+  emptyStateIcon: {
+    alignItems: 'center',
+    borderRadius: 999,
+    height: 48,
+    justifyContent: 'center',
+    width: 48,
+  },
+  emptyStateText: {
+    flex: 1,
+    gap: 3,
+    minWidth: 0,
   },
   historyDivider: {
     height: 6,
@@ -1509,22 +1503,6 @@ const styles = StyleSheet.create({
     minHeight: 54,
     paddingHorizontal: 16,
   },
-  positionActionCard: {
-    borderRadius: 16,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  positionActionButton: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-  },
-  positionActionDivider: {
-    height: 1,
-    marginHorizontal: 16,
-  },
   sectionTitle: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -1536,20 +1514,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sellBadge: {
-    alignItems: 'center',
-    borderRadius: 5,
-    flexDirection: 'row',
-    gap: 3,
-    paddingHorizontal: 5,
-    paddingVertical: 2,
-  },
   sheetAddButton: {
     alignItems: 'center',
+    borderWidth: 1,
     borderRadius: 999,
-    height: 44,
+    flexDirection: 'row',
+    gap: 6,
+    minHeight: 40,
     justifyContent: 'center',
-    width: 44,
+    paddingHorizontal: 12,
+  },
+  sheetAddRow: {
+    alignItems: 'flex-end',
+    paddingBottom: 12,
+    paddingHorizontal: 16,
   },
   sheetBody: {
     flexShrink: 1,
@@ -1561,22 +1539,6 @@ const styles = StyleSheet.create({
   },
   sheetGroup: {
     gap: 10,
-  },
-  sheetHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
-  sheetHeaderSide: {
-    width: 44,
-  },
-  statusPill: {
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
   },
   switchAccountBody: {
     flex: 1,
@@ -1593,11 +1555,6 @@ const styles = StyleSheet.create({
   },
   switchDivider: {
     height: 1,
-  },
-  switchStatusBadge: {
-    borderRadius: 5,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
   },
   switchTitleBlock: {
     flex: 1,

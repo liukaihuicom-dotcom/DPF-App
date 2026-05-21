@@ -1,16 +1,25 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
 import { Platform } from 'react-native';
 
+import {
+  tradingAccountCountPresets,
+  tradingAccountDataPresets,
+  tradingAccountStatusPresets,
+  type TradingAccountCountPreset,
+  type TradingAccountDataPreset,
+  type TradingAccountScenario,
+  type TradingAccountStatusPreset,
+} from '@/src/domain/accountProfiles';
 import type { Locale, TranslationKey } from '@/src/i18n/translations';
 import { translations } from '@/src/i18n/translations';
 import { themePalettes, type ThemeMode, type ThemePalette } from '@/src/theme/colors';
-import type { AuthStatus, DiscoverModuleId, Role } from '@/src/domain/types';
+import type { AuthStatus, DiscoverModuleId, Role, TradingAccountUsageOverride } from '@/src/domain/types';
 
-const STORAGE_KEY = 'broker-fx-product-settings';
+const STORAGE_KEY = 'dupoin-mvp-product-settings';
 const DEFAULT_THEME_MODE: ThemeMode = 'lightBroker';
 const DEFAULT_DISCOVER_MODULE_BY_ROLE: Record<Role, DiscoverModuleId> = {
   partner: 'partner',
-  trader: 'challenge',
+  trader: 'community',
 };
 const discoverModuleIds: DiscoverModuleId[] = [
   'challenge',
@@ -24,6 +33,8 @@ const discoverModuleIds: DiscoverModuleId[] = [
   'support',
   'rewards',
 ];
+const tradingAccountScenarios: TradingAccountScenario[] = ['default', 'stateAnalysis'];
+const tradingAccountUsageOverrides: TradingAccountUsageOverride[] = ['auto', 'normal', 'warning', 'abnormal'];
 
 type ProductSettings = {
   authStatus: AuthStatus;
@@ -37,8 +48,18 @@ type ProductSettings = {
   setLocale: (locale: Locale) => void;
   setRole: (role: Role) => void;
   setThemeMode: (themeMode: ThemeMode) => void;
+  setTradingAccountCountPreset: (tradingAccountCountPreset: TradingAccountCountPreset) => void;
+  setTradingAccountDataPreset: (tradingAccountDataPreset: TradingAccountDataPreset) => void;
+  setTradingAccountScenario: (tradingAccountScenario: TradingAccountScenario) => void;
+  setTradingAccountStatusPreset: (tradingAccountStatusPreset: TradingAccountStatusPreset) => void;
+  setTradingAccountUsageOverride: (tradingAccountUsageOverride: TradingAccountUsageOverride) => void;
   t: (key: TranslationKey, params?: Record<string, string | number>) => string;
   themeMode: ThemeMode;
+  tradingAccountCountPreset: TradingAccountCountPreset;
+  tradingAccountDataPreset: TradingAccountDataPreset;
+  tradingAccountScenario: TradingAccountScenario;
+  tradingAccountStatusPreset: TradingAccountStatusPreset;
+  tradingAccountUsageOverride: TradingAccountUsageOverride;
 };
 
 const ProductSettingsContext = createContext<ProductSettings | null>(null);
@@ -58,6 +79,26 @@ function readStoredSettings() {
 
 function isDiscoverModuleId(value: unknown): value is DiscoverModuleId {
   return typeof value === 'string' && discoverModuleIds.includes(value as DiscoverModuleId);
+}
+
+function isTradingAccountUsageOverride(value: unknown): value is TradingAccountUsageOverride {
+  return typeof value === 'string' && tradingAccountUsageOverrides.includes(value as TradingAccountUsageOverride);
+}
+
+function isTradingAccountScenario(value: unknown): value is TradingAccountScenario {
+  return typeof value === 'string' && tradingAccountScenarios.includes(value as TradingAccountScenario);
+}
+
+function isTradingAccountCountPreset(value: unknown): value is TradingAccountCountPreset {
+  return typeof value === 'string' && tradingAccountCountPresets.includes(value as TradingAccountCountPreset);
+}
+
+function isTradingAccountDataPreset(value: unknown): value is TradingAccountDataPreset {
+  return typeof value === 'string' && tradingAccountDataPresets.includes(value as TradingAccountDataPreset);
+}
+
+function isTradingAccountStatusPreset(value: unknown): value is TradingAccountStatusPreset {
+  return typeof value === 'string' && tradingAccountStatusPresets.includes(value as TradingAccountStatusPreset);
 }
 
 function readStoredDiscoverModules(stored: Record<string, unknown>): Record<Role, DiscoverModuleId> {
@@ -88,6 +129,21 @@ export function ProductSettingsProvider({ children }: PropsWithChildren) {
   const [selectedDiscoverModuleByRole, setSelectedDiscoverModuleByRole] = useState<Record<Role, DiscoverModuleId>>(
     readStoredDiscoverModules(stored),
   );
+  const [tradingAccountScenario, setTradingAccountScenario] = useState<TradingAccountScenario>(
+    isTradingAccountScenario(stored.tradingAccountScenario) ? stored.tradingAccountScenario : 'default',
+  );
+  const [tradingAccountCountPreset, setTradingAccountCountPreset] = useState<TradingAccountCountPreset>(
+    isTradingAccountCountPreset(stored.tradingAccountCountPreset) ? stored.tradingAccountCountPreset : 'scenario',
+  );
+  const [tradingAccountDataPreset, setTradingAccountDataPreset] = useState<TradingAccountDataPreset>(
+    isTradingAccountDataPreset(stored.tradingAccountDataPreset) ? stored.tradingAccountDataPreset : 'scenario',
+  );
+  const [tradingAccountStatusPreset, setTradingAccountStatusPreset] = useState<TradingAccountStatusPreset>(
+    isTradingAccountStatusPreset(stored.tradingAccountStatusPreset) ? stored.tradingAccountStatusPreset : 'scenario',
+  );
+  const [tradingAccountUsageOverride, setTradingAccountUsageOverride] = useState<TradingAccountUsageOverride>(
+    isTradingAccountUsageOverride(stored.tradingAccountUsageOverride) ? stored.tradingAccountUsageOverride : 'auto',
+  );
   const setSelectedDiscoverModule = (moduleId: DiscoverModuleId) => {
     setSelectedDiscoverModuleByRole((current) => ({ ...current, [role]: moduleId }));
   };
@@ -97,8 +153,33 @@ export function ProductSettingsProvider({ children }: PropsWithChildren) {
       return;
     }
 
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ authStatus, locale, role, selectedDiscoverModuleByRole, themeMode }));
-  }, [authStatus, locale, role, selectedDiscoverModuleByRole, themeMode]);
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        authStatus,
+        locale,
+        role,
+        selectedDiscoverModuleByRole,
+        themeMode,
+        tradingAccountCountPreset,
+        tradingAccountDataPreset,
+        tradingAccountScenario,
+        tradingAccountStatusPreset,
+        tradingAccountUsageOverride,
+      }),
+    );
+  }, [
+    authStatus,
+    locale,
+    role,
+    selectedDiscoverModuleByRole,
+    themeMode,
+    tradingAccountCountPreset,
+    tradingAccountDataPreset,
+    tradingAccountScenario,
+    tradingAccountStatusPreset,
+    tradingAccountUsageOverride,
+  ]);
 
   const value = useMemo<ProductSettings>(() => {
     const dictionary = translations[locale];
@@ -114,6 +195,11 @@ export function ProductSettingsProvider({ children }: PropsWithChildren) {
       setRole,
       setSelectedDiscoverModule,
       setThemeMode,
+      setTradingAccountCountPreset,
+      setTradingAccountDataPreset,
+      setTradingAccountScenario,
+      setTradingAccountStatusPreset,
+      setTradingAccountUsageOverride,
       t: (key, params) => {
         let text: string = dictionary[key] ?? translations['zh-CN'][key] ?? key;
 
@@ -126,8 +212,24 @@ export function ProductSettingsProvider({ children }: PropsWithChildren) {
         return text;
       },
       themeMode,
+      tradingAccountCountPreset,
+      tradingAccountDataPreset,
+      tradingAccountScenario,
+      tradingAccountStatusPreset,
+      tradingAccountUsageOverride,
     };
-  }, [authStatus, locale, role, selectedDiscoverModuleByRole, themeMode]);
+  }, [
+    authStatus,
+    locale,
+    role,
+    selectedDiscoverModuleByRole,
+    themeMode,
+    tradingAccountCountPreset,
+    tradingAccountDataPreset,
+    tradingAccountScenario,
+    tradingAccountStatusPreset,
+    tradingAccountUsageOverride,
+  ]);
 
   return <ProductSettingsContext.Provider value={value}>{children}</ProductSettingsContext.Provider>;
 }

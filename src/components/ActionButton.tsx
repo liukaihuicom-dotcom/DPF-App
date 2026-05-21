@@ -5,13 +5,15 @@ import { useThemePalette } from '@/src/settings/ProductSettings';
 import { NativePressable } from './NativePressable';
 import { AppText } from './Typography';
 
+export type ActionButtonTone = 'up' | 'down' | 'blue' | 'brand' | 'neutral' | 'amber';
+
 type ActionButtonProps = {
   accessibilityLabel?: string;
   disabled?: boolean;
   label: string;
   loading?: boolean;
   onPress: () => void;
-  tone?: 'up' | 'down' | 'blue' | 'brand' | 'neutral' | 'amber';
+  tone?: ActionButtonTone;
   style?: ViewStyle;
 };
 

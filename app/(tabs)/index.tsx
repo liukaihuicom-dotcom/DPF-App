@@ -1,379 +1,273 @@
 import { useMemo, useState } from 'react';
+import { router } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Card } from '@/src/components/Card';
 import { InstrumentRow } from '@/src/components/InstrumentRow';
 import { NativePressable } from '@/src/components/NativePressable';
 import { PhosphorIcon } from '@/src/components/PhosphorIcon';
+import { getQuoteChangeVisual } from '@/src/components/quoteVisuals';
 import { Screen } from '@/src/components/Screen';
 import { Sparkline } from '@/src/components/Sparkline';
+import { TextField } from '@/src/components/TextField';
 import { AppText } from '@/src/components/Typography';
 import { formatCompactMoney, formatMoney, formatPercent, formatPrice, localizeText } from '@/src/domain/format';
 import { getDisplayChange } from '@/src/domain/trading';
-import type { Account, Instrument, InstrumentAssetClass } from '@/src/domain/types';
+import type { Instrument, InstrumentAssetClass } from '@/src/domain/types';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
 
-type MarketTabId = 'watchlist' | InstrumentAssetClass;
+type MarketTabKey = 'watchlist' | InstrumentAssetClass;
 
-const marketTabs: MarketTabId[] = ['watchlist', 'forex', 'metals', 'futures', 'stocks'];
+const marketTabs: { key: MarketTabKey; labelKey: 'markets.tab.watchlist' | 'markets.tab.forex' | 'markets.tab.metals' | 'markets.tab.futures' | 'markets.tab.stocks' }[] = [
+  { key: 'watchlist', labelKey: 'markets.tab.watchlist' },
+  { key: 'forex', labelKey: 'markets.tab.forex' },
+  { key: 'metals', labelKey: 'markets.tab.metals' },
+  { key: 'futures', labelKey: 'markets.tab.futures' },
+  { key: 'stocks', labelKey: 'markets.tab.stocks' },
+];
 
 export default function HomeScreen() {
-  const { account, instruments, positions, quoteStatus } = useBroker();
+  const { account, instruments, positions } = useBroker();
   const { locale, palette, t } = useProductSettings();
-  const [selectedTab, setSelectedTab] = useState<MarketTabId>('watchlist');
+  const floatingPnl = positions.reduce((total, position) => total + position.unrealizedPnl, 0);
+  const topMovers = [...instruments]
+    .sort((a, b) => Math.abs(getDisplayChange(b).changePercent) - Math.abs(getDisplayChange(a).changePercent))
+    .slice(0, 6);
 
-  const visibleInstruments = useMemo(() => getVisibleInstruments(instruments, selectedTab), [instruments, selectedTab]);
-  const topMovers = [...instruments].sort((a, b) => Math.abs(getDisplayChange(b).changePercent) - Math.abs(getDisplayChange(a).changePercent));
-  const anchorInstrument = instruments.find((instrument) => instrument.symbol === 'EUR/USD') ?? instruments[0];
-  const bidDepth = [0, 1, 2].map((step) => ({
-    price: anchorInstrument.bid - step * anchorInstrument.pipSize * 2,
-    size: [2.8, 1.9, 1.2][step],
-  }));
-  const askDepth = [0, 1, 2].map((step) => ({
-    price: anchorInstrument.ask + step * anchorInstrument.pipSize * 2,
-    size: [2.4, 1.7, 1.1][step],
-  }));
   return (
-    <Screen title={t('markets.title')}>
-      <AccountSummaryStrip account={account} floatingPnl={positions.reduce((total, position) => total + position.unrealizedPnl, 0)} />
-
-      {quoteStatus !== 'connected' ? <QuoteStatusCard status={quoteStatus} /> : null}
-
-      {quoteStatus === 'connected' ? <MoversCarousel instruments={topMovers.slice(0, 6)} /> : null}
-
-      <View style={StyleSheet.flatten([styles.searchBar, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-        <PhosphorIcon color={palette.textDim} name="magnifying-glass" size={14} />
-        <AppText numberOfLines={1} tone="dim" variant="caption">
-          {locale === 'en-US' ? 'Search FX, metals, indices' : '搜索外汇、黄金、指数'}
-        </AppText>
+    <Screen
+      rightActions={[
+        { icon: 'bell', label: t('top.notifications') },
+        { icon: 'headphones', label: t('top.support') },
+      ]}
+      title="Dupoin">
+      <View style={styles.accountStrip}>
+        <View style={StyleSheet.flatten([styles.accountTile, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+          <AppText tone="muted" variant="caption">
+            {t('account.equity')}
+          </AppText>
+          <AppText adjustsFontSizeToFit numberOfLines={1} variant="number">
+            {formatMoney(account.equity, account.currency, 0, locale)}
+          </AppText>
+        </View>
+        <View style={StyleSheet.flatten([styles.accountTile, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+          <AppText tone="muted" variant="caption">
+            {t('portfolio.unrealizedPnl')}
+          </AppText>
+          <AppText adjustsFontSizeToFit numberOfLines={1} tone={floatingPnl >= 0 ? 'down' : 'up'} variant="number">
+            {formatMoney(floatingPnl, account.currency, 0, locale)}
+          </AppText>
+        </View>
+        <View style={StyleSheet.flatten([styles.accountTile, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+          <AppText tone="muted" variant="caption">
+            {t('account.availableMargin')}
+          </AppText>
+          <AppText adjustsFontSizeToFit numberOfLines={1} variant="number">
+            {formatCompactMoney(account.freeMargin, account.currency, locale)}
+          </AppText>
+        </View>
       </View>
 
-      <View style={StyleSheet.flatten([styles.marketTabs, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-        {marketTabs.map((tab) => {
-          const active = tab === selectedTab;
-
-          return (
-            <NativePressable
-              accessibilityRole="tab"
-              accessibilityState={{ selected: active }}
-              key={tab}
-              minTouch={36}
-              onPress={() => setSelectedTab(tab)}
-              style={StyleSheet.flatten([
-                styles.marketTab,
-                active && {
-                  backgroundColor: palette.panel,
-                },
-              ])}>
-              <AppText
-                adjustsFontSizeToFit
-                numberOfLines={1}
-                style={styles.marketTabText}
-                tone={active ? 'default' : 'dim'}
-                variant="caption">
-                {t(`markets.tab.${tab}`)}
-              </AppText>
-            </NativePressable>
-          );
-        })}
-      </View>
-
-      {quoteStatus === 'connected' ? (
-        <Card compact>
-          <View style={styles.marketHeader}>
-            <AppText tone="dim" variant="caption">
-              {locale === 'en-US' ? 'Symbol' : '品种'}
-            </AppText>
-            <AppText tone="dim" variant="caption">
-              Bid / Ask
-            </AppText>
-            <AppText tone="dim" variant="caption">
-              %
-            </AppText>
-          </View>
-          {visibleInstruments.map((instrument) => (
-            <InstrumentRow instrument={instrument} key={instrument.id} />
-          ))}
-        </Card>
-      ) : null}
-
-      {quoteStatus === 'connected' ? (
-        <Card>
-          <View style={styles.sectionHeader}>
-            <View>
-              <AppText variant="subtitle">{t('home.depthTitle')}</AppText>
-              <AppText tone="muted" variant="caption">
-                {anchorInstrument.symbol} · {t('home.depthSubtitle')}
-              </AppText>
-            </View>
-          </View>
-          <View style={styles.depthBook}>
-            <DepthSide color={palette.down} instrument={anchorInstrument} label={t('home.depthBid')} levels={bidDepth} />
-            <DepthSide color={palette.up} instrument={anchorInstrument} label={t('home.depthAsk')} levels={askDepth} />
-          </View>
-        </Card>
-      ) : null}
+      <SectionTitle
+        action={locale === 'en-US' ? 'All markets' : '全部行情'}
+        onPress={() => router.push('/markets' as never)}
+        title={t('home.topMovers')}
+      />
+      <MoversCarousel instruments={topMovers} />
+      <MarketList instruments={instruments} />
     </Screen>
   );
 }
 
-function QuoteStatusCard({ status }: { status: 'connecting' | 'connected' | 'failed' }) {
-  const { locale, palette } = useProductSettings();
-  const failed = status === 'failed';
+function SectionTitle({ action, onPress, title }: { action: string; onPress: () => void; title: string }) {
+  const { palette } = useProductSettings();
 
   return (
-    <Card>
-      <View style={styles.quoteStatusContent}>
-        <View style={StyleSheet.flatten([styles.quoteStatusIcon, { backgroundColor: failed ? `${palette.danger}12` : `${palette.brand}12` }])}>
-          <PhosphorIcon color={failed ? palette.danger : palette.brand} name={failed ? 'info' : 'clock'} size={20} />
-        </View>
-        <View style={styles.quoteStatusText}>
-          <AppText tone={failed ? 'danger' : 'default'} variant="subtitle">
-            {failed ? (locale === 'en-US' ? 'Quote connection failed' : '报价连接失败') : locale === 'en-US' ? 'Connecting quotes' : '正在连接报价'}
-          </AppText>
-          <AppText tone="muted" variant="caption">
-            {failed
-              ? locale === 'en-US'
-                ? 'Unable to receive live quotes from Dupoin WebTrade. Please check the network and try again.'
-                : '无法接收 Dupoin WebTrade 实时报价，请检查网络后重试。'
-              : locale === 'en-US'
-                ? 'Waiting for the first live bid / ask update.'
-                : '等待首条实时 Bid / Ask 报价。'}
-          </AppText>
-        </View>
+    <View style={styles.sectionTitle}>
+      <AppText variant="subtitle">{title}</AppText>
+      <NativePressable accessibilityLabel={action} accessibilityRole="button" minTouch={36} onPress={onPress} style={styles.sectionAction}>
+        <AppText tone="brand" variant="caption">
+          {action}
+        </AppText>
+        <PhosphorIcon color={palette.brand} name="caret-right" size={14} />
+      </NativePressable>
+    </View>
+  );
+}
+
+function MoversCarousel({ instruments }: { instruments: Instrument[] }) {
+  const { locale, palette } = useProductSettings();
+
+  return (
+    <ScrollView contentContainerStyle={styles.moversRail} horizontal showsHorizontalScrollIndicator={false}>
+      {instruments.map((instrument) => {
+        const { changePercent } = getDisplayChange(instrument);
+        const quoteVisual = getQuoteChangeVisual(changePercent, palette);
+
+        return (
+          <NativePressable
+            accessibilityLabel={instrument.symbol}
+            accessibilityRole="button"
+            key={instrument.id}
+            minTouch={128}
+            onPress={() => router.push(`/instrument/${instrument.id}` as never)}
+            style={StyleSheet.flatten([styles.moverCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+            <View style={styles.moverTop}>
+              <View style={styles.moverIdentity}>
+                <AppText numberOfLines={1} variant="subtitle">
+                  {instrument.symbol}
+                </AppText>
+                <AppText numberOfLines={1} tone="muted" variant="caption">
+                  {localizeText(instrument.name, locale)}
+                </AppText>
+              </View>
+              <View style={StyleSheet.flatten([styles.moverBadge, { backgroundColor: `${quoteVisual.color}12` }])}>
+                <AppText tone={quoteVisual.tone} variant="caption">
+                  {formatPercent(changePercent)}
+                </AppText>
+              </View>
+            </View>
+            <Sparkline color={quoteVisual.color} height={32} values={instrument.sparkline} width={122} />
+            <View style={styles.moverBottom}>
+              <AppText tone="dim" variant="caption">
+                Ask
+              </AppText>
+              <AppText tone={quoteVisual.tone} variant="number">
+                {formatPrice(instrument, instrument.ask)}
+              </AppText>
+            </View>
+          </NativePressable>
+        );
+      })}
+    </ScrollView>
+  );
+}
+
+function MarketList({ instruments }: { instruments: Instrument[] }) {
+  const { locale, palette, t } = useProductSettings();
+  const [selectedTab, setSelectedTab] = useState<MarketTabKey>('watchlist');
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const closeSearch = () => {
+    setSearchQuery('');
+    setSearchOpen(false);
+  };
+  const filteredInstruments = useMemo(() => {
+    const tabInstruments =
+      selectedTab === 'watchlist' ? instruments.filter((instrument) => instrument.favorite) : instruments.filter((instrument) => instrument.assetClass === selectedTab);
+
+    if (!normalizedQuery) {
+      return tabInstruments;
+    }
+
+    return tabInstruments.filter((instrument) => {
+      const localizedName = localizeText(instrument.name, locale).toLowerCase();
+      const searchable = [instrument.symbol, instrument.baseCurrency, instrument.quoteCurrency, localizedName].join(' ').toLowerCase();
+
+      return searchable.includes(normalizedQuery);
+    });
+  }, [instruments, locale, normalizedQuery, selectedTab]);
+
+  return (
+    <Card compact style={styles.marketBoard}>
+      <View style={styles.marketToolbar}>
+        {searchOpen ? (
+          <View style={styles.marketSearchShell}>
+            <TextField
+              accessibilityLabel={t('markets.search')}
+              autoCapitalize="characters"
+              autoCorrect={false}
+              autoFocus
+              containerStyle={styles.marketSearchField}
+              icon="magnifying-glass"
+              inputStyle={styles.marketSearchInput}
+              label={t('markets.search')}
+              labelHidden
+              onChangeText={setSearchQuery}
+              placeholder={t('markets.search')}
+              returnKeyType="search"
+              shellStyle={StyleSheet.flatten([styles.marketSearchExpanded, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}
+              value={searchQuery}
+            />
+            <NativePressable
+              accessibilityLabel={t('common.cancel')}
+              accessibilityRole="button"
+              minTouch={38}
+              onPress={closeSearch}
+              style={StyleSheet.flatten([styles.marketSearchClose, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+              <PhosphorIcon color={palette.textDim} name="x" size={14} />
+            </NativePressable>
+          </View>
+        ) : (
+          <>
+            <ScrollView contentContainerStyle={styles.marketTabs} horizontal showsHorizontalScrollIndicator={false} style={styles.marketTabsRail}>
+              {marketTabs.map((tab) => {
+                const selected = selectedTab === tab.key;
+
+                return (
+                  <NativePressable
+                    accessibilityLabel={t(tab.labelKey)}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected }}
+                    key={tab.key}
+                    minTouch={38}
+                    onPress={() => setSelectedTab(tab.key)}
+                    style={StyleSheet.flatten([
+                      styles.marketTab,
+                      {
+                        backgroundColor: selected ? palette.text : palette.panelSoft,
+                        borderColor: selected ? palette.text : palette.lineSoft,
+                      },
+                    ])}>
+                    <AppText numberOfLines={1} style={selected ? { color: palette.bg } : undefined} tone={selected ? 'default' : 'muted'} variant="caption">
+                      {t(tab.labelKey)}
+                    </AppText>
+                  </NativePressable>
+                );
+              })}
+            </ScrollView>
+            <NativePressable
+              accessibilityLabel={t('markets.search')}
+              accessibilityRole="button"
+              minTouch={38}
+              onPress={() => setSearchOpen(true)}
+              style={StyleSheet.flatten([styles.marketSearchTrigger, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+              <PhosphorIcon color={palette.textDim} name="magnifying-glass" size={17} />
+            </NativePressable>
+          </>
+        )}
+      </View>
+
+      <View style={styles.marketRows}>
+        {filteredInstruments.length > 0 ? (
+          filteredInstruments.map((instrument) => <InstrumentRow instrument={instrument} key={instrument.id} />)
+        ) : (
+          <View style={StyleSheet.flatten([styles.emptyMarketRows, { backgroundColor: palette.panelSoft }])}>
+            <AppText tone="muted" variant="caption">
+              {t('markets.empty')}
+            </AppText>
+          </View>
+        )}
       </View>
     </Card>
   );
 }
 
-function MoversCarousel({ instruments }: { instruments: Instrument[] }) {
-  const { locale, palette, t } = useProductSettings();
-
-  return (
-    <View style={styles.moversBlock}>
-      <View style={styles.moversHeader}>
-        <AppText variant="subtitle">{t('home.topMovers')}</AppText>
-        <AppText tone="dim" variant="caption">
-          {t('home.moversCaption')}
-        </AppText>
-      </View>
-      <ScrollView
-        contentContainerStyle={styles.moversRail}
-        horizontal
-        showsHorizontalScrollIndicator={false}>
-        {instruments.map((instrument) => {
-          const { changePercent } = getDisplayChange(instrument);
-          const positive = changePercent >= 0;
-          const tone = positive ? 'up' : 'down';
-          const color = positive ? palette.up : palette.down;
-
-          return (
-            <View
-              key={instrument.id}
-              style={StyleSheet.flatten([styles.moverCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-              <View style={styles.moverTop}>
-                <View style={styles.moverIdentity}>
-                  <AppText numberOfLines={1} variant="subtitle">
-                    {instrument.symbol}
-                  </AppText>
-                  <AppText numberOfLines={1} tone="muted" variant="caption">
-                    {localizeText(instrument.name, locale)}
-                  </AppText>
-                </View>
-                <View style={StyleSheet.flatten([styles.moverBadge, { backgroundColor: `${color}12` }])}>
-                  <AppText tone={tone} variant="caption">
-                    {formatPercent(changePercent)}
-                  </AppText>
-                </View>
-              </View>
-              <Sparkline color={color} height={30} values={instrument.sparkline} width={116} />
-              <View style={styles.moverBottom}>
-                <AppText tone="dim" variant="caption">
-                  Ask
-                </AppText>
-                <AppText tone={tone} variant="number">
-                  {formatPrice(instrument, instrument.ask)}
-                </AppText>
-              </View>
-            </View>
-          );
-        })}
-      </ScrollView>
-    </View>
-  );
-}
-
-function getVisibleInstruments(instruments: Instrument[], tab: MarketTabId) {
-  if (tab === 'watchlist') {
-    return instruments.filter((instrument) => instrument.favorite);
-  }
-
-  return instruments.filter((instrument) => instrument.assetClass === tab);
-}
-
-function AccountSummaryStrip({ account, floatingPnl }: { account: Account; floatingPnl: number }) {
-  const { locale, palette, t } = useProductSettings();
-  const pnlTone = floatingPnl >= 0 ? 'up' : 'down';
-
-  return (
-    <View style={StyleSheet.flatten([styles.accountStrip, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-      <View style={styles.accountSummaryMain}>
-        <View style={styles.accountIdentityBlock}>
-          <AppText numberOfLines={1} tone="dim" variant="eyebrow">
-            {t('account.currentTrading')}
-          </AppText>
-          <View style={styles.accountIdRow}>
-            <View style={StyleSheet.flatten([styles.accountStripDot, { backgroundColor: palette.brand }])} />
-            <AppText adjustsFontSizeToFit numberOfLines={1} variant="subtitle">
-              {account.accountId}
-            </AppText>
-          </View>
-        </View>
-
-        <View style={styles.accountMetricRow}>
-          <View style={styles.accountStripItem}>
-            <AppText adjustsFontSizeToFit numberOfLines={1} tone="dim" variant="eyebrow">
-              {t('account.equity')}
-            </AppText>
-            <AppText adjustsFontSizeToFit numberOfLines={1} variant="number">
-              {formatCompactMoney(account.equity, account.currency, locale)}
-            </AppText>
-          </View>
-          <View style={styles.accountStripItem}>
-            <AppText adjustsFontSizeToFit numberOfLines={1} tone="dim" variant="eyebrow">
-              {t('portfolio.unrealizedPnl')}
-            </AppText>
-            <AppText adjustsFontSizeToFit numberOfLines={1} tone={pnlTone} variant="number">
-              {formatMoney(floatingPnl, account.currency, 0, locale)}
-            </AppText>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
-}
-
-function DepthSide({
-  color,
-  instrument,
-  label,
-  levels,
-}: {
-  color: string;
-  instrument: ReturnType<typeof useBroker>['instruments'][number];
-  label: string;
-  levels: { price: number; size: number }[];
-}) {
-  return (
-    <View style={styles.depthSide}>
-      <AppText style={{ color }} variant="caption">
-        {label}
-      </AppText>
-      {levels.map((level) => (
-        <View key={level.price} style={styles.depthRow}>
-          <AppText style={{ color }} variant="caption">
-            {formatPrice(instrument, level.price)}
-          </AppText>
-          <View style={StyleSheet.flatten([styles.depthTrack, { backgroundColor: `${color}16` }])}>
-            <View style={StyleSheet.flatten([styles.depthFill, { backgroundColor: color, width: `${level.size * 28}%` }])} />
-          </View>
-          <AppText tone="muted" variant="caption">
-            {level.size.toFixed(1)}M
-          </AppText>
-        </View>
-      ))}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   accountStrip: {
-    borderRadius: 16,
+    flexDirection: 'row',
+    gap: 8,
+  },
+  accountTile: {
+    borderRadius: 12,
     borderWidth: 1,
-    minHeight: 58,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  accountIdRow: {
-    alignItems: 'baseline',
-    flexDirection: 'row',
-    gap: 7,
-    minWidth: 0,
-  },
-  accountIdentityBlock: {
-    flex: 1,
-    gap: 2,
-    minWidth: 0,
-  },
-  accountMetricRow: {
-    flex: 1.15,
-    flexDirection: 'row',
-    gap: 10,
-    minWidth: 0,
-  },
-  accountStripItem: {
     flex: 1,
     gap: 3,
+    minHeight: 66,
     minWidth: 0,
-  },
-  accountStripDot: {
-    borderRadius: 999,
-    height: 7,
-    width: 7,
-  },
-  accountSummaryMain: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 12,
-  },
-  depthBook: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  depthFill: {
-    borderRadius: 999,
-    height: 7,
-  },
-  depthRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 6,
-    minHeight: 25,
-  },
-  depthSide: {
-    flex: 1,
-    gap: 6,
-    minWidth: 0,
-  },
-  depthTrack: {
-    borderRadius: 999,
-    flex: 1,
-    height: 7,
-    overflow: 'hidden',
-  },
-  marketHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingBottom: 4,
-  },
-  quoteStatusContent: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 12,
-  },
-  quoteStatusIcon: {
-    alignItems: 'center',
-    borderRadius: 999,
-    height: 42,
-    justifyContent: 'center',
-    width: 42,
-  },
-  quoteStatusText: {
-    flex: 1,
-    gap: 3,
-    minWidth: 0,
+    padding: 10,
   },
   moverBadge: {
     borderRadius: 999,
@@ -387,29 +281,18 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     borderWidth: 1,
     gap: 8,
-    minHeight: 126,
+    minHeight: 132,
     padding: 12,
-    width: 156,
+    width: 164,
   },
   moverIdentity: {
     flex: 1,
     gap: 1,
     minWidth: 0,
   },
-  moversBlock: {
-    gap: 8,
-    marginHorizontal: -16,
-  },
-  moversHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 10,
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-  },
   moversRail: {
     gap: 10,
-    paddingHorizontal: 16,
+    paddingRight: 16,
   },
   moverTop: {
     alignItems: 'flex-start',
@@ -417,47 +300,90 @@ const styles = StyleSheet.create({
     gap: 8,
     justifyContent: 'space-between',
   },
-  marketTab: {
-    alignItems: 'center',
-    borderRadius: 999,
-    flex: 1,
-    minWidth: 0,
-    paddingHorizontal: 7,
-    paddingVertical: 8,
-  },
-  marketTabs: {
-    borderRadius: 999,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 4,
-    padding: 4,
-  },
-  marketTabText: {
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 16,
-  },
-  searchBar: {
-    alignItems: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 8,
-    minHeight: 40,
-    paddingHorizontal: 14,
-  },
-  sectionHeader: {
+  sectionAction: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'space-between',
-    marginBottom: 10,
+    gap: 2,
   },
   sectionTitle: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 10,
     justifyContent: 'space-between',
     marginTop: 2,
+  },
+  emptyMarketRows: {
+    alignItems: 'center',
+    borderRadius: 12,
+    minHeight: 72,
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+  },
+  marketBoard: {
+    gap: 12,
+  },
+  marketRows: {
+    gap: 0,
+  },
+  marketSearchClose: {
+    alignItems: 'center',
+    borderRadius: 999,
+    borderWidth: 1,
+    height: 38,
+    justifyContent: 'center',
+    width: 38,
+  },
+  marketSearchExpanded: {
+    borderRadius: 999,
+    gap: 6,
+    height: 38,
+    minHeight: 38,
+    paddingHorizontal: 11,
+  },
+  marketSearchField: {
+    flex: 1,
+    minWidth: 0,
+  },
+  marketSearchInput: {
+    flex: 1,
+    fontSize: 12,
+    lineHeight: 16,
+    minWidth: 0,
+    padding: 0,
+  },
+  marketSearchShell: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    gap: 8,
+    minWidth: 0,
+  },
+  marketSearchTrigger: {
+    alignItems: 'center',
+    borderRadius: 999,
+    borderWidth: 1,
+    height: 38,
+    justifyContent: 'center',
+    width: 38,
+  },
+  marketTab: {
+    alignItems: 'center',
+    borderRadius: 999,
+    borderWidth: 1,
+    height: 38,
+    justifyContent: 'center',
+    paddingHorizontal: 13,
+  },
+  marketTabs: {
+    gap: 7,
+    paddingRight: 8,
+  },
+  marketTabsRail: {
+    flex: 1,
+    minWidth: 0,
+  },
+  marketToolbar: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 8,
   },
 });

@@ -1,0 +1,8 @@
+{
+  "instrumentId": "eur-usd",
+  "direction": "buy",
+  "type": "market",
+  "lots": 0.1,
+  "idempotencyKey": "demo-ord-001"
+}
+

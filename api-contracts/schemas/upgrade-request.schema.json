@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "upgrade-request.schema.json",
+  "title": "UpgradeRequest",
+  "type": "object",
+  "required": ["id", "applicantClientId", "applicantName", "status", "reason", "submittedAt"],
+  "properties": {
+    "id": { "type": "string" },
+    "applicantClientId": { "type": "string" },
+    "applicantName": { "type": "string" },
+    "superiorName": { "type": "string" },
+    "status": { "type": "string", "enum": ["none", "pending", "approved", "rejected"] },
+    "reason": { "type": "string" },
+    "submittedAt": { "type": "string" }
+  }
+}
+

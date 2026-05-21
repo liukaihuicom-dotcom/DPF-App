@@ -6,8 +6,14 @@ import { Metric } from '@/src/components/Metric';
 import { NativePressable } from '@/src/components/NativePressable';
 import { PhosphorIcon } from '@/src/components/PhosphorIcon';
 import { Screen } from '@/src/components/Screen';
+import { StatusPill, type StatusPillTone } from '@/src/components/StatusPill';
 import { AppText } from '@/src/components/Typography';
-import { buildTradingAccountProfiles, getAccountStatusLabel, type TradingAccountProfile, type TradingAccountStatus } from '@/src/domain/accountProfiles';
+import {
+  buildTradingAccountProfiles,
+  getAccountStatusLabel,
+  tradingAccountStatusGroups,
+  type TradingAccountProfile,
+} from '@/src/domain/accountProfiles';
 import { formatCompactMoney, formatMoney, formatVolumeMillions, localizeText, statusLabel } from '@/src/domain/format';
 import { commissions, partnerMetrics } from '@/src/domain/mockData';
 import { useProductSettings } from '@/src/settings/ProductSettings';
@@ -21,29 +27,37 @@ export default function AccountScreen() {
 
 function TraderAccountsScreen() {
   const { account, positions } = useBroker();
-  const { locale, palette, t } = useProductSettings();
-  const accounts = buildTradingAccountProfiles(account, positions);
+  const {
+    locale,
+    palette,
+    t,
+    tradingAccountCountPreset,
+    tradingAccountDataPreset,
+    tradingAccountScenario,
+    tradingAccountStatusPreset,
+  } = useProductSettings();
+  const accounts = buildTradingAccountProfiles(account, positions, tradingAccountScenario, {
+    countPreset: tradingAccountCountPreset,
+    dataPreset: tradingAccountDataPreset,
+    statusPreset: tradingAccountStatusPreset,
+  });
   const overview = buildAccountOverview(accounts, positions.length);
-  const groups: { id: TradingAccountStatus; title: string }[] = [
-    { id: 'active', title: 'Active' },
-    { id: 'readOnly', title: 'Read Only' },
-    { id: 'disabled', title: 'Disabled' },
-    { id: 'demo', title: 'Demo' },
-    { id: 'archived', title: 'Archived' },
-  ];
 
   return (
     <Screen
       rightActions={[{ icon: 'user-plus', label: locale === 'en-US' ? 'Add account' : '添加账户' }]}
       title={t('tabs.accounts')}>
       <AccountOverviewCard overview={overview} />
-      {groups.map((group) => {
-        const groupedAccounts = accounts.filter((item) => item.group === group.id);
+      {tradingAccountStatusGroups.map((group) => {
+        const groupedAccounts = accounts.filter((item) => item.group === group);
+        if (groupedAccounts.length === 0) {
+          return null;
+        }
 
         return (
-          <View key={group.id} style={styles.accountGroup}>
+          <View key={group} style={styles.accountGroup}>
             <AppText tone="muted" variant="caption">
-              {group.title} ({groupedAccounts.length})
+              {getAccountStatusLabel(group, locale)} ({groupedAccounts.length})
             </AppText>
             {groupedAccounts.map((profile) => (
               <AccountListCard key={profile.id} profile={profile} />
@@ -57,8 +71,8 @@ function TraderAccountsScreen() {
 
 function AccountListCard({ profile }: { profile: TradingAccountProfile }) {
   const { locale, palette } = useProductSettings();
-  const status = profile.group !== 'active' && profile.group !== 'demo' ? getAccountStatusLabel(profile.group, locale) : '';
-  const statusTone = profile.group === 'disabled' || profile.group === 'archived' ? palette.up : palette.amber;
+  const status = profile.group !== 'active' ? getAccountStatusLabel(profile.group, locale) : '';
+  const statusTone: StatusPillTone = profile.group === 'demo' ? 'brand' : profile.group === 'disabled' || profile.group === 'archived' ? 'danger' : 'warning';
 
   return (
     <NativePressable
@@ -74,13 +88,7 @@ function AccountListCard({ profile }: { profile: TradingAccountProfile }) {
           <View style={styles.accountTitleBlock}>
             <View style={styles.accountNumberRow}>
               <AppText variant="subtitle">{profile.accountNo}</AppText>
-              {status ? (
-                <View style={StyleSheet.flatten([styles.accountStatusBadge, { backgroundColor: `${statusTone}14`, borderColor: `${statusTone}55` }])}>
-                  <AppText style={{ color: statusTone }} variant="eyebrow">
-                    {status}
-                  </AppText>
-                </View>
-              ) : null}
+              {status ? <StatusPill compact label={status} tone={statusTone} /> : null}
             </View>
             <AppText numberOfLines={1} tone="muted" variant="caption">
               🇺🇸 {profile.currency} · {profile.platform} · {profile.type}
@@ -131,8 +139,8 @@ function AccountOverviewCard({ overview }: { overview: AccountOverview }) {
   const activityLabel = locale === 'en-US' ? 'Account activity' : '账号活跃';
   const activeCaption =
     locale === 'en-US'
-      ? `${overview.activeAccountCount}/${overview.totalAccountCount} active · ${overview.openPositionCount} positions`
-      : `${overview.activeAccountCount}/${overview.totalAccountCount} 活跃 · ${overview.openPositionCount} 持仓`;
+      ? `${overview.activeAccountCount}/${overview.totalAccountCount} tradable · ${overview.openPositionCount} positions`
+      : `${overview.activeAccountCount}/${overview.totalAccountCount} 可交易 · ${overview.openPositionCount} 持仓`;
 
   return (
     <Card>
@@ -144,13 +152,7 @@ function AccountOverviewCard({ overview }: { overview: AccountOverview }) {
           </AppText>
           <AppText tone="muted" variant="caption">{locale === 'en-US' ? 'Total equity' : '总净值'}</AppText>
         </View>
-        <View style={StyleSheet.flatten([styles.activityBadge, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}55` }])}>
-          <View style={StyleSheet.flatten([styles.activityDot, { backgroundColor: palette.brand }])} />
-          <View style={styles.activityText}>
-            <AppText variant="caption">{activityLabel}</AppText>
-            <AppText numberOfLines={1} tone="muted" variant="eyebrow">{activeCaption}</AppText>
-          </View>
-        </View>
+        <StatusPill label={`${activityLabel} · ${activeCaption}`} style={styles.activityPill} tone="brand" />
       </View>
 
       <View style={StyleSheet.flatten([styles.accountDivider, { backgroundColor: palette.lineSoft }])} />
@@ -230,7 +232,7 @@ function CommissionScreen() {
 }
 
 function buildAccountOverview(accounts: TradingAccountProfile[], openPositionCount: number): AccountOverview {
-  const activeAccounts = accounts.filter((profile) => profile.group === 'active');
+  const activeAccounts = accounts.filter((profile) => profile.group === 'active' || profile.group === 'demo');
 
   return {
     activeAccountCount: activeAccounts.length,
@@ -277,12 +279,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 6,
   },
-  accountStatusBadge: {
-    borderRadius: 4,
-    borderWidth: 1,
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-  },
   accountTitleBlock: {
     flex: 1,
     minWidth: 0,
@@ -295,24 +291,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
-  activityBadge: {
-    alignItems: 'center',
-    borderRadius: 10,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 7,
-    maxWidth: 154,
-    paddingHorizontal: 9,
-    paddingVertical: 8,
-  },
-  activityDot: {
-    borderRadius: 999,
-    height: 7,
-    width: 7,
-  },
-  activityText: {
-    flex: 1,
-    minWidth: 0,
+  activityPill: {
+    alignSelf: 'flex-start',
+    maxWidth: '100%',
   },
   metricRow: {
     flexDirection: 'row',
@@ -320,17 +301,14 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   overviewGrid: {
+    columnGap: 12,
     flexDirection: 'row',
-    gap: 12,
+    rowGap: 10,
   },
   overviewHeader: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'space-between',
+    gap: 10,
   },
   overviewTitleBlock: {
-    flex: 1,
     gap: 2,
     minWidth: 0,
   },

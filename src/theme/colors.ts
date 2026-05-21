@@ -90,4 +90,11 @@ export const shadows = {
     shadowRadius: 12,
     elevation: 2,
   },
+  toast: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.14,
+    shadowRadius: 24,
+    elevation: 12,
+  },
 };

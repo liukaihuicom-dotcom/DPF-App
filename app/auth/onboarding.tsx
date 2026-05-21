@@ -6,11 +6,13 @@ import { AuthLink, AuthShell } from '@/src/components/AuthShell';
 import { NativePressable } from '@/src/components/NativePressable';
 import { PhosphorIcon, type PhosphorIconName } from '@/src/components/PhosphorIcon';
 import { AppText } from '@/src/components/Typography';
+import { dupoinOnboardingSteps } from '@/src/domain/dupoinMvp';
+import { localizeText } from '@/src/domain/format';
 import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 export default function OnboardingScreen() {
-  const { palette, t } = useProductSettings();
+  const { locale, palette, t } = useProductSettings();
   const steps = [
     ['user-plus', t('onboarding.step.account'), t('onboarding.step.accountHint')],
     ['shield-check', t('onboarding.step.risk'), t('onboarding.step.riskHint')],
@@ -62,6 +64,40 @@ export default function OnboardingScreen() {
         </View>
       </View>
 
+      <View style={StyleSheet.flatten([styles.activationPanel, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+        <View style={styles.activationHeader}>
+          <View style={styles.flex}>
+            <AppText variant="subtitle">{locale === 'en-US' ? 'First-week activation' : '首周激活路径'}</AppText>
+            <AppText tone="muted" variant="caption">
+              {locale === 'en-US' ? 'A guided path from demo account to first order.' : '从模拟账户到首笔订单的引导路径。'}
+            </AppText>
+          </View>
+          <ActionButton
+            label={locale === 'en-US' ? 'Start' : '开始'}
+            onPress={() => router.push('/auth/register')}
+            style={styles.smallButton}
+            tone="brand"
+          />
+        </View>
+        <View style={styles.activationSteps}>
+          {dupoinOnboardingSteps.map((step, index) => (
+            <View key={step.id} style={styles.activationStepRow}>
+              <View style={StyleSheet.flatten([styles.activationStepMark, { backgroundColor: index < 2 ? palette.down : palette.brand }])}>
+                <AppText style={{ color: palette.white }} variant="eyebrow">
+                  {index + 1}
+                </AppText>
+              </View>
+              <View style={styles.flex}>
+                <AppText variant="body">{localizeText(step.label, locale)}</AppText>
+                <AppText tone={index < 2 ? 'down' : 'brand'} variant="caption">
+                  {localizeText(step.state, locale)}
+                </AppText>
+              </View>
+            </View>
+          ))}
+        </View>
+      </View>
+
       <View style={styles.choiceGrid}>
         {quickChoices.map(([icon, title, hint]) => (
           <NativePressable
@@ -99,6 +135,33 @@ export default function OnboardingScreen() {
 }
 
 const styles = StyleSheet.create({
+  activationHeader: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'space-between',
+  },
+  activationPanel: {
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 14,
+    padding: 14,
+  },
+  activationStepMark: {
+    alignItems: 'center',
+    borderRadius: 999,
+    height: 26,
+    justifyContent: 'center',
+    width: 26,
+  },
+  activationStepRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+  },
+  activationSteps: {
+    gap: 11,
+  },
   centerLink: {
     alignItems: 'center',
   },
@@ -156,6 +219,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     padding: 12,
+  },
+  smallButton: {
+    minHeight: 36,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
   },
   stepIndex: {
     alignItems: 'center',

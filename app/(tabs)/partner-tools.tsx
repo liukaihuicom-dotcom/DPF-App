@@ -1,28 +1,27 @@
-import { router, type Href } from 'expo-router';
+import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { Card } from '@/src/components/Card';
 import { NativePressable } from '@/src/components/NativePressable';
 import { PhosphorIcon, type PhosphorIconName } from '@/src/components/PhosphorIcon';
 import { Screen } from '@/src/components/Screen';
+import { StatusPill } from '@/src/components/StatusPill';
 import { AppText } from '@/src/components/Typography';
 import type { DiscoverModuleId } from '@/src/domain/types';
-import { useToast } from '@/src/feedback/Toast';
 import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 export default function PartnerToolsScreen() {
   const { palette, role, selectedDiscoverModuleId, setSelectedDiscoverModule, t } = useProductSettings();
-  const toast = useToast();
   const tiles: DiscoverTile[] = [
     { color: palette.amber, group: 'growth', icon: 'trophy', id: 'challenge' },
     { color: palette.brand, group: 'growth', icon: 'graduation-cap', id: 'education' },
     { color: palette.textMuted, group: 'growth', icon: 'chats-circle', id: 'community' },
-    { color: palette.text, group: 'account', href: '/accounts', icon: 'user-circle', id: 'profile' },
-    { color: palette.down, group: 'account', href: '/auth/onboarding', icon: 'identification-card', id: 'onboarding' },
-    { color: palette.brand, group: 'account', href: role === 'partner' ? '/trade' : '/accounts', icon: 'share-network', id: 'partner' },
-    { color: palette.up, group: 'trading', href: '/markets', icon: 'chart-line-up', id: 'markets' },
-    { color: palette.blue, group: 'trading', href: '/accounts', icon: 'user', id: 'accounts' },
+    { color: palette.text, group: 'account', icon: 'user-circle', id: 'profile' },
+    { color: palette.down, group: 'account', icon: 'identification-card', id: 'onboarding' },
+    { color: palette.brand, group: 'account', icon: 'share-network', id: 'partner' },
+    { color: palette.up, group: 'trading', icon: 'chart-line-up', id: 'markets' },
+    { color: palette.blue, group: 'trading', icon: 'user', id: 'accounts' },
     { color: palette.textMuted, group: 'service', icon: 'headphones', id: 'support' },
     { color: palette.amber, group: 'service', icon: 'gift', id: 'rewards' },
   ];
@@ -41,11 +40,7 @@ export default function PartnerToolsScreen() {
               {t('discover.menuHint')}
             </AppText>
           </View>
-          <View style={StyleSheet.flatten([styles.statusBadge, { backgroundColor: `${palette.brand}12`, borderColor: palette.brand }])}>
-            <AppText tone="brand" variant="caption">
-              {t(`discover.module.${selectedDiscoverModuleId}.short`)}
-            </AppText>
-          </View>
+          <StatusPill compact label={t(`discover.module.${selectedDiscoverModuleId}.short`)} tone="brand" />
         </View>
       </Card>
 
@@ -60,12 +55,7 @@ export default function PartnerToolsScreen() {
               {t('discover.selected')}
             </AppText>
           </View>
-          <View style={StyleSheet.flatten([styles.statusPreview, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}66` }])}>
-            <PhosphorIcon color={palette.brand} name={selectedTile.icon} size={16} />
-            <AppText tone="brand" variant="caption">
-              {t(`discover.module.${selectedDiscoverModuleId}.short`)}
-            </AppText>
-          </View>
+          <StatusPill icon={selectedTile.icon} label={t(`discover.module.${selectedDiscoverModuleId}.short`)} tone="brand" />
         </View>
       </Card>
 
@@ -92,12 +82,7 @@ export default function PartnerToolsScreen() {
                   onPress={() => {
                     setSelectedDiscoverModule(tile.id);
                     void impactLight();
-
-                    if (tile.href) {
-                      router.push(tile.href);
-                    } else {
-                      toast.show({ message: t('discover.module.pendingHint'), title: t(`discover.module.${tile.id}.title`) });
-                    }
+                    router.replace('/quick' as never);
                   }}
                   selected={selectedDiscoverModuleId === tile.id}
                   tile={tile}
@@ -115,7 +100,6 @@ type DiscoverTileGroup = 'growth' | 'account' | 'trading' | 'service';
 type DiscoverTile = {
   color: string;
   group: DiscoverTileGroup;
-  href?: Href;
   icon: PhosphorIconName;
   id: DiscoverModuleId;
 };
@@ -209,21 +193,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     justifyContent: 'space-between',
-  },
-  statusPreview: {
-    alignItems: 'center',
-    borderRadius: 10,
-    borderWidth: 1,
-    gap: 5,
-    minWidth: 72,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  statusBadge: {
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
   },
   menuHero: {
     alignItems: 'center',
