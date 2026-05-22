@@ -6,6 +6,7 @@
 | display.lg | 22 | 500 | Primary page title |
 | title.md | 16 | 600 | Section title and card headline |
 | title.sm | 16 | 500 | Secondary section title |
+| sheet.title | 20 | 600 | Global bottom sheet title bar |
 | body.md | 16 | 400 | Main body text |
 | body.sm | 14 | 400 | Dense market rows and card body |
 | caption | 14 | 500 | Labels and helper copy |
@@ -17,4 +18,3 @@
 
 - Letter spacing should be 0 unless a token explicitly defines a label treatment.
 - Button and tab text must use fixed containers and `adjustsFontSizeToFit` where labels may localize longer.
-

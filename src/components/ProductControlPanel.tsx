@@ -13,16 +13,26 @@ import {
   type TradingAccountStatusPreset,
 } from '@/src/domain/accountProfiles';
 import { formatNumber } from '@/src/domain/format';
-import type { AuthStatus, DiscoverModuleId, Role, TradingAccountUsageOverride, TradingAccountUsageStatus, UpgradeStatus } from '@/src/domain/types';
+import type {
+  AuthStatus,
+  DiscoverModuleId,
+  Role,
+  TradeWorkspaceDataPreset,
+  TradingAccountUsageOverride,
+  TradingAccountUsageStatus,
+  UpgradeStatus,
+} from '@/src/domain/types';
 import { localeOptions, type TranslationKey } from '@/src/i18n/translations';
 import { useToast } from '@/src/feedback/Toast';
 import { impactLight, notifySuccess, notifyWarning } from '@/src/feedback/haptics';
-import { useProductSettings } from '@/src/settings/ProductSettings';
+import { tradeWorkspaceDataPresets, useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
 import { themePalettes, type ThemeMode } from '@/src/theme/colors';
+import { typography } from '@/src/theme/tokens';
 
 import { NativePressable } from './NativePressable';
-import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
+import { AppIcon, type AppIconName } from './AppIcon';
+import { HeaderIconButton, HeaderIconSlot } from './HeaderIconButton';
 import { AppText } from './Typography';
 
 type ConsoleScreen =
@@ -38,7 +48,7 @@ type PageConsoleGroup = 'markets' | 'trading' | 'accounts' | 'growth' | 'auth';
 type PageConsoleEntry = {
   gapKey: TranslationKey;
   group: PageConsoleGroup;
-  icon: PhosphorIconName;
+  icon: AppIconName;
   interactionsKey: TranslationKey;
   moduleKey: TranslationKey;
   rolesKey: TranslationKey;
@@ -50,7 +60,7 @@ type PageConsoleEntry = {
   tone: 'amber' | 'blue' | 'brand' | 'cyan' | 'danger' | 'down' | 'up';
 };
 
-const themeModes = Object.keys(themePalettes) as ThemeMode[];
+const themeModes = ['system', ...Object.keys(themePalettes)] as ThemeMode[];
 const authStatuses: AuthStatus[] = ['guest', 'signedIn'];
 const roles: Role[] = ['trader', 'partner'];
 const tradingAccountScenarios: TradingAccountScenario[] = ['default', 'stateAnalysis'];
@@ -81,12 +91,16 @@ const tradingAccountStatusPresetLabels: Record<TradingAccountStatusPreset, Trans
   readOnly: 'control.tradingAccount.statusPreset.readOnly',
   scenario: 'control.tradingAccount.statusPreset.scenario',
 };
+const tradeWorkspaceDataPresetLabels: Record<TradeWorkspaceDataPreset, TranslationKey> = {
+  empty: 'control.tradeWorkspace.dataPreset.empty',
+  sample: 'control.tradeWorkspace.dataPreset.sample',
+};
 const webSelectStyle = {
   appearance: 'none',
   background: 'transparent',
   border: 0,
   fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-  fontSize: 13,
+  fontSize: typography.captionSm.fontSize,
   height: '100%',
   outline: 'none',
   width: '100%',
@@ -99,10 +113,14 @@ export function ProductControlPanel() {
     authStatus,
     locale,
     palette,
+    pendingOrderDataPreset,
+    positionDataPreset,
     role,
     selectedDiscoverModuleId,
     setAuthStatus,
     setLocale,
+    setPendingOrderDataPreset,
+    setPositionDataPreset,
     setRole,
     setSelectedDiscoverModule,
     setThemeMode,
@@ -198,14 +216,14 @@ export function ProductControlPanel() {
                   </View>
                   <View style={styles.formGrid}>
                     <ControlSelect
-                      icon="sliders-horizontal"
+                      icon="settingsSliders"
                       label={t('control.theme')}
                       onChange={(value) => setThemeMode(value as ThemeMode)}
                       options={themeModes.map((item) => ({ label: t(`theme.${item}`), value: item }))}
                       value={themeMode}
                     />
                     <ControlSelect
-                      icon="globe"
+                      icon="globalMarket"
                       label={t('control.language')}
                       onChange={(value) => setLocale(value as typeof locale)}
                       options={localeOptions.map((item) => ({ label: item.label, value: item.value }))}
@@ -225,7 +243,7 @@ export function ProductControlPanel() {
                 <View style={styles.menuList}>
                   <MenuRow
                     description={t('control.pageConsole.menu.pagesBody')}
-                    icon="list-checks"
+                    icon="taskChecklist"
                     meta={t('control.pageConsole.menu.pagesMeta')}
                     onPress={() => setScreen({ name: 'pages' })}
                     title={t('control.pageConsole.menu.pages')}
@@ -233,7 +251,7 @@ export function ProductControlPanel() {
                   />
                   <MenuRow
                     description={t('control.pageConsole.menu.stateBody')}
-                    icon="sliders-horizontal"
+                    icon="settingsSliders"
                     meta={`${authLabel} / ${roleLabel}`}
                     onPress={() => setScreen({ name: 'state' })}
                     title={t('control.pageConsole.menu.state')}
@@ -241,7 +259,7 @@ export function ProductControlPanel() {
                   />
                   <MenuRow
                     description={t('control.pageConsole.menu.partnerBody')}
-                    icon="share-network"
+                    icon="partnerNetwork"
                     meta={t(`upgrade.status.${upgradeRequest.status}`)}
                     onPress={() => setScreen({ name: 'partner' })}
                     title={t('control.pageConsole.menu.partner')}
@@ -249,7 +267,7 @@ export function ProductControlPanel() {
                   />
                   <MenuRow
                     description={t('control.tradingAccount.managementHint')}
-                    icon="shield-check"
+                    icon="riskShield"
                     meta={formatNumber(tradingAccounts.length, 0, locale)}
                     onPress={() => setScreen({ name: 'runtime' })}
                     title={t('control.tradingAccount.management')}
@@ -288,56 +306,70 @@ export function ProductControlPanel() {
                 </View>
                 <View style={styles.formGrid}>
                   <ControlSelect
-                    icon="user"
+                    icon="userProfile"
                     label={t('control.accountStatus')}
                     onChange={(value) => setAuthStatus(value as AuthStatus)}
                     options={authStatuses.map((item) => ({ label: t(`auth.status.${item}`), value: item }))}
                     value={authStatus}
                   />
                   <ControlSelect
-                    icon="share-network"
+                    icon="partnerNetwork"
                     label={t('control.pageConsole.rolePreset')}
                     onChange={(value) => setRole(value as Role)}
                     options={roles.map((item) => ({ label: item === 'partner' ? t('role.partner') : t('role.trader'), value: item }))}
                     value={role}
                   />
                   <ControlSelect
-                    icon="bank"
+                    icon="accountBank"
                     label={t('control.tradingScenario')}
                     onChange={(value) => setTradingAccountScenario(value as TradingAccountScenario)}
                     options={tradingAccountScenarios.map((item) => ({ label: t(`control.tradingScenario.${item}`), value: item }))}
                     value={tradingAccountScenario}
                   />
                   <ControlSelect
-                    icon="bank"
+                    icon="accountBank"
                     label={t('control.tradingAccount.statusPreset')}
                     onChange={(value) => setTradingAccountStatusPreset(value as TradingAccountStatusPreset)}
                     options={tradingAccountStatusPresets.map((item) => ({ label: t(tradingAccountStatusPresetLabels[item]), value: item }))}
                     value={tradingAccountStatusPreset}
                   />
                   <ControlSelect
-                    icon="list-checks"
+                    icon="taskChecklist"
                     label={t('control.tradingAccount.countPreset')}
                     onChange={(value) => setTradingAccountCountPreset(value as TradingAccountCountPreset)}
                     options={tradingAccountCountPresets.map((item) => ({ label: t(tradingAccountCountPresetLabels[item]), value: item }))}
                     value={tradingAccountCountPreset}
                   />
                   <ControlSelect
-                    icon="chart-line-up"
+                    icon="marketTrend"
                     label={t('control.tradingAccount.dataPreset')}
                     onChange={(value) => setTradingAccountDataPreset(value as TradingAccountDataPreset)}
                     options={tradingAccountDataPresets.map((item) => ({ label: t(tradingAccountDataPresetLabels[item]), value: item }))}
                     value={tradingAccountDataPreset}
                   />
                   <ControlSelect
-                    icon="shield-check"
+                    icon="riskShield"
                     label={t('control.tradingUsage.selectLabel')}
                     onChange={(value) => setTradingAccountUsageOverride(value as TradingAccountUsageOverride)}
                     options={tradingAccountUsageOverrides.map((item) => ({ label: t(`control.tradingUsage.override.${item}`), value: item }))}
                     value={tradingAccountUsageOverride}
                   />
                   <ControlSelect
-                    icon="compass"
+                    icon="marketTrend"
+                    label={t('control.tradeWorkspace.positionsPreset')}
+                    onChange={(value) => setPositionDataPreset(value as TradeWorkspaceDataPreset)}
+                    options={tradeWorkspaceDataPresets.map((item) => ({ label: t(tradeWorkspaceDataPresetLabels[item]), value: item }))}
+                    value={positionDataPreset}
+                  />
+                  <ControlSelect
+                    icon="promoTicket"
+                    label={t('control.tradeWorkspace.pendingPreset')}
+                    onChange={(value) => setPendingOrderDataPreset(value as TradeWorkspaceDataPreset)}
+                    options={tradeWorkspaceDataPresets.map((item) => ({ label: t(tradeWorkspaceDataPresetLabels[item]), value: item }))}
+                    value={pendingOrderDataPreset}
+                  />
+                  <ControlSelect
+                    icon="discoverCompass"
                     label={t('control.pageConsole.discoverModule')}
                     onChange={(value) => setSelectedDiscoverModule(value as DiscoverModuleId)}
                     options={discoverModuleIds.map((item) => ({ label: t(`discover.module.${item}.short`), value: item }))}
@@ -389,32 +421,46 @@ export function ProductControlPanel() {
                 </View>
                 <View style={styles.formGrid}>
                   <ControlSelect
-                    icon="bank"
+                    icon="accountBank"
                     label={t('control.tradingAccount.statusPreset')}
                     onChange={(value) => setTradingAccountStatusPreset(value as TradingAccountStatusPreset)}
                     options={tradingAccountStatusPresets.map((item) => ({ label: t(tradingAccountStatusPresetLabels[item]), value: item }))}
                     value={tradingAccountStatusPreset}
                   />
                   <ControlSelect
-                    icon="list-checks"
+                    icon="taskChecklist"
                     label={t('control.tradingAccount.countPreset')}
                     onChange={(value) => setTradingAccountCountPreset(value as TradingAccountCountPreset)}
                     options={tradingAccountCountPresets.map((item) => ({ label: t(tradingAccountCountPresetLabels[item]), value: item }))}
                     value={tradingAccountCountPreset}
                   />
                   <ControlSelect
-                    icon="chart-line-up"
+                    icon="marketTrend"
                     label={t('control.tradingAccount.dataPreset')}
                     onChange={(value) => setTradingAccountDataPreset(value as TradingAccountDataPreset)}
                     options={tradingAccountDataPresets.map((item) => ({ label: t(tradingAccountDataPresetLabels[item]), value: item }))}
                     value={tradingAccountDataPreset}
                   />
                   <ControlSelect
-                    icon="shield-check"
+                    icon="riskShield"
                     label={t('control.tradingUsage.selectLabel')}
                     onChange={(value) => setTradingAccountUsageOverride(value as TradingAccountUsageOverride)}
                     options={tradingAccountUsageOverrides.map((item) => ({ label: t(`control.tradingUsage.override.${item}`), value: item }))}
                     value={tradingAccountUsageOverride}
+                  />
+                  <ControlSelect
+                    icon="marketTrend"
+                    label={t('control.tradeWorkspace.positionsPreset')}
+                    onChange={(value) => setPositionDataPreset(value as TradeWorkspaceDataPreset)}
+                    options={tradeWorkspaceDataPresets.map((item) => ({ label: t(tradeWorkspaceDataPresetLabels[item]), value: item }))}
+                    value={positionDataPreset}
+                  />
+                  <ControlSelect
+                    icon="promoTicket"
+                    label={t('control.tradeWorkspace.pendingPreset')}
+                    onChange={(value) => setPendingOrderDataPreset(value as TradeWorkspaceDataPreset)}
+                    options={tradeWorkspaceDataPresets.map((item) => ({ label: t(tradeWorkspaceDataPresetLabels[item]), value: item }))}
+                    value={pendingOrderDataPreset}
                   />
                 </View>
                 <View style={styles.summaryGrid}>
@@ -427,6 +473,8 @@ export function ProductControlPanel() {
                   <ConsoleMetric label={t('control.tradingUsage.selectLabel')} value={t(`control.tradingUsage.status.${effectiveTradingStatus}`)} />
                   <ConsoleMetric label={t('control.tradingAccount.statusPreset')} value={t(tradingAccountStatusPresetLabels[tradingAccountStatusPreset])} />
                   <ConsoleMetric label={t('control.tradingAccount.dataPreset')} value={t(tradingAccountDataPresetLabels[tradingAccountDataPreset])} />
+                  <ConsoleMetric label={t('control.tradeWorkspace.positionsPreset')} value={t(tradeWorkspaceDataPresetLabels[positionDataPreset])} />
+                  <ConsoleMetric label={t('control.tradeWorkspace.pendingPreset')} value={t(tradeWorkspaceDataPresetLabels[pendingOrderDataPreset])} />
                 </View>
               </View>
             ) : null}
@@ -440,7 +488,7 @@ export function ProductControlPanel() {
         minTouch={48}
         onPress={() => setOpen((value) => !value)}
         style={StyleSheet.flatten([styles.fab, { backgroundColor: palette.panelHigh, borderColor: palette.brand }])}>
-        <PhosphorIcon color={palette.brand} name="sliders-horizontal" size={20} />
+        <AppIcon color={palette.brand} name="settingsSliders" size={20} />
       </NativePressable>
     </View>
   );
@@ -476,10 +524,10 @@ function PanelHeader({
   return (
     <View style={StyleSheet.flatten([styles.panelTop, { borderBottomColor: palette.lineSoft }])}>
       {screen.name !== 'home' ? (
-        <NativePressable accessibilityLabel={t('top.back')} accessibilityRole="button" minTouch={36} onPress={onBack} style={styles.headerIconButton}>
-          <PhosphorIcon color={palette.textMuted} name="caret-left" size={16} />
-        </NativePressable>
-      ) : null}
+        <HeaderIconButton accessibilityLabel={t('top.back')} icon="navigateBack" onPress={onBack} variant="ghost" />
+      ) : (
+        <HeaderIconSlot />
+      )}
       <View style={styles.titleBlock}>
         <AppText tone="dim" variant="eyebrow">
           {t('control.pageConsole.eyebrow')}
@@ -488,9 +536,7 @@ function PanelHeader({
           {title}
         </AppText>
       </View>
-      <NativePressable accessibilityLabel={t('common.cancel')} accessibilityRole="button" minTouch={36} onPress={onClose} style={styles.headerIconButton}>
-        <PhosphorIcon color={palette.textMuted} name="x" size={16} />
-      </NativePressable>
+      <HeaderIconButton accessibilityLabel={t('common.cancel')} icon="closeX" onPress={onClose} variant="ghost" />
     </View>
   );
 }
@@ -500,12 +546,12 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.home.gap',
       group: 'markets',
-      icon: 'chart-line-up',
+      icon: 'marketTrend',
       interactionsKey: 'control.pageConsole.page.home.interactions',
       moduleKey: 'control.pageConsole.module.markets',
       rolesKey: 'control.pageConsole.roles.traderPartner',
-      route: '/',
-      routeLabel: '/',
+      route: '/markets',
+      routeLabel: '/markets',
       scenarioKey: 'control.pageConsole.page.home.scenario',
       stateKeys: ['control.pageConsole.state.default', 'control.pageConsole.state.quote', 'control.pageConsole.state.failed'],
       titleKey: 'control.pageConsole.page.home.title',
@@ -514,7 +560,7 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.instrument.gap',
       group: 'markets',
-      icon: 'ticket',
+      icon: 'promoTicket',
       interactionsKey: 'control.pageConsole.page.instrument.interactions',
       moduleKey: 'control.pageConsole.module.markets',
       rolesKey: 'control.pageConsole.roles.traderPartner',
@@ -528,7 +574,7 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.trade.gap',
       group: 'trading',
-      icon: 'list-checks',
+      icon: 'taskChecklist',
       interactionsKey: 'control.pageConsole.page.trade.interactions',
       moduleKey: 'control.pageConsole.module.trading',
       rolesKey: 'control.pageConsole.roles.traderPartner',
@@ -542,7 +588,7 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.order.gap',
       group: 'trading',
-      icon: 'arrows-left-right',
+      icon: 'transferSwitch',
       interactionsKey: 'control.pageConsole.page.order.interactions',
       moduleKey: 'control.pageConsole.module.trading',
       rolesKey: 'control.pageConsole.roles.trader',
@@ -556,7 +602,7 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.accounts.gap',
       group: 'accounts',
-      icon: 'bank',
+      icon: 'accountBank',
       interactionsKey: 'control.pageConsole.page.accounts.interactions',
       moduleKey: 'control.pageConsole.module.accounts',
       rolesKey: 'control.pageConsole.roles.traderPartner',
@@ -570,7 +616,7 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.accountDetails.gap',
       group: 'accounts',
-      icon: 'user-circle',
+      icon: 'userAvatar',
       interactionsKey: 'control.pageConsole.page.accountDetails.interactions',
       moduleKey: 'control.pageConsole.module.accounts',
       rolesKey: 'control.pageConsole.roles.trader',
@@ -584,11 +630,11 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.discover.gap',
       group: 'growth',
-      icon: 'compass',
+      icon: 'discoverCompass',
       interactionsKey: 'control.pageConsole.page.discover.interactions',
       moduleKey: 'control.pageConsole.module.discover',
       rolesKey: 'control.pageConsole.roles.traderPartner',
-      route: '/discover',
+      route: '/discover' as Href,
       routeLabel: '/discover',
       scenarioKey: 'control.pageConsole.page.discover.scenario',
       stateKeys: ['control.pageConsole.state.default', 'control.pageConsole.state.selected', 'control.pageConsole.state.placeholder'],
@@ -598,7 +644,7 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.partnerTools.gap',
       group: 'growth',
-      icon: 'share-network',
+      icon: 'partnerNetwork',
       interactionsKey: 'control.pageConsole.page.partnerTools.interactions',
       moduleKey: 'control.pageConsole.module.partner',
       rolesKey: 'control.pageConsole.roles.partner',
@@ -612,7 +658,7 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.clientProfile.gap',
       group: 'growth',
-      icon: 'identification-card',
+      icon: 'identityCard',
       interactionsKey: 'control.pageConsole.page.clientProfile.interactions',
       moduleKey: 'control.pageConsole.module.partner',
       rolesKey: 'control.pageConsole.roles.partner',
@@ -624,9 +670,23 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
       tone: 'amber',
     },
     {
+      gapKey: 'control.pageConsole.page.launch.gap',
+      group: 'auth',
+      icon: 'globalMarket',
+      interactionsKey: 'control.pageConsole.page.launch.interactions',
+      moduleKey: 'control.pageConsole.module.auth',
+      rolesKey: 'control.pageConsole.roles.guest',
+      route: '/launch',
+      routeLabel: '/launch',
+      scenarioKey: 'control.pageConsole.page.launch.scenario',
+      stateKeys: ['control.pageConsole.state.default', 'control.pageConsole.state.permission', 'control.pageConsole.state.placeholder'],
+      titleKey: 'control.pageConsole.page.launch.title',
+      tone: 'brand',
+    },
+    {
       gapKey: 'control.pageConsole.page.onboarding.gap',
       group: 'auth',
-      icon: 'globe',
+      icon: 'globalMarket',
       interactionsKey: 'control.pageConsole.page.onboarding.interactions',
       moduleKey: 'control.pageConsole.module.auth',
       rolesKey: 'control.pageConsole.roles.guest',
@@ -640,7 +700,7 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.login.gap',
       group: 'auth',
-      icon: 'lock',
+      icon: 'secureLock',
       interactionsKey: 'control.pageConsole.page.login.interactions',
       moduleKey: 'control.pageConsole.module.auth',
       rolesKey: 'control.pageConsole.roles.guest',
@@ -654,7 +714,7 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.register.gap',
       group: 'auth',
-      icon: 'user-plus',
+      icon: 'addUser',
       interactionsKey: 'control.pageConsole.page.register.interactions',
       moduleKey: 'control.pageConsole.module.auth',
       rolesKey: 'control.pageConsole.roles.guest',
@@ -668,7 +728,7 @@ function buildPageEntries(anchorId: string): PageConsoleEntry[] {
     {
       gapKey: 'control.pageConsole.page.forgot.gap',
       group: 'auth',
-      icon: 'envelope-open',
+      icon: 'emailMessage',
       interactionsKey: 'control.pageConsole.page.forgot.interactions',
       moduleKey: 'control.pageConsole.module.auth',
       rolesKey: 'control.pageConsole.roles.guest',
@@ -711,7 +771,7 @@ function PageDetail({ entry, onClose }: { entry: PageConsoleEntry; onClose: () =
     <View style={styles.detailStack}>
       <View style={StyleSheet.flatten([styles.routePanel, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
         <View style={StyleSheet.flatten([styles.pageIcon, { backgroundColor: `${toneColor}14`, borderColor: `${toneColor}55` }])}>
-          <PhosphorIcon color={toneColor} name={entry.icon} size={16} />
+          <AppIcon color={toneColor} name={entry.icon} size={16} />
         </View>
         <View style={styles.titleBlock}>
           <AppText tone="dim" variant="eyebrow">
@@ -747,7 +807,7 @@ function PageDetail({ entry, onClose }: { entry: PageConsoleEntry; onClose: () =
         <AppText numberOfLines={1} style={{ color: palette.panel }} variant="caption">
           {t('control.pageConsole.openPage')}
         </AppText>
-        <PhosphorIcon color={palette.panel} name="caret-right" size={14} />
+        <AppIcon color={palette.panel} name="navigateNext" size={14} />
       </NativePressable>
     </View>
   );
@@ -762,7 +822,7 @@ function MenuRow({
   tone,
 }: {
   description: string;
-  icon: PhosphorIconName;
+  icon: AppIconName;
   meta?: string;
   onPress: () => void;
   title: string;
@@ -777,7 +837,7 @@ function MenuRow({
       onPress={onPress}
       style={StyleSheet.flatten([styles.menuRow, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
       <View style={StyleSheet.flatten([styles.menuIcon, { backgroundColor: `${tone}12`, borderColor: `${tone}55` }])}>
-        <PhosphorIcon color={tone} name={icon} size={16} />
+        <AppIcon color={tone} name={icon} size={16} />
       </View>
       <View style={styles.menuText}>
         <View style={styles.menuTitleRow}>
@@ -794,7 +854,7 @@ function MenuRow({
           {description}
         </AppText>
       </View>
-      <PhosphorIcon color={palette.textDim} name="caret-right" size={15} />
+      <AppIcon color={palette.textDim} name="navigateNext" size={15} />
     </NativePressable>
   );
 }
@@ -873,7 +933,7 @@ function ControlSelect({
   options,
   value,
 }: {
-  icon: PhosphorIconName;
+  icon: AppIconName;
   label: string;
   onChange: (value: string) => void;
   options: { label: string; value: string }[];
@@ -888,8 +948,8 @@ function ControlSelect({
         {label}
       </AppText>
       <View style={StyleSheet.flatten([styles.selectShell, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-        <View style={StyleSheet.flatten([styles.selectIcon, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-          <PhosphorIcon color={palette.brand} name={icon} size={13} />
+        <View style={StyleSheet.flatten([styles.selectIcon, { backgroundColor: palette.panelSoft }])}>
+          <AppIcon color={palette.brand} name={icon} size={13} />
         </View>
         <View style={styles.selectValue}>
           {Platform.OS === 'web' ? (
@@ -910,7 +970,7 @@ function ControlSelect({
             </AppText>
           )}
         </View>
-        <PhosphorIcon color={palette.textDim} name="caret-down" size={15} />
+        <AppIcon color={palette.textDim} name="expandDown" size={15} />
       </View>
     </View>
   );
@@ -949,12 +1009,6 @@ const styles = StyleSheet.create({
   },
   groupBlock: {
     gap: 8,
-  },
-  headerIconButton: {
-    alignItems: 'center',
-    height: 32,
-    justifyContent: 'center',
-    width: 32,
   },
   host: {
     alignItems: 'flex-end',
@@ -1071,7 +1125,6 @@ const styles = StyleSheet.create({
   selectIcon: {
     alignItems: 'center',
     borderRadius: 8,
-    borderWidth: 1,
     height: 28,
     justifyContent: 'center',
     width: 28,

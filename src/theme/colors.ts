@@ -1,4 +1,5 @@
-export type ThemeMode = 'darkTerminal' | 'lightBroker' | 'midnightBlue';
+export type ResolvedThemeMode = 'darkTerminal' | 'lightBroker' | 'midnightBlue';
+export type ThemeMode = 'system' | ResolvedThemeMode;
 
 export type ThemePalette = {
   bg: string;
@@ -17,10 +18,11 @@ export type ThemePalette = {
   blue: string;
   cyan: string;
   danger: string;
+  launch: string;
   white: string;
 };
 
-export const themePalettes: Record<ThemeMode, ThemePalette> = {
+export const themePalettes: Record<ResolvedThemeMode, ThemePalette> = {
   darkTerminal: {
     amber: '#F4B000',
     bg: '#0A0B0D',
@@ -29,6 +31,7 @@ export const themePalettes: Record<ThemeMode, ThemePalette> = {
     cyan: '#2EB5C4',
     danger: '#FF667A',
     down: '#05B169',
+    launch: '#9CE56D',
     line: '#2A2E35',
     lineSoft: '#1E2228',
     panel: '#111318',
@@ -48,6 +51,7 @@ export const themePalettes: Record<ThemeMode, ThemePalette> = {
     cyan: '#2EB5C4',
     danger: '#CF202F',
     down: '#05A66B',
+    launch: '#9CE56D',
     line: '#DEE1E6',
     lineSoft: '#EEF0F3',
     panel: '#FFFFFF',
@@ -67,6 +71,7 @@ export const themePalettes: Record<ThemeMode, ThemePalette> = {
     cyan: '#2EB5C4',
     danger: '#FF6C8A',
     down: '#05B169',
+    launch: '#9CE56D',
     line: '#24304A',
     lineSoft: '#19243A',
     panel: '#0E1626',

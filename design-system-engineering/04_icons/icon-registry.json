@@ -1,0 +1,1306 @@
+{
+  "version": "1.0.0",
+  "source": "hugeicons-free-stroke-rounded",
+  "style": {
+    "provider": "hugeicons-free-stroke-rounded",
+    "targetProvider": "hugeicons-pro-duotone-rounded",
+    "grid": "24x24",
+    "strokeWidth": 1.75,
+    "strokeLinecap": "round",
+    "strokeLinejoin": "round",
+    "platforms": [
+      "app",
+      "h5",
+      "web"
+    ],
+    "notes": "Runtime uses Hugeicons free Stroke Rounded because Pro registry authentication is not configured locally. Registry is Pro-ready through proProviderIcon and duotone/twotone metadata."
+  },
+  "toneTokens": [
+    "text",
+    "textMuted",
+    "textDim",
+    "brand",
+    "blue",
+    "amber",
+    "danger",
+    "up",
+    "down",
+    "white",
+    "panel"
+  ],
+  "sizeTokens": {
+    "tabNav": 20,
+    "topBar": 16,
+    "topBarBack": 22,
+    "formPrefix": 15,
+    "listPrefix": 18,
+    "featureEntry": 22,
+    "keyVisual": 42,
+    "statusCompact": 12,
+    "statusDefault": 14
+  },
+  "icons": {
+    "appApple": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 17,
+      "allowedTones": [
+        "text"
+      ],
+      "states": [
+        "default"
+      ],
+      "usage": "Apple sign-in provider mark.",
+      "forbidden": [
+        "Do not recolor as risk or market status."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "AppleIcon",
+      "proProviderIcon": "AppleIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "text",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "navigation",
+      "financeSemanticScore": 7
+    },
+    "actionRefresh": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "amber",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "loading"
+      ],
+      "usage": "Refresh or withdraw-style cyclical action when paired with label.",
+      "forbidden": [
+        "Do not use for price trend."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "ArrowReloadHorizontalIcon",
+      "proProviderIcon": "ArrowReloadHorizontalIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textDim",
+      "secondaryTone": "amber",
+      "strokeWidth": 1.75,
+      "visualWeight": "functional",
+      "financeSemanticScore": 7
+    },
+    "transferSwitch": {
+      "category": "funds",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "blue",
+        "text",
+        "brand"
+      ],
+      "states": [
+        "default",
+        "pressed",
+        "disabled"
+      ],
+      "usage": "Transfer, swap, or two-way movement between accounts.",
+      "forbidden": [
+        "Do not use for market volatility."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "Exchange03Icon",
+      "proProviderIcon": "Exchange03Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "blue",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.8,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 9
+    },
+    "accountBank": {
+      "category": "funds",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 18,
+      "allowedTones": [
+        "text",
+        "textDim",
+        "blue"
+      ],
+      "states": [
+        "default",
+        "selected",
+        "disabled"
+      ],
+      "usage": "Bank, balance, funding account, or institutional account.",
+      "forbidden": [
+        "Avoid for generic profile or archive action."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "Wallet01Icon",
+      "proProviderIcon": "Wallet01Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "text",
+      "secondaryTone": "blue",
+      "strokeWidth": 1.8,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 9
+    },
+    "notificationBell": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 16,
+      "allowedTones": [
+        "textMuted",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "unread",
+        "disabled"
+      ],
+      "usage": "Notifications entry.",
+      "forbidden": [
+        "Do not use for alert risk severity; use riskWarning/riskShield."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "Notification02Icon",
+      "proProviderIcon": "Notification02Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textMuted",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.7,
+      "visualWeight": "navigation",
+      "financeSemanticScore": 7
+    },
+    "expandDown": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 14,
+      "allowedTones": [
+        "text",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "expanded",
+        "collapsed"
+      ],
+      "usage": "Dropdown or expandable control. Use the chevron-style down arrow without a shaft for global dropdown affordances.",
+      "forbidden": [
+        "Do not use as next navigation.",
+        "Do not use shafted down arrows for dropdown controls."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "ArrowDown01Icon",
+      "proProviderIcon": "ArrowDown01Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textDim",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.7,
+      "visualWeight": "micro",
+      "financeSemanticScore": 6
+    },
+    "navigateBack": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 22,
+      "allowedTones": [
+        "text",
+        "textMuted"
+      ],
+      "states": [
+        "default",
+        "pressed",
+        "disabled"
+      ],
+      "usage": "Back navigation.",
+      "forbidden": [
+        "Do not use for previous market movement."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "ArrowLeft02Icon",
+      "proProviderIcon": "ArrowLeft02Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "text",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.7,
+      "visualWeight": "navigation",
+      "financeSemanticScore": 6
+    },
+    "navigateNext": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 16,
+      "allowedTones": [
+        "text",
+        "textDim",
+        "panel"
+      ],
+      "states": [
+        "default",
+        "pressed",
+        "disabled"
+      ],
+      "usage": "Next row navigation and disclosure.",
+      "forbidden": [
+        "Do not use for market up/down state."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "ArrowRight02Icon",
+      "proProviderIcon": "ArrowRight02Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textDim",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.7,
+      "visualWeight": "micro",
+      "financeSemanticScore": 6
+    },
+    "marketTrend": {
+      "category": "market",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "brand",
+        "up",
+        "down",
+        "text",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "selected",
+        "positive",
+        "negative"
+      ],
+      "usage": "Market trend, quote movement, trading volume, or position direction.",
+      "forbidden": [
+        "Use up/down tones only when representing market direction."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "ChartCandlestickIcon",
+      "proProviderIcon": "ChartCandlestickIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.8,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 10
+    },
+    "chatFeedback": {
+      "category": "support-ops",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "brand",
+        "textMuted"
+      ],
+      "states": [
+        "default",
+        "unread"
+      ],
+      "usage": "Feedback or single conversation entry.",
+      "forbidden": [
+        "Do not use for community group."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "Message01Icon",
+      "proProviderIcon": "Message01Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "supporting",
+      "financeSemanticScore": 6
+    },
+    "communityChat": {
+      "category": "support-ops",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 22,
+      "allowedTones": [
+        "textMuted",
+        "down",
+        "brand"
+      ],
+      "states": [
+        "default",
+        "active"
+      ],
+      "usage": "Community, group chat, or social trading discussions.",
+      "forbidden": [
+        "Do not use for individual support ticket."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "UserGroupIcon",
+      "proProviderIcon": "UserGroupIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textMuted",
+      "secondaryTone": "brand",
+      "strokeWidth": 1.75,
+      "visualWeight": "supporting",
+      "financeSemanticScore": 6
+    },
+    "checkMark": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 12,
+      "allowedTones": [
+        "panel",
+        "white",
+        "brand",
+        "down"
+      ],
+      "states": [
+        "checked",
+        "success"
+      ],
+      "usage": "Checkbox or compact selected indicator.",
+      "forbidden": [
+        "Do not use as full verification badge."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "Tick02Icon",
+      "proProviderIcon": "Tick02Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.9,
+      "visualWeight": "micro",
+      "financeSemanticScore": 6
+    },
+    "statusVerified": {
+      "category": "kyc",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 18,
+      "allowedTones": [
+        "brand",
+        "down",
+        "text"
+      ],
+      "states": [
+        "verified",
+        "selected",
+        "success"
+      ],
+      "usage": "Verified state, selected account, completed status.",
+      "forbidden": [
+        "Do not use for generic checkbox when checkMark is enough."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "CheckmarkCircle02Icon",
+      "proProviderIcon": "CheckmarkCircle02Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "down",
+      "strokeWidth": 1.75,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 9
+    },
+    "historyClock": {
+      "category": "trading",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 18,
+      "allowedTones": [
+        "text",
+        "textDim",
+        "amber"
+      ],
+      "states": [
+        "pending",
+        "default"
+      ],
+      "usage": "Order history, pending review, recent activity, time filter.",
+      "forbidden": [
+        "Do not use for countdown risk unless paired with warning tone."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "TransactionHistoryIcon",
+      "proProviderIcon": "TransactionHistoryIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "text",
+      "secondaryTone": "amber",
+      "strokeWidth": 1.75,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 9
+    },
+    "discoverCompass": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "brand",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "selected"
+      ],
+      "usage": "Discover and module exploration entry.",
+      "forbidden": [
+        "Do not use for location."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "CompassIcon",
+      "proProviderIcon": "CompassIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "navigation",
+      "financeSemanticScore": 6
+    },
+    "moreDots": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 22,
+      "allowedTones": [
+        "text",
+        "textMuted"
+      ],
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "usage": "More actions menu.",
+      "forbidden": [
+        "Do not use for loading."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "MoreHorizontalIcon",
+      "proProviderIcon": "MoreHorizontalIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textMuted",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.7,
+      "visualWeight": "micro",
+      "financeSemanticScore": 6
+    },
+    "emailMessage": {
+      "category": "support-ops",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 18,
+      "allowedTones": [
+        "brand",
+        "textMuted"
+      ],
+      "states": [
+        "default",
+        "sent",
+        "received"
+      ],
+      "usage": "Email, inbox, password recovery.",
+      "forbidden": [
+        "Do not use for app notifications."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "MailOpenIcon",
+      "proProviderIcon": "MailOpenIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "supporting",
+      "financeSemanticScore": 6
+    },
+    "rewardGift": {
+      "category": "support-ops",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 22,
+      "allowedTones": [
+        "amber",
+        "brand"
+      ],
+      "states": [
+        "default",
+        "available"
+      ],
+      "usage": "Rewards, bonus, promotional gift.",
+      "forbidden": [
+        "Do not use for trading ticket or coupon unless promo-specific."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "GiftIcon",
+      "proProviderIcon": "GiftIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "amber",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "supporting",
+      "financeSemanticScore": 5
+    },
+    "globalMarket": {
+      "category": "market",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 19,
+      "allowedTones": [
+        "brand",
+        "panel"
+      ],
+      "states": [
+        "default",
+        "selected"
+      ],
+      "usage": "Global market, language, regional onboarding.",
+      "forbidden": [
+        "Do not use for account identity."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "GlobeIcon",
+      "proProviderIcon": "GlobeIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 8
+    },
+    "educationCap": {
+      "category": "support-ops",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "brand",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "completed"
+      ],
+      "usage": "Education, academy, trading lessons.",
+      "forbidden": [
+        "Do not use for KYC completion."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "School01Icon",
+      "proProviderIcon": "School01Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "supporting",
+      "financeSemanticScore": 6
+    },
+    "supportHeadset": {
+      "category": "support-ops",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 18,
+      "allowedTones": [
+        "textMuted",
+        "brand"
+      ],
+      "states": [
+        "default",
+        "available"
+      ],
+      "usage": "Support center or service contact.",
+      "forbidden": [
+        "Do not use for audio/media."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "HeadsetIcon",
+      "proProviderIcon": "HeadsetIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textMuted",
+      "secondaryTone": "brand",
+      "strokeWidth": 1.75,
+      "visualWeight": "supporting",
+      "financeSemanticScore": 6
+    },
+    "identityCard": {
+      "category": "kyc",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "down",
+        "brand",
+        "text"
+      ],
+      "states": [
+        "default",
+        "reviewing",
+        "verified"
+      ],
+      "usage": "Identity verification, onboarding KYC, profile document.",
+      "forbidden": [
+        "Do not use for generic account tab."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "UserIdVerificationIcon",
+      "proProviderIcon": "UserIdVerificationIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "down",
+      "strokeWidth": 1.75,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 10
+    },
+    "infoCircle": {
+      "category": "risk",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 15,
+      "allowedTones": [
+        "textMuted",
+        "blue",
+        "danger"
+      ],
+      "states": [
+        "default",
+        "warning",
+        "error"
+      ],
+      "usage": "Inline help, disclosure, risk explanation.",
+      "forbidden": [
+        "Do not use as success status."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "InformationCircleIcon",
+      "proProviderIcon": "InformationCircleIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textMuted",
+      "secondaryTone": "blue",
+      "strokeWidth": 1.7,
+      "visualWeight": "micro",
+      "financeSemanticScore": 8
+    },
+    "quoteList": {
+      "category": "market",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "text",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "selected"
+      ],
+      "usage": "Watchlist, quote list, list view.",
+      "forbidden": [
+        "Do not use for task checklist."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "ListViewIcon",
+      "proProviderIcon": "ListViewIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "text",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 8
+    },
+    "taskChecklist": {
+      "category": "trading",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "brand",
+        "text",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "completed"
+      ],
+      "usage": "Orders, trading journal, task checklist, execution list.",
+      "forbidden": [
+        "Do not use for plain market quote list."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "CheckListIcon",
+      "proProviderIcon": "CheckListIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 8
+    },
+    "secureLock": {
+      "category": "risk",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 16,
+      "allowedTones": [
+        "textDim",
+        "brand"
+      ],
+      "states": [
+        "locked",
+        "secure",
+        "disabled"
+      ],
+      "usage": "Password, locked field, protected content.",
+      "forbidden": [
+        "Do not use for regulatory review."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "SecurityLockIcon",
+      "proProviderIcon": "SecurityLockIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textDim",
+      "secondaryTone": "brand",
+      "strokeWidth": 1.7,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 9
+    },
+    "searchGlass": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 17,
+      "allowedTones": [
+        "text",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "focused",
+        "disabled"
+      ],
+      "usage": "Search entry and field prefix.",
+      "forbidden": [
+        "Do not use for inspect/detail navigation."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "Search01Icon",
+      "proProviderIcon": "Search01Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "text",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.7,
+      "visualWeight": "navigation",
+      "financeSemanticScore": 6
+    },
+    "qrCode": {
+      "category": "funds",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 24,
+      "allowedTones": [
+        "text",
+        "brand"
+      ],
+      "states": [
+        "default",
+        "scanned"
+      ],
+      "usage": "Deposit QR, account QR, scan code.",
+      "forbidden": [
+        "Do not use for generic code/coupon."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "QrCodeIcon",
+      "proProviderIcon": "QrCodeIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "text",
+      "secondaryTone": "brand",
+      "strokeWidth": 1.8,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 9
+    },
+    "partnerNetwork": {
+      "category": "support-ops",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "brand",
+        "blue",
+        "text"
+      ],
+      "states": [
+        "default",
+        "active"
+      ],
+      "usage": "Partner network, sharing, referral graph.",
+      "forbidden": [
+        "Do not use for transfer funds."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "Share08Icon",
+      "proProviderIcon": "Share08Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "blue",
+      "strokeWidth": 1.75,
+      "visualWeight": "supporting",
+      "financeSemanticScore": 6
+    },
+    "riskShield": {
+      "category": "risk",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 18,
+      "allowedTones": [
+        "brand",
+        "down",
+        "textMuted"
+      ],
+      "states": [
+        "protected",
+        "verified",
+        "reviewing"
+      ],
+      "usage": "Security, fraud prevention, compliance protection.",
+      "forbidden": [
+        "Do not use as generic success when statusVerified is clearer."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "SecurityCheckIcon",
+      "proProviderIcon": "SecurityCheckIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "brand",
+      "secondaryTone": "down",
+      "strokeWidth": 1.75,
+      "visualWeight": "financial-core",
+      "financeSemanticScore": 10
+    },
+    "settingsSliders": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 18,
+      "allowedTones": [
+        "brand",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "active"
+      ],
+      "usage": "Settings, filters, product controls, sort.",
+      "forbidden": [
+        "Do not use for market depth."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "FilterHorizontalIcon",
+      "proProviderIcon": "FilterHorizontalIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textDim",
+      "secondaryTone": "brand",
+      "strokeWidth": 1.75,
+      "visualWeight": "functional",
+      "financeSemanticScore": 7
+    },
+    "promoTicket": {
+      "category": "support-ops",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "amber",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "available",
+        "expired"
+      ],
+      "usage": "Coupon, promotion, simulated contest badge.",
+      "forbidden": [
+        "Do not use for trading order ticket; use taskChecklist/tradeOrder."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "TicketStarIcon",
+      "proProviderIcon": "TicketStarIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "amber",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "supporting",
+      "financeSemanticScore": 5
+    },
+    "achievementTrophy": {
+      "category": "support-ops",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 20,
+      "allowedTones": [
+        "amber",
+        "textDim"
+      ],
+      "states": [
+        "default",
+        "earned"
+      ],
+      "usage": "Challenge, leaderboard, achievement.",
+      "forbidden": [
+        "Do not use for account status."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "Award01Icon",
+      "proProviderIcon": "Award01Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "amber",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "supporting",
+      "financeSemanticScore": 5
+    },
+    "userProfile": {
+      "category": "account",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 22,
+      "allowedTones": [
+        "text",
+        "blue"
+      ],
+      "states": [
+        "default",
+        "selected"
+      ],
+      "usage": "User, client, account owner, profile preview.",
+      "forbidden": [
+        "Do not use for bank/funding account."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "UserIcon",
+      "proProviderIcon": "UserIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "text",
+      "secondaryTone": "blue",
+      "strokeWidth": 1.75,
+      "visualWeight": "functional",
+      "financeSemanticScore": 7
+    },
+    "userAvatar": {
+      "category": "account",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 22,
+      "allowedTones": [
+        "text",
+        "textMuted"
+      ],
+      "states": [
+        "default",
+        "selected"
+      ],
+      "usage": "Profile avatar placeholder and profile module.",
+      "forbidden": [
+        "Do not use for add-account action."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "UserCircleIcon",
+      "proProviderIcon": "UserCircleIcon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "text",
+      "secondaryTone": "textDim",
+      "strokeWidth": 1.75,
+      "visualWeight": "functional",
+      "financeSemanticScore": 7
+    },
+    "addUser": {
+      "category": "account",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 22,
+      "allowedTones": [
+        "text",
+        "brand"
+      ],
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "usage": "Add account, add client, invite user.",
+      "forbidden": [
+        "Do not use for KYC verification."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "UserAdd01Icon",
+      "proProviderIcon": "UserAdd01Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "text",
+      "secondaryTone": "brand",
+      "strokeWidth": 1.75,
+      "visualWeight": "functional",
+      "financeSemanticScore": 7
+    },
+    "closeX": {
+      "category": "system-navigation",
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "defaultSize": 16,
+      "allowedTones": [
+        "textDim",
+        "danger",
+        "panel"
+      ],
+      "states": [
+        "default",
+        "pressed",
+        "destructive"
+      ],
+      "usage": "Close, cancel, dismiss, delete when paired with danger tone.",
+      "forbidden": [
+        "Do not use as failed status without label."
+      ],
+      "deprecated": false,
+      "provider": "hugeicons-free-stroke-rounded",
+      "targetProvider": "hugeicons-pro-duotone-rounded",
+      "providerIcon": "Cancel01Icon",
+      "proProviderIcon": "Cancel01Icon",
+      "style": "stroke-rounded",
+      "targetStyle": "duotone-rounded",
+      "primaryTone": "textDim",
+      "secondaryTone": "danger",
+      "strokeWidth": 1.75,
+      "visualWeight": "micro",
+      "financeSemanticScore": 6
+    }
+  },
+  "brandAssets": {
+    "launcherIcon": "assets/images/icon.png",
+    "adaptiveIcon": "assets/images/adaptive-icon.png",
+    "splashIcon": "assets/images/splash-icon.png",
+    "favicon": "assets/images/favicon.png",
+    "contentLogo": "assets/images/dupoin-logo.png"
+  },
+  "targetSource": "hugeicons-pro-duotone-rounded"
+}

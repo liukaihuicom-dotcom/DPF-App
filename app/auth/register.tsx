@@ -1,11 +1,11 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { ActionButton } from '@/src/components/ActionButton';
 import { AuthLink, AuthShell, AuthTextField } from '@/src/components/AuthShell';
 import { NativePressable } from '@/src/components/NativePressable';
-import { PhosphorIcon } from '@/src/components/PhosphorIcon';
+import { AppIcon } from '@/src/components/AppIcon';
 import { AppText } from '@/src/components/Typography';
 import { useToast } from '@/src/feedback/Toast';
 import { notifySuccess, notifyWarning } from '@/src/feedback/haptics';
@@ -16,7 +16,8 @@ function isValidEmail(value: string) {
 }
 
 export default function RegisterScreen() {
-  const { palette, setAuthStatus, t } = useProductSettings();
+  const params = useLocalSearchParams<{ redirect?: string }>();
+  const { palette, t } = useProductSettings();
   const toast = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,10 +39,12 @@ export default function RegisterScreen() {
       return;
     }
 
-    setAuthStatus('signedIn');
     void notifySuccess();
-    toast.show({ message: t('auth.register.successBody'), title: t('auth.register.successTitle'), tone: 'success' });
-    router.replace('/');
+    router.push(
+      `/auth/verify?intent=register&email=${encodeURIComponent(email.trim())}&redirect=${encodeURIComponent(
+        typeof params.redirect === 'string' ? params.redirect : '/markets',
+      )}`,
+    );
   };
 
   return (
@@ -54,7 +57,7 @@ export default function RegisterScreen() {
       <AuthTextField
         autoComplete="email"
         error={emailError}
-        icon="envelope-open"
+        icon="emailMessage"
         keyboardType="email-address"
         label={t('auth.email')}
         onChangeText={setEmail}
@@ -65,7 +68,7 @@ export default function RegisterScreen() {
       <AuthTextField
         autoComplete="new-password"
         error={passwordError}
-        icon="lock"
+        icon="secureLock"
         label={t('auth.password')}
         onChangeText={setPassword}
         placeholder={t('auth.passwordPlaceholder')}
@@ -76,7 +79,7 @@ export default function RegisterScreen() {
       <AuthTextField
         autoComplete="new-password"
         error={confirmError}
-        icon="check-circle"
+        icon="statusVerified"
         label={t('auth.confirmPassword')}
         onChangeText={setConfirmPassword}
         placeholder={t('auth.confirmPasswordPlaceholder')}
@@ -86,7 +89,7 @@ export default function RegisterScreen() {
       />
       <AuthTextField
         autoCapitalize="characters"
-        icon="ticket"
+        icon="promoTicket"
         label={t('auth.inviteCode')}
         onChangeText={setInviteCode}
         placeholder={t('auth.inviteCodePlaceholder')}
@@ -99,7 +102,7 @@ export default function RegisterScreen() {
         onPress={() => setRiskAccepted((value) => !value)}
         style={StyleSheet.flatten([styles.riskRow, { backgroundColor: palette.panel, borderColor: riskError ? palette.danger : palette.lineSoft }])}>
         <View style={StyleSheet.flatten([styles.checkbox, { backgroundColor: riskAccepted ? palette.text : palette.panelHigh, borderColor: riskAccepted ? palette.text : palette.line }])}>
-          {riskAccepted ? <PhosphorIcon color={palette.panel} name="check" size={12} /> : null}
+          {riskAccepted ? <AppIcon color={palette.panel} name="checkMark" size={12} /> : null}
         </View>
         <AppText numberOfLines={3} tone="muted" variant="caption">
           {t('auth.riskAccept')}

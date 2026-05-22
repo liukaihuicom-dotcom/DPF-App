@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IconRegistry",
+  "type": "object",
+  "required": ["version", "source", "style", "toneTokens", "sizeTokens", "icons", "brandAssets"],
+  "properties": {
+    "version": { "type": "string" },
+    "source": { "type": "string" },
+    "targetSource": { "type": "string" },
+    "style": {
+      "type": "object",
+      "required": ["provider", "targetProvider", "grid", "strokeWidth", "strokeLinecap", "strokeLinejoin", "platforms"],
+      "properties": {
+        "provider": { "type": "string" },
+        "targetProvider": { "type": "string" },
+        "grid": { "const": "24x24" },
+        "strokeWidth": { "type": "number" },
+        "strokeLinecap": { "const": "round" },
+        "strokeLinejoin": { "const": "round" },
+        "platforms": {
+          "type": "array",
+          "items": { "enum": ["app", "h5", "web", "admin"] },
+          "minItems": 1
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "toneTokens": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "sizeTokens": {
+      "type": "object",
+      "additionalProperties": { "type": "number" }
+    },
+    "icons": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "provider",
+          "providerIcon",
+          "proProviderIcon",
+          "style",
+          "category",
+          "platforms",
+          "defaultSize",
+          "allowedTones",
+          "primaryTone",
+          "secondaryTone",
+          "strokeWidth",
+          "visualWeight",
+          "financeSemanticScore",
+          "states",
+          "usage",
+          "forbidden",
+          "deprecated"
+        ],
+        "properties": {
+          "provider": { "type": "string" },
+          "targetProvider": { "type": "string" },
+          "providerIcon": { "type": "string" },
+          "proProviderIcon": { "type": "string" },
+          "style": { "enum": ["stroke-rounded", "duotone-rounded", "twotone-rounded"] },
+          "targetStyle": { "enum": ["stroke-rounded", "duotone-rounded", "twotone-rounded"] },
+          "category": {
+            "enum": ["market", "trading", "account", "risk", "kyc", "funds", "system-navigation", "support-ops"]
+          },
+          "platforms": {
+            "type": "array",
+            "items": { "enum": ["app", "h5", "web", "admin"] },
+            "minItems": 1
+          },
+          "defaultSize": { "type": "number" },
+          "allowedTones": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "primaryTone": { "type": "string" },
+          "secondaryTone": { "type": "string" },
+          "strokeWidth": { "type": "number" },
+          "visualWeight": { "enum": ["micro", "navigation", "functional", "financial-core", "supporting"] },
+          "financeSemanticScore": { "type": "number", "minimum": 1, "maximum": 10 },
+          "states": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "usage": { "type": "string" },
+          "forbidden": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "deprecated": { "type": "boolean" },
+          "replacement": { "type": "string" }
+        }
+      }
+    },
+    "brandAssets": {
+      "type": "object",
+      "required": ["launcherIcon", "adaptiveIcon", "splashIcon", "favicon", "contentLogo"],
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

@@ -2,10 +2,13 @@ import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { Card } from '@/src/components/Card';
+import { DescribedLabel } from '@/src/components/DescribedLabel';
+import { FundActionGrid } from '@/src/components/FundActionGrid';
 import { Metric } from '@/src/components/Metric';
 import { NativePressable } from '@/src/components/NativePressable';
-import { PhosphorIcon } from '@/src/components/PhosphorIcon';
+import { AppIcon } from '@/src/components/AppIcon';
 import { Screen } from '@/src/components/Screen';
+import { Sparkline } from '@/src/components/Sparkline';
 import { StatusPill, type StatusPillTone } from '@/src/components/StatusPill';
 import { AppText } from '@/src/components/Typography';
 import {
@@ -18,6 +21,7 @@ import { formatCompactMoney, formatMoney, formatVolumeMillions, localizeText, st
 import { commissions, partnerMetrics } from '@/src/domain/mockData';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
+import { typography } from '@/src/theme/tokens';
 
 export default function AccountScreen() {
   const { role } = useBroker();
@@ -45,9 +49,10 @@ function TraderAccountsScreen() {
 
   return (
     <Screen
-      rightActions={[{ icon: 'user-plus', label: locale === 'en-US' ? 'Add account' : '添加账户' }]}
+      rightActions={[{ icon: 'addUser', label: locale === 'en-US' ? 'Add account' : '添加账户' }]}
       title={t('tabs.accounts')}>
       <AccountOverviewCard overview={overview} />
+      <FundActionGrid />
       {tradingAccountStatusGroups.map((group) => {
         const groupedAccounts = accounts.filter((item) => item.group === group);
         if (groupedAccounts.length === 0) {
@@ -81,7 +86,7 @@ function AccountListCard({ profile }: { profile: TradingAccountProfile }) {
       onPress={() => router.push(`/account-details/${profile.id}`)}
       style={StyleSheet.flatten([styles.accountCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
       <View style={StyleSheet.flatten([styles.walletIcon, { backgroundColor: palette.panelSoft }])}>
-        <PhosphorIcon color={palette.text} name="bank" size={18} />
+        <AppIcon color={palette.text} name="accountBank" size={18} />
       </View>
       <View style={styles.accountCardBody}>
         <View style={styles.accountCardTop}>
@@ -94,7 +99,7 @@ function AccountListCard({ profile }: { profile: TradingAccountProfile }) {
               🇺🇸 {profile.currency} · {profile.platform} · {profile.type}
             </AppText>
           </View>
-          <PhosphorIcon color={palette.textDim} name="caret-right" size={16} />
+          <AppIcon color={palette.textDim} name="navigateNext" size={16} />
         </View>
 
         <View style={StyleSheet.flatten([styles.accountDivider, { backgroundColor: palette.lineSoft }])} />
@@ -124,56 +129,71 @@ function AccountListCard({ profile }: { profile: TradingAccountProfile }) {
 
 type AccountOverview = {
   activeAccountCount: number;
+  todayPnl: number;
   latestTrade: string;
   openPositionCount: number;
   totalAccountCount: number;
   totalEquity: number;
   totalFreeMargin: number;
   totalRealizedPnl: number;
+  totalReturn: number;
   totalUnrealizedPnl: number;
   totalUsedMargin: number;
+  trendValues: number[];
 };
 
 function AccountOverviewCard({ overview }: { overview: AccountOverview }) {
   const { locale, palette, t } = useProductSettings();
-  const activityLabel = locale === 'en-US' ? 'Account activity' : '账号活跃';
-  const activeCaption =
-    locale === 'en-US'
-      ? `${overview.activeAccountCount}/${overview.totalAccountCount} tradable · ${overview.openPositionCount} positions`
-      : `${overview.activeAccountCount}/${overview.totalAccountCount} 可交易 · ${overview.openPositionCount} 持仓`;
 
   return (
     <Card>
-      <View style={styles.overviewHeader}>
-        <View style={styles.overviewTitleBlock}>
-          <AppText tone="muted" variant="caption">{locale === 'en-US' ? 'Account overview' : '账户总览'}</AppText>
-          <AppText adjustsFontSizeToFit numberOfLines={1} variant="largeNumber">
+      <View style={styles.overviewCardContent}>
+        <View style={styles.overviewPrimary}>
+          <DescribedLabel label={t('accounts.overview.totalEquity')} />
+          <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.overviewEquityValue} variant="quote">
             {formatMoney(overview.totalEquity, 'USD', 2, locale)}
           </AppText>
-          <AppText tone="muted" variant="caption">{locale === 'en-US' ? 'Total equity' : '总净值'}</AppText>
+          <View style={styles.overviewDailyBlock}>
+            <View style={styles.overviewDailyRow}>
+              <AppText tone="muted" variant="caption">{t('accounts.overview.dailyPnl')}</AppText>
+              <AppText numberOfLines={1} style={styles.overviewDailyValue} tone={overview.todayPnl >= 0 ? 'down' : 'up'} variant="subtitle">
+                {formatMoney(overview.todayPnl, 'USD', 2, locale)}
+              </AppText>
+            </View>
+            <View style={styles.overviewTrend}>
+              <Sparkline color={overview.todayPnl >= 0 ? palette.down : palette.up} height={44} values={overview.trendValues} width={172} />
+            </View>
+          </View>
         </View>
-        <StatusPill label={`${activityLabel} · ${activeCaption}`} style={styles.activityPill} tone="brand" />
-      </View>
 
-      <View style={StyleSheet.flatten([styles.accountDivider, { backgroundColor: palette.lineSoft }])} />
-      <View style={styles.overviewGrid}>
-        <Metric label={t('account.availableMargin')} value={formatMoney(overview.totalFreeMargin, 'USD', 2, locale)} />
-        <Metric label={t('account.usedMargin')} value={formatMoney(overview.totalUsedMargin, 'USD', 2, locale)} />
-      </View>
-      <View style={styles.overviewGrid}>
-        <Metric
-          label={locale === 'en-US' ? 'Closed PnL' : '已平仓盈亏'}
-          tone={overview.totalRealizedPnl >= 0 ? 'down' : 'up'}
-          value={formatMoney(overview.totalRealizedPnl, 'USD', 2, locale)}
-        />
-        <Metric
-          caption={locale === 'en-US' ? `Last trade ${overview.latestTrade}` : `最近交易 ${overview.latestTrade}`}
-          label={locale === 'en-US' ? 'Floating PnL' : '浮动盈亏'}
-          tone={overview.totalUnrealizedPnl >= 0 ? 'down' : 'up'}
-          value={formatMoney(overview.totalUnrealizedPnl, 'USD', 2, locale)}
-        />
+        <View style={StyleSheet.flatten([styles.overviewVerticalDivider, { backgroundColor: palette.lineSoft }])} />
+
+        <View style={styles.overviewSide}>
+          <OverviewSideMetric
+            label={t('accounts.overview.totalUnrealizedPnl')}
+            tone={overview.totalUnrealizedPnl >= 0 ? 'down' : 'up'}
+            value={formatMoney(overview.totalUnrealizedPnl, 'USD', 2, locale)}
+          />
+          <OverviewSideMetric
+            label={t('accounts.overview.totalReturn')}
+            tone={overview.totalReturn >= 0 ? 'down' : 'up'}
+            value={formatMoney(overview.totalReturn, 'USD', 2, locale)}
+          />
+          <OverviewSideMetric label={t('accounts.overview.activeAccounts')} value={`${overview.activeAccountCount}`} />
+        </View>
       </View>
     </Card>
+  );
+}
+
+function OverviewSideMetric({ label, tone, value }: { label: string; tone?: 'down' | 'up'; value: string }) {
+  return (
+    <View style={styles.overviewSideMetric}>
+      <AppText tone="muted" variant="caption">{label}</AppText>
+      <AppText adjustsFontSizeToFit numberOfLines={1} tone={tone} variant="subtitle">
+        {value}
+      </AppText>
+    </View>
   );
 }
 
@@ -233,18 +253,31 @@ function CommissionScreen() {
 
 function buildAccountOverview(accounts: TradingAccountProfile[], openPositionCount: number): AccountOverview {
   const activeAccounts = accounts.filter((profile) => profile.group === 'active' || profile.group === 'demo');
+  const totalRealizedPnl = accounts.reduce((total, profile) => total + profile.realizedPnl, 0);
+  const totalUnrealizedPnl = accounts.reduce((total, profile) => total + profile.unrealizedPnl, 0);
+
+  const totalEquity = accounts.reduce((total, profile) => total + profile.equity, 0);
+  const totalReturn = totalRealizedPnl + totalUnrealizedPnl;
 
   return {
     activeAccountCount: activeAccounts.length,
+    todayPnl: totalReturn,
     latestTrade: activeAccounts[0]?.lastTrade ?? accounts[0]?.lastTrade ?? '--',
     openPositionCount,
     totalAccountCount: accounts.length,
-    totalEquity: accounts.reduce((total, profile) => total + profile.equity, 0),
+    totalEquity,
     totalFreeMargin: accounts.reduce((total, profile) => total + profile.freeMargin, 0),
-    totalRealizedPnl: accounts.reduce((total, profile) => total + profile.realizedPnl, 0),
-    totalUnrealizedPnl: accounts.reduce((total, profile) => total + profile.unrealizedPnl, 0),
+    totalRealizedPnl,
+    totalReturn,
+    totalUnrealizedPnl,
     totalUsedMargin: accounts.reduce((total, profile) => total + profile.usedMargin, 0),
+    trendValues: buildOverviewTrend(totalEquity, totalReturn),
   };
+}
+
+function buildOverviewTrend(totalEquity: number, totalReturn: number) {
+  const base = Math.max(totalEquity - totalReturn, 1);
+  return [base * 0.996, base * 1.002, base * 0.999, base * 1.008, base * 1.006, base * 1.014, totalEquity * 0.998, totalEquity];
 }
 
 const styles = StyleSheet.create({
@@ -291,26 +324,55 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
-  activityPill: {
-    alignSelf: 'flex-start',
-    maxWidth: '100%',
-  },
   metricRow: {
     flexDirection: 'row',
     gap: 12,
     marginTop: 12,
   },
-  overviewGrid: {
-    columnGap: 12,
+  overviewCardContent: {
+    alignItems: 'stretch',
     flexDirection: 'row',
-    rowGap: 10,
+    gap: 14,
   },
-  overviewHeader: {
-    gap: 10,
+  overviewDailyBlock: {
+    gap: 6,
+    marginTop: 16,
   },
-  overviewTitleBlock: {
-    gap: 2,
+  overviewDailyRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    justifyContent: 'space-between',
+  },
+  overviewDailyValue: {
+    flex: 1,
     minWidth: 0,
+    textAlign: 'right',
+  },
+  overviewEquityValue: {
+    ...typography.quote,
+  },
+  overviewPrimary: {
+    flex: 1.24,
+    minWidth: 0,
+  },
+  overviewSide: {
+    flex: 0.82,
+    gap: 12,
+    justifyContent: 'center',
+    minWidth: 116,
+  },
+  overviewSideMetric: {
+    gap: 3,
+    minWidth: 0,
+  },
+  overviewTrend: {
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  overviewVerticalDivider: {
+    alignSelf: 'stretch',
+    width: 1,
   },
   recordMain: {
     flex: 1,

@@ -1,63 +1,127 @@
-import { router } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { ActionButton } from '@/src/components/ActionButton';
+import { AppIcon, type AppIconName } from '@/src/components/AppIcon';
 import { Card } from '@/src/components/Card';
 import { NativePressable } from '@/src/components/NativePressable';
-import { PhosphorIcon } from '@/src/components/PhosphorIcon';
 import { Screen } from '@/src/components/Screen';
 import { StatusPill } from '@/src/components/StatusPill';
 import { AppText } from '@/src/components/Typography';
+import { discoverLayoutDefinitions, type DiscoverLayoutDefinition, type DiscoverLayoutItem } from '@/src/domain/discoverLayout';
 import { dupoinInsights, dupoinQuickActions } from '@/src/domain/dupoinMvp';
 import { formatPercent, localizeText } from '@/src/domain/format';
 import { partnerMetrics } from '@/src/domain/mockData';
 import type { DiscoverModuleId } from '@/src/domain/types';
 import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
+import { radius, spacing } from '@/src/theme/tokens';
+
+type DiscoverLayoutRenderItem = DiscoverLayoutItem & {
+  definition: DiscoverLayoutDefinition;
+};
 
 export default function DupoinDiscoverScreen() {
-  const { locale, palette, setSelectedDiscoverModule, t } = useProductSettings();
+  const { discoverLayoutItems, locale, palette, setSelectedDiscoverModule, t } = useProductSettings();
   const openModule = (moduleId: DiscoverModuleId) => {
     setSelectedDiscoverModule(moduleId);
     void impactLight();
     router.replace('/quick' as never);
   };
+  const renderItems = discoverLayoutItems
+    .map((item) => ({
+      ...item,
+      definition: discoverLayoutDefinitions.find((definition) => definition.id === item.id),
+    }))
+    .filter((item): item is DiscoverLayoutRenderItem => Boolean(item.definition));
 
   return (
-    <Screen
-      subtitle={locale === 'en-US' ? 'Copy trading, academy, and partner growth' : '跟单、学堂与 Partner 增长'}
-      title={t('tabs.copy')}>
+    <Screen title={t('tabs.discover')}>
+      <View style={styles.layoutFlow}>
+        {renderItems.map((item) => (
+          <DiscoverLayoutBlock item={item} key={item.id} onOpenModule={openModule} />
+        ))}
+      </View>
+
+      <Link asChild href="/discover-layout">
+        <NativePressable
+          accessibilityLabel={locale === 'en-US' ? 'Layout settings' : '布局设置'}
+          minTouch={44}
+          style={styles.layoutSettingsLink}>
+          <AppIcon color={palette.brand} name="settingsSliders" size={16} />
+          <AppText tone="brand" variant="caption">
+            {locale === 'en-US' ? 'Layout settings' : '布局设置'}
+          </AppText>
+        </NativePressable>
+      </Link>
+    </Screen>
+  );
+}
+
+function DiscoverLayoutBlock({
+  item,
+  onOpenModule,
+}: {
+  item: DiscoverLayoutRenderItem;
+  onOpenModule: (moduleId: DiscoverModuleId) => void;
+}) {
+  if (item.viewMode === 'list') {
+    return <DiscoverListCard item={item} onOpenModule={onOpenModule} />;
+  }
+
+  if (item.viewMode === 'medium') {
+    return <DiscoverMediumCard item={item} onOpenModule={onOpenModule} />;
+  }
+
+  return <DiscoverLargeCard item={item} onOpenModule={onOpenModule} />;
+}
+
+function DiscoverLargeCard({
+  item,
+  onOpenModule,
+}: {
+  item: DiscoverLayoutRenderItem;
+  onOpenModule: (moduleId: DiscoverModuleId) => void;
+}) {
+  const { locale, palette, t } = useProductSettings();
+  const title = localizeText(item.definition.title, locale);
+  const body = localizeText(item.definition.body, locale);
+  const press = () => {
+    if (item.definition.moduleId) {
+      onOpenModule(item.definition.moduleId);
+    }
+  };
+
+  if (item.id === 'profile') {
+    return (
       <NativePressable
-        accessibilityLabel={t('discover.module.profile.title')}
+        accessibilityLabel={title}
         minTouch={96}
-        onPress={() => openModule('profile')}
+        onPress={press}
         style={StyleSheet.flatten([styles.profileEntryCard, { backgroundColor: palette.panelHigh, borderColor: palette.line }])}>
         <View style={StyleSheet.flatten([styles.profileEntryIcon, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}55` }])}>
-          <PhosphorIcon color={palette.brand} name="user-circle" size={22} />
+          <AppIcon color={palette.brand} name={item.definition.icon} size={22} />
         </View>
         <View style={styles.profileEntryBody}>
           <View style={styles.profileEntryTitleRow}>
-            <AppText variant="subtitle">{t('discover.module.profile.title')}</AppText>
+            <AppText variant="subtitle">{title}</AppText>
             <StatusPill compact label={t('discover.module.profile.short')} tone="brand" />
           </View>
           <AppText numberOfLines={2} tone="muted" variant="caption">
-            {t('discover.module.profile.hint')}
+            {body}
           </AppText>
         </View>
         <View style={StyleSheet.flatten([styles.profileEntryArrow, { backgroundColor: palette.panelSoft }])}>
-          <PhosphorIcon color={palette.textMuted} name="caret-right" size={15} />
+          <AppIcon color={palette.textMuted} name="navigateNext" size={15} />
         </View>
       </NativePressable>
+    );
+  }
 
-      <Card>
-        <View style={styles.sectionHeader}>
-          <View>
-            <AppText variant="subtitle">{locale === 'en-US' ? 'Function entry' : '功能入口'}</AppText>
-            <AppText tone="muted" variant="caption">
-              {locale === 'en-US' ? 'Markets, trading, wallet, and learning shortcuts live here.' : '行情、交易、钱包和学习入口集中在这里。'}
-            </AppText>
-          </View>
-        </View>
+  if (item.id === 'functionCenter') {
+    return (
+      <Card style={styles.fullWidthCard}>
+        <DiscoverCardHeader body={body} icon={item.definition.icon} title={title} />
         <View style={styles.quickGrid}>
           {dupoinQuickActions.map((action) => (
             <NativePressable
@@ -68,7 +132,7 @@ export default function DupoinDiscoverScreen() {
               onPress={() => router.push(action.route as never)}
               style={StyleSheet.flatten([styles.quickAction, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
               <View style={StyleSheet.flatten([styles.quickIcon, { backgroundColor: `${palette.brand}12` }])}>
-                <PhosphorIcon color={palette.brand} name={action.icon} size={18} />
+                <AppIcon color={palette.brand} name={action.icon} size={18} />
               </View>
               <View style={styles.quickText}>
                 <AppText numberOfLines={1} variant="subtitle">
@@ -82,48 +146,15 @@ export default function DupoinDiscoverScreen() {
           ))}
         </View>
       </Card>
+    );
+  }
 
-      <View style={styles.moduleGrid}>
-        <ModuleCard
-          body={locale === 'en-US' ? 'Short lessons for spread, leverage, margin call, and CFD order basics.' : '点差、杠杆、保证金追缴和 CFD 下单基础短课。'}
-          icon="graduation-cap"
-          onPress={() => openModule('education')}
-          title={locale === 'en-US' ? 'Dupoin Academy' : 'Dupoin 学堂'}
-        />
-        <ModuleCard
-          body={locale === 'en-US' ? 'Simulated leaderboard with weekly ROI, drawdown, and trade discipline.' : '按周展示模拟收益、回撤和交易纪律的挑战榜。'}
-          icon="trophy"
-          onPress={() => openModule('challenge')}
-          title={locale === 'en-US' ? 'Demo challenge' : '模拟挑战赛'}
-        />
-        <ModuleCard
-          body={locale === 'en-US' ? 'Help center, service status, and guided support for account setup.' : '帮助中心、服务状态和账户设置引导客服。'}
-          icon="headphones"
-          onPress={() => openModule('support')}
-          title={locale === 'en-US' ? 'Support desk' : '客服中心'}
-        />
-        <ModuleCard
-          body={locale === 'en-US' ? 'Risk acknowledgement stays visible before every simulated trade flow.' : '每条模拟交易路径都保留风险确认和提示。'}
-          icon="shield-check"
-          onPress={() => openModule('onboarding')}
-          title={locale === 'en-US' ? 'Risk controls' : '风险控制'}
-        />
-      </View>
-
-      <Card>
+  if (item.id === 'partnerPreview') {
+    return (
+      <Card style={styles.fullWidthCard}>
         <View style={styles.sectionHeader}>
-          <View>
-            <AppText variant="subtitle">{locale === 'en-US' ? 'Partner preview' : 'Partner 预览'}</AppText>
-            <AppText tone="muted" variant="caption">
-              {locale === 'en-US' ? 'IB growth loop kept in the MVP for referrals.' : 'MVP 保留 IB 推荐增长闭环。'}
-            </AppText>
-          </View>
-          <ActionButton
-            label={t('tabs.partner')}
-            onPress={() => openModule('partner')}
-            style={styles.partnerButton}
-            tone="neutral"
-          />
+          <DiscoverCardHeader body={body} icon={item.definition.icon} title={title} />
+          <ActionButton label={t('tabs.partner')} onPress={press} style={styles.partnerButton} tone="neutral" />
         </View>
         <View style={styles.partnerStats}>
           <PartnerStat label={t('partner.monthClients')} value={String(partnerMetrics.clients)} />
@@ -131,16 +162,13 @@ export default function DupoinDiscoverScreen() {
           <PartnerStat label={locale === 'en-US' ? 'Conversion' : '转化率'} value={formatPercent(partnerMetrics.conversionRate)} />
         </View>
       </Card>
+    );
+  }
 
-      <Card>
-        <View style={styles.sectionHeader}>
-          <View>
-            <AppText variant="subtitle">{locale === 'en-US' ? 'Market brief' : '市场简报'}</AppText>
-            <AppText tone="muted" variant="caption">
-              {locale === 'en-US' ? 'Editorial cards ready for a future CMS feed.' : '为后续 CMS 资讯流预留的编辑卡片。'}
-            </AppText>
-          </View>
-        </View>
+  if (item.id === 'marketBrief') {
+    return (
+      <Card style={styles.fullWidthCard}>
+        <DiscoverCardHeader body={body} icon={item.definition.icon} title={title} />
         <View style={styles.newsList}>
           {dupoinInsights.map((insight) => (
             <View key={insight.id} style={StyleSheet.flatten([styles.newsRow, { borderTopColor: palette.lineSoft }])}>
@@ -160,31 +188,38 @@ export default function DupoinDiscoverScreen() {
           ))}
         </View>
       </Card>
-    </Screen>
+    );
+  }
+
+  return (
+    <Card style={styles.fullWidthCard}>
+      <DiscoverCardHeader body={body} icon={item.definition.icon} title={title} />
+      {item.definition.moduleId ? (
+        <ActionButton label={locale === 'en-US' ? 'Open' : '打开'} onPress={press} style={styles.largeOpenButton} tone="neutral" />
+      ) : null}
+    </Card>
   );
 }
 
-function ModuleCard({
-  body,
-  icon,
-  onPress,
-  title,
+function DiscoverMediumCard({
+  item,
+  onOpenModule,
 }: {
-  body: string;
-  icon: 'graduation-cap' | 'trophy' | 'headphones' | 'shield-check';
-  onPress: () => void;
-  title: string;
+  item: DiscoverLayoutRenderItem;
+  onOpenModule: (moduleId: DiscoverModuleId) => void;
 }) {
-  const { palette } = useProductSettings();
+  const { locale, palette } = useProductSettings();
+  const title = localizeText(item.definition.title, locale);
+  const body = localizeText(item.definition.body, locale);
 
   return (
     <NativePressable
       accessibilityLabel={title}
-      minTouch={142}
-      onPress={onPress}
-      style={StyleSheet.flatten([styles.moduleCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      minTouch={124}
+      onPress={() => item.definition.moduleId && onOpenModule(item.definition.moduleId)}
+      style={StyleSheet.flatten([styles.mediumCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
       <View style={StyleSheet.flatten([styles.moduleIcon, { backgroundColor: `${palette.brand}12` }])}>
-        <PhosphorIcon color={palette.brand} name={icon} size={18} />
+        <AppIcon color={palette.brand} name={item.definition.icon} size={18} />
       </View>
       <AppText numberOfLines={1} variant="subtitle">
         {title}
@@ -193,6 +228,57 @@ function ModuleCard({
         {body}
       </AppText>
     </NativePressable>
+  );
+}
+
+function DiscoverListCard({
+  item,
+  onOpenModule,
+}: {
+  item: DiscoverLayoutRenderItem;
+  onOpenModule: (moduleId: DiscoverModuleId) => void;
+}) {
+  const { locale, palette } = useProductSettings();
+  const title = localizeText(item.definition.title, locale);
+  const body = localizeText(item.definition.body, locale);
+
+  return (
+    <NativePressable
+      accessibilityLabel={title}
+      minTouch={64}
+      onPress={() => item.definition.moduleId && onOpenModule(item.definition.moduleId)}
+      style={StyleSheet.flatten([styles.listCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.listIcon, { backgroundColor: `${palette.brand}12` }])}>
+        <AppIcon color={palette.brand} name={item.definition.icon} size={18} />
+      </View>
+      <View style={styles.listText}>
+        <AppText numberOfLines={1} variant="subtitle">
+          {title}
+        </AppText>
+        <AppText numberOfLines={1} tone="muted" variant="caption">
+          {body}
+        </AppText>
+      </View>
+      <AppIcon color={palette.textDim} name="navigateNext" size={16} />
+    </NativePressable>
+  );
+}
+
+function DiscoverCardHeader({ body, icon, title }: { body: string; icon: AppIconName; title: string }) {
+  const { palette } = useProductSettings();
+
+  return (
+    <View style={styles.headerWithIcon}>
+      <View style={StyleSheet.flatten([styles.headerIcon, { backgroundColor: `${palette.brand}12` }])}>
+        <AppIcon color={palette.brand} name={icon} size={18} />
+      </View>
+      <View style={styles.headerCopy}>
+        <AppText variant="subtitle">{title}</AppText>
+        <AppText numberOfLines={2} tone="muted" variant="caption">
+          {body}
+        </AppText>
+      </View>
+    </View>
   );
 }
 
@@ -210,35 +296,91 @@ function PartnerStat({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
-  moduleCard: {
-    borderRadius: 14,
+  headerCopy: {
+    flex: 1,
+    gap: 3,
+    minWidth: 0,
+  },
+  fullWidthCard: {
+    width: '100%',
+  },
+  headerIcon: {
+    alignItems: 'center',
+    borderRadius: radius.full,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
+  headerWithIcon: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  largeOpenButton: {
+    marginTop: spacing.lg,
+    minHeight: 38,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+  },
+  layoutFlow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 9,
+  },
+  layoutSettingsLink: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    gap: spacing.xs,
+    marginTop: spacing.xs,
+    paddingHorizontal: spacing.md,
+  },
+  listCard: {
+    alignItems: 'center',
+    borderRadius: radius.md,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    width: '100%',
+  },
+  listIcon: {
+    alignItems: 'center',
+    borderRadius: radius.full,
+    height: 34,
+    justifyContent: 'center',
+    width: 34,
+  },
+  listText: {
+    flex: 1,
+    minWidth: 0,
+  },
+  mediumCard: {
+    borderRadius: radius.lg,
     borderWidth: 1,
     gap: 7,
     minHeight: 142,
     padding: 13,
     width: '48.6%',
   },
-  moduleGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 9,
-  },
   moduleIcon: {
     alignItems: 'center',
-    borderRadius: 999,
+    borderRadius: radius.full,
     height: 36,
     justifyContent: 'center',
     width: 36,
   },
   newsList: {
     gap: 2,
+    marginTop: spacing.lg,
   },
   newsRow: {
     alignItems: 'flex-start',
     borderTopWidth: 1,
     flexDirection: 'row',
-    gap: 12,
-    paddingTop: 12,
+    gap: spacing.md,
+    paddingTop: spacing.md,
   },
   newsText: {
     flex: 1,
@@ -257,12 +399,12 @@ const styles = StyleSheet.create({
   },
   partnerStats: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 14,
+    gap: spacing.md,
+    marginTop: spacing.lg,
   },
   profileEntryArrow: {
     alignItems: 'center',
-    borderRadius: 999,
+    borderRadius: radius.full,
     height: 30,
     justifyContent: 'center',
     width: 30,
@@ -274,15 +416,16 @@ const styles = StyleSheet.create({
   },
   profileEntryCard: {
     alignItems: 'center',
-    borderRadius: 14,
+    borderRadius: radius.lg,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.md,
     padding: 14,
+    width: '100%',
   },
   profileEntryIcon: {
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
     height: 46,
     justifyContent: 'center',
@@ -296,23 +439,23 @@ const styles = StyleSheet.create({
   },
   quickAction: {
     alignItems: 'center',
-    borderRadius: 14,
+    borderRadius: radius.lg,
     borderWidth: 1,
     flexDirection: 'row',
     gap: 10,
     minHeight: 72,
-    padding: 12,
+    padding: spacing.md,
     width: '48.6%',
   },
   quickGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 9,
-    marginTop: 14,
+    marginTop: spacing.lg,
   },
   quickIcon: {
     alignItems: 'center',
-    borderRadius: 999,
+    borderRadius: radius.full,
     height: 38,
     justifyContent: 'center',
     width: 38,
@@ -324,7 +467,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     alignItems: 'flex-start',
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.md,
     justifyContent: 'space-between',
   },
 });

@@ -18,23 +18,52 @@ Use for global mobile action menus, order options, filters, account menus, and c
 
 ## API
 
-`useBottomSheet()` returns `show(options)` and `hide()`.
+`useBottomSheet()` returns `show(options)`, `push(options)`, `back()`, and `hide()`.
 
 | Prop | Type | Required | Description |
 |---|---|---:|---|
-| title | string | yes | Header navigation title |
-| subtitle | string | no | Header supporting context |
+| title | string | no | Compatibility header title when `header` is omitted |
+| subtitle | string | no | Compatibility header supporting context |
+| header | false or BottomSheetHeaderOptions | no | Structured app-native header or explicit headerless mode |
 | content | ReactNode | yes | Scrollable middle content |
 | footer | ReactNode or BottomSheetAction[] | no | Fixed bottom action area |
 | snapPoints | Array<string \| number> | no | Optional override |
 
-`BottomSheetAction` supports `label`, `onPress`, `tone`, `disabled`, `loading`, and `accessibilityLabel`.
+`BottomSheetHeaderOptions` supports `title`, `leftIcon`, `leftAction`, and `rightAction`.
+
+`subtitle`, `rightIcon`, `rightAccessibilityLabel`, and `onRightPress` are compatibility-only fields. New sheets must put supporting copy in the content area and use `rightAction` for business actions.
+
+`BottomSheetAction` supports `label`, `onPress`, `tone`, `disabled`, `loading`, `icon`, and `accessibilityLabel`.
+
+## Presets
+
+Use `bottomSheetPresets` for repeatable global sheet composition:
+
+- `actionMenu({ content, footer?, snapPoints? })`: headerless action or quick menu sheet.
+- `detail({ title, leftIcon?, rightAction?, content, footer?, snapPoints? })`: standard detail sheet with app-native header.
+- `selection({ title, leftIcon?, rightAction?, content, footer?, snapPoints? })`: standard picker or account selection sheet.
+
+Page code must either call a preset or pass an explicit `header` / `header: false`. Do not rely on the legacy `title` / `subtitle` compatibility path for new or migrated sheets.
 
 ## Structure
 
-- Header navigation area: title, optional subtitle, close button.
+- Header navigation area: fixed-height `56px` title bar below the handle.
+- The header is a component-owned fixed visual navigation layer. When a header is present, `BottomSheetContent` must insert an internal `BottomSheetHeaderSpacer` with the same `sheetHeaderHeight` token before page content.
+- Page code must never use padding, margin, an empty `View`, or a locally drawn title bar to simulate global sheet header height.
+- The header title bar does not render a divider line; separation comes from spacing, surface shape, and content hierarchy.
+- Left slot is a reserved semantic/navigation icon slot, not the default close action.
+- Left slot may become an explicit close action only when the caller provides `leftAction`.
+- Nested sheets opened with `push()` must show a left back action and return with `back()`.
+- Center title is single-line and visually centered; supporting description belongs in the content area by default.
+- Center title uses the `sheetTitle` typography token: 20px size, 600 weight, 24px line height.
+- Right slot is a business action slot for add, next, filter, open, or more actions. It must not default to close.
+- Empty left or right slots keep equal width so the title stays centered.
+- `header: false` removes the header area entirely for pure content/action sheets.
+- `header: false` also removes the internal header spacer, so content starts naturally below the handle with no reserved title-bar height.
 - Scrollable content area: default internal scroll for long content.
-- Fixed footer action area: action buttons plus bottom safe area.
+- Sheet header, content, and footer horizontal padding must use `layout.screenPaddingX` (12px) so sheet modules align with page modules.
+- Fixed footer action area: action buttons plus bottom safe area. Footer must be rendered by the global BottomSheet component through `@gorhom/bottom-sheet` `footerComponent`, aligned to the sheet width, and the scrollable content must reserve footer space.
+- Destructive, edit, close, submit, and other explicit operations should pair their button label with a registered `AppIcon` unless the surrounding pattern already supplies the same icon semantics.
 - Backdrop is rendered by the app-owned `AppBottomSheetBackdrop`, not the library default backdrop, and tapping it closes the sheet.
 - The global sheet host sits above `AppViewport`; backdrop covers the full app stage while the sheet surface aligns to the active app page width.
 
@@ -59,6 +88,32 @@ default, opening, open, closing, disabled action, loading action, failed action.
 ## A11y
 
 - Sheet title must describe the context.
-- Dismiss paths must be available through the backdrop, pan-down gesture, and header close button.
-- Backdrop must not be exposed as a named focusable button; use the header close button for explicit close semantics.
+- Dismiss paths must be available through the backdrop and pan-down gesture.
+- Headerless sheets must still be dismissible through backdrop tap and pan-down gesture.
+- Backdrop must not be exposed as a named focusable button.
+- Header right actions are business actions and need labels.
 - Icon-only actions in sheets need labels.
+- Header icon slots reserve 40px. The rendered header icon is 24px.
+- Header reserved semantic icons render as plain primary-text icons without a decorative circular background or outline frame.
+- Header action icons may keep the shared 40px touch area, but must not draw an outlined circular frame.
+- Header reserved icons and action icons use text-color contrast by default, matching the title color rather than muted secondary icon color.
+
+## Governance
+
+- Page code must not draw its own global sheet header or backdrop.
+- Use `header.leftIcon` for semantic context icons such as account, options, order, or history.
+- Do not use the right header slot for close. Use `rightAction` only for business actions.
+- Do not put descriptions into the title bar unless approved as a compatibility exception; use content-area copy instead.
+- Sheet title-bar icon actions must use the shared header icon-button pattern: 40px reserved area and 24px icon, without an outlined icon-badge frame.
+- Sheet title-bar icon actions and reserved semantic icons must use the primary text token for icon color unless a specific business state is documented.
+- Header height must come from the `sheetHeaderHeight` token and must not be simulated with content padding.
+- Header title size must come from the `sheetTitle` typography token; page code must not override sheet title size.
+- Header, content, and footer horizontal padding must come from `layout.screenPaddingX`; page code must not add outer padding to compensate for sheet module alignment.
+- Header occupancy is a global component invariant: `BottomSheetHeader` and `BottomSheetHeaderSpacer` must both bind to `sheetHeaderHeight`, and any regression is a QA blocker for the component library.
+- Footer actions must be owned by the global BottomSheet component and paired with `enableFooterMarginAdjustment`; page content must not simulate fixed operation buttons.
+- Use `header: false` only when the header would duplicate nearby content and the sheet remains understandable without a title.
+- Detail sheets may use `header: false` when the first content block already presents the object identity, status, and context; position and pending-order detail sheets follow this mode.
+- Footer actions for edit, close, delete, and submit flows must stay in the fixed bottom operation area and use documented action icons from `AppIcon`.
+- Every `bottomSheet.show(...)` call must declare a header mode explicitly, either through `header`, `header: false`, or `bottomSheetPresets`.
+- Full-page interaction acceptance covers every global sheet entry in `app/**`, not only the trade page: home account switching, portfolio account switching and menus, position/order details, account detail actions, and balance transaction details.
+- Each accepted sheet must pass open, backdrop-close, pan-down-close, header-close when present, dynamic-height, max-height safe area, and page-width alignment checks.

@@ -1,11 +1,11 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { ActionButton } from '@/src/components/ActionButton';
 import { AuthLink, AuthShell, AuthTextField } from '@/src/components/AuthShell';
 import { NativePressable } from '@/src/components/NativePressable';
-import { PhosphorIcon } from '@/src/components/PhosphorIcon';
+import { AppIcon } from '@/src/components/AppIcon';
 import { AppText } from '@/src/components/Typography';
 import { useToast } from '@/src/feedback/Toast';
 import { notifySuccess, notifyWarning } from '@/src/feedback/haptics';
@@ -16,7 +16,8 @@ function isValidEmail(value: string) {
 }
 
 export default function LoginScreen() {
-  const { palette, setAuthStatus, t } = useProductSettings();
+  const params = useLocalSearchParams<{ redirect?: string }>();
+  const { palette, t } = useProductSettings();
   const toast = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,10 +34,12 @@ export default function LoginScreen() {
       return;
     }
 
-    setAuthStatus('signedIn');
     void notifySuccess();
-    toast.show({ message: t('auth.login.successBody'), title: t('auth.login.successTitle'), tone: 'success' });
-    router.replace('/');
+    router.push(
+      `/auth/verify?intent=login&email=${encodeURIComponent(email.trim())}&redirect=${encodeURIComponent(
+        typeof params.redirect === 'string' ? params.redirect : '/markets',
+      )}`,
+    );
   };
 
   return (
@@ -49,7 +52,7 @@ export default function LoginScreen() {
       <AuthTextField
         autoComplete="email"
         error={emailError}
-        icon="envelope-open"
+        icon="emailMessage"
         keyboardType="email-address"
         label={t('auth.email')}
         onChangeText={setEmail}
@@ -60,7 +63,7 @@ export default function LoginScreen() {
       <AuthTextField
         autoComplete="password"
         error={passwordError}
-        icon="lock"
+        icon="secureLock"
         label={t('auth.password')}
         onChangeText={setPassword}
         placeholder={t('auth.passwordPlaceholder')}
@@ -80,7 +83,7 @@ export default function LoginScreen() {
           toast.show({ message: t('top.placeholderMessage'), title: t('auth.socialUnavailable'), tone: 'warning' });
         }}
         style={StyleSheet.flatten([styles.socialButton, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
-        <PhosphorIcon color={palette.text} name="apple-logo" size={17} />
+        <AppIcon color={palette.text} name="appApple" size={17} />
         <AppText variant="body">{t('auth.apple')}</AppText>
       </NativePressable>
     </AuthShell>

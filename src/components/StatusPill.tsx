@@ -3,15 +3,16 @@ import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { useThemePalette } from '@/src/settings/ProductSettings';
 import type { ThemePalette } from '@/src/theme/colors';
+import { radius } from '@/src/theme/tokens';
 
-import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
+import { AppIcon, type AppIconName } from './AppIcon';
 import { AppText, type AppTextTone } from './Typography';
 
-export type StatusPillTone = 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'brand' | 'up' | 'down';
+export type StatusPillTone = 'success' | 'warning' | 'danger' | 'infoCircle' | 'neutral' | 'brand' | 'up' | 'down';
 
 export type StatusPillProps = {
   compact?: boolean;
-  icon?: PhosphorIconName | ReactNode;
+  icon?: AppIconName | ReactNode;
   label: string;
   style?: StyleProp<ViewStyle>;
   tone: StatusPillTone;
@@ -25,7 +26,7 @@ function resolveTone(palette: ThemePalette, tone: StatusPillTone): { color: stri
       return { color: palette.amber, textTone: 'amber' };
     case 'danger':
       return { color: palette.danger, textTone: 'danger' };
-    case 'info':
+    case 'infoCircle':
       return { color: palette.blue, textTone: 'blue' };
     case 'brand':
       return { color: palette.brand, textTone: 'brand' };
@@ -43,7 +44,7 @@ export function StatusPill({ compact, icon, label, style, tone }: StatusPillProp
   const palette = useThemePalette();
   const toneConfig = resolveTone(palette, tone);
   const iconNode =
-    typeof icon === 'string' ? <PhosphorIcon color={toneConfig.color} name={icon as PhosphorIconName} size={compact ? 12 : 14} /> : icon ?? null;
+    typeof icon === 'string' ? <AppIcon color={toneConfig.color} name={icon as AppIconName} size={compact ? 12 : 14} /> : icon ?? null;
 
   return (
     <View
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
   },
   pill: {
     alignItems: 'center',
-    borderRadius: 999,
+    borderRadius: radius.full,
     borderWidth: 1,
     flexDirection: 'row',
     gap: 5,

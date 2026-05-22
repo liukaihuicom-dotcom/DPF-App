@@ -7,11 +7,12 @@ import { useToast } from '@/src/feedback/Toast';
 import { notifySuccess, notifyWarning } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
+import { typography } from '@/src/theme/tokens';
 
 import { ActionButton } from './ActionButton';
 import { Card } from './Card';
 import { NativePressable } from './NativePressable';
-import { PhosphorIcon } from './PhosphorIcon';
+import { AppIcon } from './AppIcon';
 import { StatusPill } from './StatusPill';
 import { TextField } from './TextField';
 import { AppText } from './Typography';
@@ -101,7 +102,7 @@ export function UpgradeChatCard({ request, readonly }: UpgradeChatCardProps) {
             ))}
           </View>
           <TextField
-            icon="chat-circle"
+            icon="chatFeedback"
             inputStyle={styles.reasonInput}
             label={t('upgrade.chatRequest')}
             multiline
@@ -115,7 +116,7 @@ export function UpgradeChatCard({ request, readonly }: UpgradeChatCardProps) {
 
       {!readonly && pending ? (
         <View style={StyleSheet.flatten([styles.waitingBox, { backgroundColor: `${palette.amber}10`, borderColor: palette.amber }])}>
-          <PhosphorIcon color={palette.amber} name="clock" size={15} />
+          <AppIcon color={palette.amber} name="historyClock" size={15} />
           <AppText tone="amber" variant="caption">
             {t('upgrade.pendingHint')}
           </AppText>
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   reasonInput: {
-    fontSize: 13,
+    ...typography.captionSm,
     minHeight: 54,
   },
   waitingBox: {

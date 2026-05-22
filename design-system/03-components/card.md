@@ -22,8 +22,9 @@
 | Padding | `space.16` or `space.12` |
 | Shadow | `shadow.panel` for highlight only |
 
+Runtime values are imported from `src/theme/tokens.ts`; page-local cards should use `Card` instead of copying radius, border, and padding rules.
+
 ## Rules
 
 - Cards should not contain unrelated page sections.
 - Avoid nested cards unless the inner item is a repeated data record.
-

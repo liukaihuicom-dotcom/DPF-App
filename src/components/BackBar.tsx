@@ -1,10 +1,10 @@
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useThemePalette } from '@/src/settings/ProductSettings';
 
 import { AppText } from './Typography';
-import { PhosphorIcon } from './PhosphorIcon';
+import { HeaderIconButton } from './HeaderIconButton';
 
 type BackBarProps = {
   label: string;
@@ -15,12 +15,13 @@ export function BackBar({ label }: BackBarProps) {
 
   return (
     <View style={styles.bar}>
-      <Pressable
-        accessibilityRole="button"
+      <HeaderIconButton
+        accessibilityLabel={label}
+        color={palette.text}
+        icon="navigateBack"
         onPress={() => router.back()}
-        style={StyleSheet.flatten([styles.button, { backgroundColor: palette.panelSoft, borderColor: palette.line }])}>
-        <PhosphorIcon color={palette.text} name="caret-left" size={22} />
-      </Pressable>
+        tone="default"
+      />
       <AppText numberOfLines={1} variant="subtitle">
         {label}
       </AppText>
@@ -34,13 +35,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     paddingTop: 8,
-  },
-  button: {
-    alignItems: 'center',
-    borderRadius: 8,
-    borderWidth: 1,
-    height: 38,
-    justifyContent: 'center',
-    width: 38,
   },
 });

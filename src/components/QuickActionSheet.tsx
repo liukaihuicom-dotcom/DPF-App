@@ -8,7 +8,8 @@ import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
 
 import { NativePressable } from './NativePressable';
-import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
+import { AppIcon, type AppIconName } from './AppIcon';
+import { HeaderIconButton } from './HeaderIconButton';
 import { AppText } from './Typography';
 
 type QuickActionSheetProps = {
@@ -65,24 +66,24 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
         ? t('control.simulator.action.partnerStatus')
         : t('control.simulator.action.partnerApply');
   const actions: {
-    icon: PhosphorIconName;
+    icon: AppIconName;
     label: string;
     onPress: () => void;
     tone: string;
   }[] = [
     {
-      icon: 'arrows-left-right',
+      icon: 'transferSwitch',
       label: t('quick.trade'),
       onPress: () => {
         if (requireSignedIn()) {
-          router.push(`/order/${anchor.id}?direction=buy`);
+          router.push(`/order/${anchor.id}?direction=buy` as never);
           onClose();
         }
       },
       tone: palette.up,
     },
     {
-      icon: 'chart-line-up',
+      icon: 'marketTrend',
       label: t('quick.markets'),
       onPress: () => {
         router.push('/markets');
@@ -91,7 +92,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
       tone: palette.brand,
     },
     {
-      icon: 'bank',
+      icon: 'accountBank',
       label: t('quick.deposit'),
       onPress: () => {
         router.push('/accounts');
@@ -100,13 +101,13 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
       tone: palette.blue,
     },
     {
-      icon: 'share-network',
+      icon: 'partnerNetwork',
       label: partnerLabel,
       onPress: runPartnerFlow,
       tone: palette.amber,
     },
     {
-      icon: 'chats-circle',
+      icon: 'communityChat',
       label: t('upgrade.applyShort'),
       onPress: () => {
         if (!requireSignedIn()) {
@@ -127,7 +128,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
       tone: palette.cyan,
     },
     {
-      icon: 'headphones',
+      icon: 'supportHeadset',
       label: t('quick.support'),
       onPress: () => {
         void impactLight();
@@ -156,9 +157,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
             </AppText>
             <AppText variant="subtitle">{t('quick.title')}</AppText>
           </View>
-          <NativePressable accessibilityLabel={t('common.cancel')} minTouch={44} onPress={onClose} style={styles.closeButton}>
-            <PhosphorIcon color={palette.textMuted} name="x" size={16} />
-          </NativePressable>
+          <HeaderIconButton accessibilityLabel={t('common.cancel')} icon="closeX" onPress={onClose} />
         </View>
         <View style={styles.sheetContent}>
           <View style={styles.actionGrid}>
@@ -169,8 +168,8 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
               minTouch={64}
               onPress={action.onPress}
               style={StyleSheet.flatten([styles.actionItem, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-              <View style={StyleSheet.flatten([styles.actionIcon, { backgroundColor: `${action.tone}12`, borderColor: `${action.tone}55` }])}>
-                <PhosphorIcon color={action.tone} name={action.icon} size={17} />
+              <View style={styles.actionIcon}>
+                <AppIcon color={action.tone} name={action.icon} size={17} />
               </View>
               <AppText adjustsFontSizeToFit numberOfLines={1} variant="caption">
                 {action.label}
@@ -194,8 +193,6 @@ const styles = StyleSheet.create({
   },
   actionIcon: {
     alignItems: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
     height: 34,
     justifyContent: 'center',
     width: 34,
@@ -209,10 +206,6 @@ const styles = StyleSheet.create({
     gap: 7,
     minWidth: 88,
     padding: 10,
-  },
-  closeButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   handle: {
     borderRadius: 999,

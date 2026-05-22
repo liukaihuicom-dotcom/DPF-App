@@ -30,6 +30,8 @@
 
 Status copy must include the meaning, not just color. Example: "Pending review", not only amber color.
 
+Visual values are bound to `ThemePalette`, `radius.full`, and `AppText` caption variants. Page-local semantic pills are not allowed.
+
 ## Migration Boundary
 
 Use `StatusPill` for semantic state, account status, upgrade status, filters, and metadata chips.

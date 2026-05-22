@@ -46,11 +46,11 @@ Runtime baseline: Expo SDK 54, Expo Router 6, React 19.1.0, React Native 0.81, R
 ### Auth & Onboarding
 
 - Target users: guest, trader, partner.
-- Entry routes: `/auth/onboarding`, `/auth`, `/auth/register`, `/auth/forgot-password`.
-- Implemented functions: onboarding path, trader/partner choice cards, first-week activation preview, login validation, registration validation, invite code field, risk acknowledgement checkbox, password reset sent state, local auth status switch to `signedIn`.
-- Core actions: start onboarding, register, accept risk, log in, request reset, return to login.
-- State source: local React form state and `ProductSettingsProvider.authStatus`.
-- Current gaps: no real identity provider, no OTP/MFA, no session token, no password email, no live KYC.
+- Entry routes: `/auth/onboarding`, `/auth`, `/auth/register`, `/auth/verify`, `/auth/account-review`, `/auth/forgot-password`.
+- Implemented functions: onboarding path, trader/partner choice cards, first-week activation preview, login validation, registration validation, local OTP verification, invite code field, risk acknowledgement checkbox, account-opening review placeholder, password reset sent state, local auth status switch to `signedIn`.
+- Core actions: start onboarding, register, accept risk, verify login/register, activate demo account, log in, request reset, return to login.
+- State source: local React form state, route params, and `ProductSettingsProvider.authStatus`.
+- Current gaps: no real identity provider, email/SMS/MFA provider, session token, password email, suitability review, or live KYC.
 
 ### Markets & Instruments
 

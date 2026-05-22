@@ -4,7 +4,7 @@ export type DupoinMvpAction = {
   id: string;
   title: LocalizedText;
   subtitle: LocalizedText;
-  icon: 'chart-line-up' | 'list-checks' | 'bank' | 'trophy' | 'graduation-cap' | 'share-network' | 'headphones' | 'shield-check';
+  icon: 'marketTrend' | 'taskChecklist' | 'accountBank' | 'achievementTrophy' | 'educationCap' | 'partnerNetwork' | 'supportHeadset' | 'riskShield';
   route: string;
 };
 
@@ -32,28 +32,28 @@ export const dupoinHeroStats = [
 export const dupoinQuickActions: DupoinMvpAction[] = [
   {
     id: 'markets',
-    icon: 'chart-line-up',
-    route: '/',
+    icon: 'marketTrend',
+    route: '/markets',
     subtitle: { 'en-US': 'FX, metals, indices', 'zh-CN': '外汇、贵金属、指数' },
     title: { 'en-US': 'Watch markets', 'zh-CN': '看行情' },
   },
   {
     id: 'order',
-    icon: 'list-checks',
+    icon: 'taskChecklist',
     route: '/order/eur-usd',
     subtitle: { 'en-US': 'EUR/USD ticket', 'zh-CN': 'EUR/USD 下单票' },
     title: { 'en-US': 'Trade demo', 'zh-CN': '模拟交易' },
   },
   {
     id: 'wallet',
-    icon: 'bank',
+    icon: 'accountBank',
     route: '/accounts',
     subtitle: { 'en-US': 'Equity and margin', 'zh-CN': '净值与保证金' },
     title: { 'en-US': 'Wallet', 'zh-CN': '钱包' },
   },
   {
     id: 'academy',
-    icon: 'graduation-cap',
+    icon: 'educationCap',
     route: '/discover',
     subtitle: { 'en-US': 'CFD risk primers', 'zh-CN': 'CFD 风险入门' },
     title: { 'en-US': 'Learn', 'zh-CN': '学习' },

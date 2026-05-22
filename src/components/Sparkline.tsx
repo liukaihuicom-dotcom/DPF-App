@@ -40,7 +40,7 @@ function SparklineComponent({ values, width = 92, height = 34, color }: Sparklin
       };
     }
 
-    const linePath = coordinates.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
+    const linePath = buildSoftLinePath(coordinates);
     const first = coordinates[0];
     const last = coordinates[coordinates.length - 1];
     const areaPath = `M ${first.x} ${height} ${linePath.replace('M', 'L')} L ${last.x} ${height} Z`;
@@ -52,14 +52,28 @@ function SparklineComponent({ values, width = 92, height = 34, color }: Sparklin
     <Svg height={height} width={width}>
       <Defs>
         <LinearGradient id={gradientId} x1="0" x2="0" y1="0" y2="1">
-          <Stop offset="0" stopColor={strokeColor} stopOpacity={0.24} />
-          <Stop offset="1" stopColor={strokeColor} stopOpacity={0.02} />
+          <Stop offset="0" stopColor={strokeColor} stopOpacity={0.12} />
+          <Stop offset="1" stopColor={strokeColor} stopOpacity={0.01} />
         </LinearGradient>
       </Defs>
       <Path d={chart.areaPath} fill={`url(#${gradientId})`} />
-      <Path d={chart.linePath} fill="none" stroke={strokeColor} strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} />
+      <Path d={chart.linePath} fill="none" stroke={strokeColor} strokeLinecap="round" strokeLinejoin="round" strokeOpacity={0.86} strokeWidth={1.45} />
     </Svg>
   );
+}
+
+function buildSoftLinePath(points: { x: number; y: number }[]) {
+  return points.reduce((path, point, index) => {
+    if (index === 0) {
+      return `M ${point.x} ${point.y}`;
+    }
+
+    const previous = points[index - 1];
+    const controlX = (previous.x + point.x) / 2;
+    const controlY = previous.y;
+
+    return `${path} Q ${controlX} ${controlY} ${point.x} ${point.y}`;
+  }, '');
 }
 
 export const Sparkline = memo(SparklineComponent);

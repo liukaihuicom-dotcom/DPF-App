@@ -2,13 +2,16 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Circle, Line, Path, Polyline } from 'react-native-svg';
 
-import { useBottomSheet } from '@/src/components/BottomSheet';
+import { bottomSheetPresets, useBottomSheet } from '@/src/components/BottomSheet';
 import { Card } from '@/src/components/Card';
+import { FundActionGrid, type FundActionGridItem } from '@/src/components/FundActionGrid';
+import { GlobalMenuList } from '@/src/components/GlobalMenuList';
 import { NativePressable } from '@/src/components/NativePressable';
-import { PhosphorIcon, type PhosphorIconName } from '@/src/components/PhosphorIcon';
+import { AppIcon } from '@/src/components/AppIcon';
 import { Screen } from '@/src/components/Screen';
 import { Sparkline } from '@/src/components/Sparkline';
 import { StatusPill, type StatusPillTone } from '@/src/components/StatusPill';
+import { TradeDirectionIcon } from '@/src/components/TradeDirectionIcon';
 import { AppText } from '@/src/components/Typography';
 import { buildTradingAccountProfiles, getAccountStatusLabel } from '@/src/domain/accountProfiles';
 import { directionLabel, formatMoney, formatNumber } from '@/src/domain/format';
@@ -19,7 +22,7 @@ import { useBroker } from '@/src/state/BrokerStore';
 export default function AccountDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { account, positions } = useBroker();
-  const { locale, palette, tradingAccountCountPreset, tradingAccountDataPreset, tradingAccountScenario, tradingAccountStatusPreset } = useProductSettings();
+  const { locale, palette, t, tradingAccountCountPreset, tradingAccountDataPreset, tradingAccountScenario, tradingAccountStatusPreset } = useProductSettings();
   const bottomSheet = useBottomSheet();
   const toast = useToast();
   const profiles = buildTradingAccountProfiles(account, positions, tradingAccountScenario, {
@@ -41,34 +44,32 @@ export default function AccountDetailsScreen() {
       }))
     : getDetailDemoPositions(locale);
   const openMoreMenu = () => {
-    bottomSheet.show({
-      title: locale === 'en-US' ? 'More actions' : '更多操作',
-      subtitle: `${profile.accountNo} · ${profile.currency}`,
+    bottomSheet.show(bottomSheetPresets.actionMenu({
       content: (
-      <AccountMoreSheet
-        onSelect={(label, tone) => {
-          bottomSheet.hide();
-          toast.show({
-            message: locale === 'en-US' ? 'Demo action only. Account data was not changed.' : '当前为演示操作，账户数据未改变。',
-            title: label,
-            tone,
-          });
-        }}
-      />
+        <AccountMoreSheet
+          onSelect={(label, tone) => {
+            bottomSheet.hide();
+            toast.show({
+              message: locale === 'en-US' ? 'Demo action only. Account data was not changed.' : '当前为演示操作，账户数据未改变。',
+              title: label,
+              tone,
+            });
+          }}
+        />
       ),
-    });
+    }));
   };
 
   return (
     <Screen
       align="center"
       back
-      rightActions={[{ icon: 'dots-three', label: locale === 'en-US' ? 'More' : '更多', onPress: openMoreMenu }]}
-      title={locale === 'en-US' ? 'Account Details' : 'Account Details'}>
+      rightActions={[{ icon: 'moreDots', label: locale === 'en-US' ? 'More' : '更多', onPress: openMoreMenu }]}
+      title={t('accountDetails.title')}>
       <Card compact>
         <View style={styles.detailHeader}>
           <View style={StyleSheet.flatten([styles.walletIcon, { backgroundColor: palette.panelSoft }])}>
-            <PhosphorIcon color={palette.text} name="bank" size={18} />
+            <AppIcon color={palette.text} name="accountBank" size={18} />
           </View>
           <View style={styles.detailTitleBlock}>
             <View style={styles.detailTitleRow}>
@@ -79,7 +80,7 @@ export default function AccountDetailsScreen() {
               {profile.platform} · {profile.currency} · {profile.type}
             </AppText>
           </View>
-          <PhosphorIcon color={palette.textDim} name="caret-right" size={16} />
+          <AppIcon color={palette.textDim} name="navigateNext" size={16} />
         </View>
 
         <View style={styles.detailMetrics}>
@@ -112,44 +113,37 @@ export default function AccountDetailsScreen() {
         <AppText tone="muted" variant="caption">Trading Server: {profile.server}</AppText>
       </Card>
 
-      <View style={styles.actionGrid}>
-        {[
-          ['Deposit', 'down', 'bank'],
-          ['Withdraw', 'amber', 'arrow-clockwise'],
-          ['Transfer', 'blue', 'arrows-left-right'],
-          ['Leverage', 'up', 'sliders-horizontal'],
-          ['Password', 'blue', 'lock'],
-          ['Trade', 'brand', 'chart-line-up'],
-        ].map(([label, tone, icon]) => (
-          <ActionTile icon={icon as PhosphorIconName} key={label} label={label} tone={tone as 'down' | 'up' | 'amber' | 'blue' | 'brand'} />
-        ))}
-      </View>
+      <FundActionGrid
+        items={[
+          { icon: 'accountBank', label: t('accountDetails.deposit'), tone: 'deposit' },
+          { icon: 'actionRefresh', label: locale === 'en-US' ? 'Withdraw' : t('accountDetails.withdrawal'), tone: 'withdraw' },
+          { icon: 'transferSwitch', label: locale === 'en-US' ? 'Transfer' : '转账', tone: 'transfer' },
+          { icon: 'settingsSliders', label: 'Leverage', tone: 'up' },
+          { icon: 'secureLock', label: 'Password', tone: 'blue' },
+          { icon: 'marketTrend', label: 'Trade', tone: 'brand' },
+        ] satisfies FundActionGridItem[]}
+      />
 
-      <Card compact>
-        {['Account Balance', 'Swap', 'Order History', 'Deposit History', 'Withdrawal History'].map((item, index, arr) => (
-          <NativePressable
-            key={item}
-            minTouch={56}
-            style={StyleSheet.flatten([styles.menuRow, index < arr.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: 1 }])}>
-            <View style={styles.menuLeft}>
-              <PhosphorIcon color={palette.text} name={index === 0 ? 'bank' : index === 1 ? 'arrows-left-right' : 'clock'} size={19} />
-              <AppText variant="body">{item}</AppText>
-            </View>
-            <PhosphorIcon color={palette.textDim} name="caret-right" size={16} />
-          </NativePressable>
-        ))}
-      </Card>
+      <GlobalMenuList
+        contained
+        items={[
+          { icon: 'identityCard' as const, label: t('accountDetails.menuBasicInfo'), onPress: () => router.push(`/account-basic/${profile.id}` as never) },
+          { icon: 'accountBank' as const, label: 'Account Balance', onPress: () => router.push(`/account-balance/${profile.id}` as never) },
+          { icon: 'transferSwitch' as const, label: 'Swap' },
+          { icon: 'historyClock' as const, label: 'Order History' },
+          { icon: 'historyClock' as const, label: 'Deposit History' },
+          { icon: 'historyClock' as const, label: 'Withdrawal History' },
+        ]}
+      />
 
       <Card compact>
         <View style={styles.cardTitleRow}>
           <AppText variant="subtitle">Positions</AppText>
-          <PhosphorIcon color={palette.textDim} name="caret-right" size={14} />
+          <AppIcon color={palette.textDim} name="navigateNext" size={14} />
         </View>
         {positionRows.map((position, index) => (
           <View key={position.id} style={StyleSheet.flatten([styles.positionRow, index < positionRows.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: 1 }])}>
-            <View style={StyleSheet.flatten([styles.positionIcon, { backgroundColor: palette.panelSoft }])}>
-              <PhosphorIcon color={position.direction === 'buy' ? palette.down : palette.up} name="chart-line-up" size={15} />
-            </View>
+            <TradeDirectionIcon direction={position.direction} size={30} />
             <View style={styles.positionMain}>
               <View style={styles.positionTitle}>
                 <AppText variant="caption">{position.symbol}</AppText>
@@ -169,7 +163,7 @@ export default function AccountDetailsScreen() {
       <Card>
         <View style={styles.cardTitleRow}>
           <AppText variant="subtitle">{locale === 'en-US' ? 'Closed PnL' : '已平仓盈亏'}</AppText>
-          <StatusPill compact icon="caret-down" label={locale === 'en-US' ? 'Symbols (5)' : '品种 (5)'} tone="neutral" />
+          <StatusPill compact icon="expandDown" label={locale === 'en-US' ? 'Symbols (5)' : '品种 (5)'} tone="neutral" />
         </View>
         <AppText tone={profile.realizedPnl >= 0 ? 'down' : 'up'} variant="subtitle">
           {formatMoney(profile.realizedPnl, profile.currency, 2, locale)}
@@ -204,7 +198,7 @@ export default function AccountDetailsScreen() {
       <Card>
         <View style={styles.cardTitleRow}>
           <AppText variant="subtitle">PnL Calendar</AppText>
-          <PhosphorIcon color={palette.textDim} name="caret-right" size={14} />
+          <AppIcon color={palette.textDim} name="navigateNext" size={14} />
         </View>
         <View style={styles.calendarGrid}>
           {Array.from({ length: 31 }).map((_, index) => {
@@ -234,9 +228,9 @@ export default function AccountDetailsScreen() {
 function AccountMoreSheet({ onSelect }: { onSelect: (label: string, tone?: 'danger' | 'default') => void }) {
   const { palette } = useProductSettings();
   const items = [
-    { icon: 'list-checks' as const, label: 'Trading Journal', tone: 'default' as const },
-    { icon: 'bank' as const, label: 'Archive Account', tone: 'default' as const },
-    { icon: 'x' as const, label: 'Delete Account', tone: 'danger' as const },
+    { icon: 'taskChecklist' as const, label: 'Trading Journal', tone: 'default' as const },
+    { icon: 'accountBank' as const, label: 'Archive Account', tone: 'default' as const },
+    { icon: 'closeX' as const, label: 'Delete Account', tone: 'danger' as const },
   ];
 
   return (
@@ -251,7 +245,7 @@ function AccountMoreSheet({ onSelect }: { onSelect: (label: string, tone?: 'dang
             minTouch={64}
             onPress={() => onSelect(item.label, item.tone)}
             style={StyleSheet.flatten([styles.moreSheetRow, index < items.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: 1 }])}>
-            <PhosphorIcon color={color} name={item.icon} size={26} />
+            <AppIcon color={color} name={item.icon} size={26} />
             <AppText style={{ color }} variant="title">
               {item.label}
             </AppText>
@@ -350,24 +344,6 @@ function SmallMetric({ label, tone, value }: { label: string; tone?: 'down' | 'u
   );
 }
 
-function ActionTile({ icon, label, tone }: { icon: PhosphorIconName; label: string; tone: 'down' | 'up' | 'amber' | 'blue' | 'brand' }) {
-  const { palette } = useProductSettings();
-  const colorByTone = {
-    amber: palette.amber,
-    blue: palette.blue,
-    brand: palette.brand,
-    down: palette.down,
-    up: palette.up,
-  };
-
-  return (
-    <NativePressable minTouch={56} style={StyleSheet.flatten([styles.actionTile, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-      <PhosphorIcon color={colorByTone[tone]} name={icon} size={18} />
-      <AppText variant="caption">{label}</AppText>
-    </NativePressable>
-  );
-}
-
 function buildClosedPnlPeriods(realizedPnl: number) {
   return [
     { period: '1W', value: realizedPnl * 0.22 },
@@ -407,20 +383,6 @@ function getDetailDemoPositions(locale: 'en-US' | 'zh-CN') {
 }
 
 const styles = StyleSheet.create({
-  actionGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  actionTile: {
-    alignItems: 'center',
-    borderRadius: 8,
-    borderWidth: 1,
-    gap: 4,
-    justifyContent: 'center',
-    minHeight: 58,
-    width: '31.7%',
-  },
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -508,18 +470,6 @@ const styles = StyleSheet.create({
     gap: 18,
     paddingHorizontal: 18,
   },
-  menuLeft: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 12,
-  },
-  menuRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    minHeight: 56,
-    paddingHorizontal: 2,
-  },
   performanceChart: {
     alignItems: 'center',
     height: 142,
@@ -535,13 +485,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginTop: 12,
-  },
-  positionIcon: {
-    alignItems: 'center',
-    borderRadius: 999,
-    height: 30,
-    justifyContent: 'center',
-    width: 30,
   },
   positionMain: {
     flex: 1,

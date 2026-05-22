@@ -2,13 +2,22 @@ import { PropsWithChildren } from 'react';
 import { StyleSheet, Text, TextProps } from 'react-native';
 
 import { useThemePalette } from '@/src/settings/ProductSettings';
+import { typography, type TypographyToken } from '@/src/theme/tokens';
 
 export type AppTextTone = 'default' | 'muted' | 'dim' | 'up' | 'down' | 'amber' | 'blue' | 'cyan' | 'brand' | 'danger';
 
 type AppTextProps = PropsWithChildren<
   TextProps & {
     tone?: AppTextTone;
-    variant?: 'eyebrow' | 'title' | 'subtitle' | 'body' | 'caption' | 'number' | 'largeNumber';
+    variant?:
+      | TypographyToken
+      | 'body'
+      | 'caption'
+      | 'eyebrow'
+      | 'largeNumber'
+      | 'number'
+      | 'subtitle'
+      | 'title';
   }
 >;
 
@@ -27,49 +36,31 @@ export function AppText({ children, tone = 'default', variant = 'body', style, .
     up: palette.up,
   };
 
+  const variantStyle = variantStyles[variant];
+
   return (
-    <Text {...props} style={StyleSheet.flatten([styles.base, styles[variant], { color: toneMap[tone] }, style])}>
+    <Text {...props} style={StyleSheet.flatten([styles.base, variantStyle, { color: toneMap[tone] }, style])}>
       {children}
     </Text>
   );
 }
 
+const variantStyles = {
+  ...typography,
+  body: typography.bodySm,
+  caption: typography.captionSm,
+  eyebrow: {
+    ...typography.microLabel,
+    textTransform: 'uppercase',
+  },
+  largeNumber: typography.displayXl,
+  number: typography.number,
+  subtitle: typography.titleMd,
+  title: typography.displayLg,
+} as const;
+
 const styles = StyleSheet.create({
   base: {
     letterSpacing: 0,
-  },
-  body: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  caption: {
-    fontSize: 12,
-    lineHeight: 16,
-  },
-  eyebrow: {
-    fontSize: 10,
-    fontWeight: '600',
-    lineHeight: 14,
-    textTransform: 'uppercase',
-  },
-  largeNumber: {
-    fontSize: 28,
-    fontWeight: '600',
-    lineHeight: 34,
-  },
-  number: {
-    fontSize: 17,
-    fontWeight: '500',
-    lineHeight: 22,
-  },
-  subtitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    lineHeight: 21,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-    lineHeight: 26,
   },
 });

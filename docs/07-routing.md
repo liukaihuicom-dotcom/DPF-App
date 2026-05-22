@@ -12,20 +12,21 @@
 
 | Group | Routes | Purpose |
 |---|---|---|
-| Root stack | `auth/onboarding`, `auth/index`, `auth/register`, `auth/forgot-password`, `instrument/[id]`, `order/[id]`, `client/[id]`, `account-details/[id]` | Page-level screens outside persistent tab navigation |
-| Visible tabs | `index`, `trade`, `accounts`, `discover`, `quick` | Primary mobile navigation and status slot |
-| Hidden tab routes | `markets`, `portfolio`, `account`, `partner-tools` | Compatibility aliases and role-specific entry points |
+| Root stack | `launch`, `auth/onboarding`, `auth/index`, `auth/register`, `auth/verify`, `auth/account-review`, `auth/forgot-password`, `instrument/[id]`, `order/[id]`, `client/[id]`, `account-details/[id]` | Page-level screens outside persistent tab navigation |
+| Visible tabs | `markets`, `trade`, `accounts`, `discover`, `quick` | Primary mobile navigation and status slot |
+| Hidden tab routes | `index`, `portfolio`, `account`, `partner-tools` | Compatibility aliases and role-specific entry points |
 
 ## Route Map
 
 | Route | Runtime File | Navigation Behavior |
 |---|---|---|
-| `/` | `app/(tabs)/index.tsx` | Market home tab |
+| `/` | `app/(tabs)/index.tsx` | Redirects to `/launch` |
+| `/launch` | `app/launch.tsx` | Default app entry with login, register, and Apple sign-in unavailable feedback |
+| `/markets` | `app/(tabs)/markets.tsx` | Market home tab |
 | `/trade` | `app/(tabs)/trade.tsx` -> `app/(tabs)/portfolio.tsx` | Trader portfolio workspace or partner client workspace by role |
 | `/accounts` | `app/(tabs)/accounts.tsx` -> `app/(tabs)/account.tsx` | Trader account workspace or partner commission workspace by role |
 | `/discover` | `app/(tabs)/discover.tsx` | Discover and growth tab |
 | `/quick` | `app/(tabs)/quick.tsx` | Redirects to `/`; visible tab button is a non-navigating status indicator |
-| `/markets` | `app/(tabs)/markets.tsx` | Redirects to `/` |
 | `/portfolio` | `app/(tabs)/portfolio.tsx` | Hidden direct route for the portfolio implementation |
 | `/account` | `app/(tabs)/account.tsx` | Hidden direct route for the account implementation |
 | `/partner-tools` | `app/(tabs)/partner-tools.tsx` | Hidden direct route for the Partner/function-center implementation |
@@ -36,6 +37,8 @@
 | `/auth/onboarding` | `app/auth/onboarding.tsx` | Root stack onboarding flow |
 | `/auth` | `app/auth/index.tsx` | Root stack login page |
 | `/auth/register` | `app/auth/register.tsx` | Root stack registration page |
+| `/auth/verify` | `app/auth/verify.tsx` | Root stack local OTP verification with `intent`, `email`, and `redirect` query params |
+| `/auth/account-review` | `app/auth/account-review.tsx` | Root stack simulated account-opening review with `email` and `redirect` query params |
 | `/auth/forgot-password` | `app/auth/forgot-password.tsx` | Root stack password reset page |
 
 ## Role Switching Behavior

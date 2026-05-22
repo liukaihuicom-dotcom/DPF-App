@@ -32,5 +32,6 @@ default, focus, inputting, validating, error, disabled, success.
 ## Governance
 
 - Page code must not import `TextInput` directly unless building a low-level input wrapper.
+- Approved low-level wrappers are `TextField` and the legacy-compatible `AuthTextField` adapter inside `AuthShell`.
 - Error copy must be passed through `error`, not rendered as a detached page-local pattern.
-- Visual values must come from `palette` through the shared component.
+- Visual values must come from `palette` and `src/theme/tokens.ts` through the shared component.

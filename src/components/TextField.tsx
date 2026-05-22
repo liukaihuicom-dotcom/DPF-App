@@ -2,8 +2,9 @@ import { ReactNode } from 'react';
 import { StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 
 import { useThemePalette } from '@/src/settings/ProductSettings';
+import { radius, spacing, typography } from '@/src/theme/tokens';
 
-import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
+import { AppIcon, type AppIconName } from './AppIcon';
 import { AppText } from './Typography';
 
 export type TextFieldProps = Omit<TextInputProps, 'style'> & {
@@ -11,7 +12,7 @@ export type TextFieldProps = Omit<TextInputProps, 'style'> & {
   disabled?: boolean;
   error?: string;
   helperText?: string;
-  icon?: PhosphorIconName | ReactNode;
+  icon?: AppIconName | ReactNode;
   inputStyle?: StyleProp<TextStyle>;
   label: string;
   labelHidden?: boolean;
@@ -36,7 +37,7 @@ export function TextField({
   const palette = useThemePalette();
   const fieldEditable = editable !== false && !disabled;
   const iconNode =
-    typeof icon === 'string' ? <PhosphorIcon color={error ? palette.danger : palette.textDim} name={icon as PhosphorIconName} size={15} /> : icon ?? null;
+    typeof icon === 'string' ? <AppIcon color={error ? palette.danger : palette.textDim} name={icon as AppIconName} size={15} /> : icon ?? null;
 
   return (
     <View style={StyleSheet.flatten([styles.wrap, containerStyle])}>
@@ -88,8 +89,7 @@ export function TextField({
 const styles = StyleSheet.create({
   input: {
     flex: 1,
-    fontSize: 14,
-    lineHeight: 20,
+    ...typography.bodySm,
     minHeight: 46,
     minWidth: 0,
     padding: 0,
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   shell: {
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
     flexDirection: 'row',
     gap: 10,
@@ -112,6 +112,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   wrap: {
-    gap: 7,
+    gap: spacing.sm,
   },
 });

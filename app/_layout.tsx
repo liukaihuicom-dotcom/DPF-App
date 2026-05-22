@@ -1,6 +1,7 @@
-import { DarkTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -17,7 +18,7 @@ import { BrokerProvider } from '@/src/state/BrokerStore';
 export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
-  initialRouteName: '(tabs)',
+  initialRouteName: 'launch',
 };
 
 SplashScreen.preventAutoHideAsync();
@@ -39,14 +40,19 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const { palette } = useProductSettings();
+  const { palette, resolvedThemeMode } = useProductSettings();
+  const navigationTheme = resolvedThemeMode === 'lightBroker' ? DefaultTheme : DarkTheme;
+
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync(palette.bg);
+  }, [palette.bg]);
 
   return (
     <ThemeProvider
       value={{
-        ...DarkTheme,
+        ...navigationTheme,
         colors: {
-          ...DarkTheme.colors,
+          ...navigationTheme.colors,
           background: palette.bg,
           border: palette.line,
           card: palette.panel,
@@ -63,15 +69,36 @@ function RootLayoutNav() {
                   contentStyle: { backgroundColor: palette.bg },
                   headerShown: false,
                 }}>
+                <Stack.Screen name="launch" />
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="auth/onboarding" />
                 <Stack.Screen name="auth/index" />
                 <Stack.Screen name="auth/register" />
+                <Stack.Screen name="auth/verify" />
+                <Stack.Screen name="auth/account-review" />
                 <Stack.Screen name="auth/forgot-password" />
                 <Stack.Screen name="instrument/[id]" />
-                <Stack.Screen name="order/[id]" />
+                <Stack.Screen
+                  name="order/[id]"
+                  options={{
+                    animation: 'fade',
+                    contentStyle: { backgroundColor: 'transparent' },
+                    presentation: 'transparentModal',
+                  }}
+                />
                 <Stack.Screen name="client/[id]" />
+                <Stack.Screen name="account-basic/[id]" />
+                <Stack.Screen name="account-balance/[id]" />
                 <Stack.Screen name="account-details/[id]" />
+                <Stack.Screen name="appearance" />
+                <Stack.Screen
+                  name="discover-layout"
+                  options={{
+                    animation: 'fade',
+                    contentStyle: { backgroundColor: 'transparent' },
+                    presentation: 'transparentModal',
+                  }}
+                />
               </Stack>
             </AppViewport>
             <GlobalBottomSheetHost />

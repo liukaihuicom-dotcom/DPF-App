@@ -3,6 +3,7 @@ import { StyleSheet, View, ViewStyle } from 'react-native';
 
 import { useThemePalette } from '@/src/settings/ProductSettings';
 import { shadows } from '@/src/theme/colors';
+import { radius, spacing } from '@/src/theme/tokens';
 
 type CardProps = PropsWithChildren<{
   compact?: boolean;
@@ -32,11 +33,11 @@ export function Card({ children, compact, highlight, style }: CardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
-    padding: 16,
+    padding: spacing.lg,
   },
   compact: {
-    padding: 12,
+    padding: spacing.md,
   },
 });

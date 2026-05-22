@@ -5,6 +5,8 @@ import { Platform } from 'react-native';
 import { initialAccount, initialUpgradeRequest, instruments as initialInstruments, partnerClients as initialPartnerClients } from '@/src/domain/mockData';
 import {
   applyQuote,
+  calculateMargin,
+  calculatePositionPnl,
   createOrder,
   createPosition,
   recalculateAccount,
@@ -99,8 +101,118 @@ function readStoredUpgradeState() {
   }
 }
 
+function getSeedInstrument(id: string) {
+  return initialInstruments.find((instrument) => instrument.id === id) ?? initialInstruments[0];
+}
+
+function getPricePrecision(instrument: Instrument) {
+  return instrument.pipSize >= 0.01 ? 3 : 5;
+}
+
+function buildSamplePosition(params: {
+  direction: Direction;
+  id: string;
+  instrument: Instrument;
+  lots: number;
+  openPriceOffset: number;
+  openedAt: string;
+}): Position {
+  const precision = getPricePrecision(params.instrument);
+  const openPriceSource = params.direction === 'buy' ? params.instrument.ask : params.instrument.bid;
+  const openPrice = Number((openPriceSource + params.openPriceOffset).toFixed(precision));
+  const currentPrice = params.direction === 'buy' ? params.instrument.bid : params.instrument.ask;
+
+  return {
+    id: params.id,
+    instrumentId: params.instrument.id,
+    symbol: params.instrument.symbol,
+    direction: params.direction,
+    lots: params.lots,
+    openPrice,
+    currentPrice,
+    marginUsed: calculateMargin(params.instrument, params.lots, openPrice),
+    unrealizedPnl: calculatePositionPnl(params.instrument, params.direction, params.lots, openPrice),
+    openedAt: params.openedAt,
+  };
+}
+
+function buildSamplePositions(): Position[] {
+  const eurUsd = getSeedInstrument('eur-usd');
+  const xauUsd = getSeedInstrument('xau-usd');
+
+  return [
+    buildSamplePosition({
+      direction: 'buy',
+      id: 'dev-pos-eur-usd',
+      instrument: eurUsd,
+      lots: 0.4,
+      openedAt: '05/22 10:08',
+      openPriceOffset: -eurUsd.pipSize * 18,
+    }),
+    buildSamplePosition({
+      direction: 'sell',
+      id: 'dev-pos-xau-usd',
+      instrument: xauUsd,
+      lots: 0.18,
+      openedAt: '05/22 11:34',
+      openPriceOffset: xauUsd.pipSize * 96,
+    }),
+  ];
+}
+
+function buildSamplePendingOrder(params: {
+  direction: Direction;
+  id: string;
+  instrument: Instrument;
+  lots: number;
+  priceOffset: number;
+  createdAt: string;
+}): Order {
+  const precision = getPricePrecision(params.instrument);
+  const priceSource = params.direction === 'buy' ? params.instrument.bid : params.instrument.ask;
+  const price = Number((priceSource + params.priceOffset).toFixed(precision));
+
+  return {
+    id: params.id,
+    instrumentId: params.instrument.id,
+    symbol: params.instrument.symbol,
+    direction: params.direction,
+    type: 'limit',
+    lots: params.lots,
+    requestedPrice: price,
+    filledPrice: price,
+    marginRequired: calculateMargin(params.instrument, params.lots, price),
+    status: 'pending',
+    createdAt: params.createdAt,
+  };
+}
+
+function buildSamplePendingOrders(): Order[] {
+  const gbpUsd = getSeedInstrument('gbp-usd');
+  const usdJpy = getSeedInstrument('usd-jpy');
+
+  return [
+    buildSamplePendingOrder({
+      createdAt: '05/22 12:10',
+      direction: 'buy',
+      id: 'dev-pending-gbp-usd',
+      instrument: gbpUsd,
+      lots: 0.25,
+      priceOffset: -gbpUsd.pipSize * 22,
+    }),
+    buildSamplePendingOrder({
+      createdAt: '05/22 12:26',
+      direction: 'sell',
+      id: 'dev-pending-usd-jpy',
+      instrument: usdJpy,
+      lots: 0.12,
+      priceOffset: usdJpy.pipSize * 18,
+    }),
+  ];
+}
+
 export function BrokerProvider({ children }: PropsWithChildren) {
-  const { role, setRole } = useProductSettings();
+  const { pendingOrderDataPreset, positionDataPreset, role, setRole } = useProductSettings();
   const storedUpgradeState = readStoredUpgradeState();
   const [instruments, setInstruments] = useState(initialInstruments);
   const [baseAccount, setBaseAccount] = useState(initialAccount);
@@ -273,6 +385,14 @@ export function BrokerProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     setPositions((current) => refreshPositions(current, instruments));
   }, [instruments]);
+
+  useEffect(() => {
+    setPositions(positionDataPreset === 'sample' ? buildSamplePositions() : []);
+  }, [positionDataPreset]);
+
+  useEffect(() => {
+    setOrders(pendingOrderDataPreset === 'sample' ? buildSamplePendingOrders() : []);
+  }, [pendingOrderDataPreset]);
 
   useEffect(() => {
     if (Platform.OS !== 'web' || typeof window === 'undefined' || !window.localStorage) {

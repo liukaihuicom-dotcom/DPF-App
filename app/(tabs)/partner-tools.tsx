@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Card } from '@/src/components/Card';
 import { NativePressable } from '@/src/components/NativePressable';
-import { PhosphorIcon, type PhosphorIconName } from '@/src/components/PhosphorIcon';
+import { AppIcon, type AppIconName } from '@/src/components/AppIcon';
 import { Screen } from '@/src/components/Screen';
 import { StatusPill } from '@/src/components/StatusPill';
 import { AppText } from '@/src/components/Typography';
@@ -14,16 +14,16 @@ import { useProductSettings } from '@/src/settings/ProductSettings';
 export default function PartnerToolsScreen() {
   const { palette, role, selectedDiscoverModuleId, setSelectedDiscoverModule, t } = useProductSettings();
   const tiles: DiscoverTile[] = [
-    { color: palette.amber, group: 'growth', icon: 'trophy', id: 'challenge' },
-    { color: palette.brand, group: 'growth', icon: 'graduation-cap', id: 'education' },
-    { color: palette.textMuted, group: 'growth', icon: 'chats-circle', id: 'community' },
-    { color: palette.text, group: 'account', icon: 'user-circle', id: 'profile' },
-    { color: palette.down, group: 'account', icon: 'identification-card', id: 'onboarding' },
-    { color: palette.brand, group: 'account', icon: 'share-network', id: 'partner' },
-    { color: palette.up, group: 'trading', icon: 'chart-line-up', id: 'markets' },
-    { color: palette.blue, group: 'trading', icon: 'user', id: 'accounts' },
-    { color: palette.textMuted, group: 'service', icon: 'headphones', id: 'support' },
-    { color: palette.amber, group: 'service', icon: 'gift', id: 'rewards' },
+    { color: palette.amber, group: 'growth', icon: 'achievementTrophy', id: 'challenge' },
+    { color: palette.brand, group: 'growth', icon: 'educationCap', id: 'education' },
+    { color: palette.textMuted, group: 'growth', icon: 'communityChat', id: 'community' },
+    { color: palette.text, group: 'account', icon: 'userAvatar', id: 'profile' },
+    { color: palette.down, group: 'account', icon: 'identityCard', id: 'onboarding' },
+    { color: palette.brand, group: 'account', icon: 'partnerNetwork', id: 'partner' },
+    { color: palette.up, group: 'trading', icon: 'marketTrend', id: 'markets' },
+    { color: palette.blue, group: 'trading', icon: 'userProfile', id: 'accounts' },
+    { color: palette.textMuted, group: 'service', icon: 'supportHeadset', id: 'support' },
+    { color: palette.amber, group: 'service', icon: 'rewardGift', id: 'rewards' },
   ];
   const selectedTile = tiles.find((tile) => tile.id === selectedDiscoverModuleId) ?? tiles[0];
 
@@ -100,7 +100,7 @@ type DiscoverTileGroup = 'growth' | 'account' | 'trading' | 'service';
 type DiscoverTile = {
   color: string;
   group: DiscoverTileGroup;
-  icon: PhosphorIconName;
+  icon: AppIconName;
   id: DiscoverModuleId;
 };
 
@@ -129,7 +129,7 @@ function DiscoverSelectableTile({ onPress, selected, tile }: { onPress: () => vo
               borderColor: selected ? palette.brand : `${tile.color}55`,
             },
           ])}>
-          <PhosphorIcon color={selected ? palette.brand : tile.color} name={tile.icon} size={18} />
+          <AppIcon color={selected ? palette.brand : tile.color} name={tile.icon} size={18} />
         </View>
         <View style={StyleSheet.flatten([styles.selectedDot, { backgroundColor: selected ? palette.brand : palette.lineSoft }])} />
       </View>

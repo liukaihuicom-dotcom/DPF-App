@@ -12,7 +12,7 @@ export default function NotFoundScreen() {
       <Stack.Screen options={{ title: t('notFound.title') }} />
       <View style={StyleSheet.flatten([styles.container, { backgroundColor: palette.bg }])}>
         <AppText variant="title">{t('notFound.title')}</AppText>
-        <Link href="/" style={styles.link}>
+        <Link href="/launch" style={styles.link}>
           <AppText tone="brand">{t('notFound.back')}</AppText>
         </Link>
       </View>

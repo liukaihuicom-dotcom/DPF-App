@@ -1,17 +1,20 @@
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import type { DimensionValue } from 'react-native';
 
 import { ActionButton } from '@/src/components/ActionButton';
 import { Card } from '@/src/components/Card';
+import { InstrumentIcon } from '@/src/components/InstrumentIcon';
 import { Metric } from '@/src/components/Metric';
 import { NativePressable } from '@/src/components/NativePressable';
-import { PhosphorIcon, type PhosphorIconName } from '@/src/components/PhosphorIcon';
+import { AppIcon, type AppIconName } from '@/src/components/AppIcon';
 import { getQuoteChangeVisual } from '@/src/components/quoteVisuals';
 import { Screen } from '@/src/components/Screen';
 import { Sparkline } from '@/src/components/Sparkline';
 import { StatusPill } from '@/src/components/StatusPill';
 import { AppText } from '@/src/components/Typography';
+import { ProfileAvatar, getProfileAvatarUri, profileAvatarOptions, type ProfileAvatarId } from '@/src/components/ProfileAvatar';
 import { dupoinInsights, dupoinOnboardingSteps } from '@/src/domain/dupoinMvp';
 import { formatCompactMoney, formatMoney, formatPercent, formatPrice, localizeText } from '@/src/domain/format';
 import { partnerMetrics } from '@/src/domain/mockData';
@@ -21,6 +24,9 @@ import { useToast } from '@/src/feedback/Toast';
 import { impactLight, notifySuccess, notifyWarning } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
+import { typography } from '@/src/theme/tokens';
+
+const PROFILE_AVATAR_STORAGE_KEY = 'dupoin-profile-avatar-id';
 
 export default function DiscoverModuleScreen() {
   const { account, instruments, positions, role, submitUpgradeRequest, upgradeRequest } = useBroker();
@@ -33,9 +39,9 @@ export default function DiscoverModuleScreen() {
       <Screen
         contentInsetBottom={12}
         rightActions={[
-          { icon: 'headphones', label: t('top.support') },
-          { icon: 'envelope-open', label: t('top.notifications') },
-          { icon: 'sliders-horizontal', label: locale === 'en-US' ? 'Settings' : '设置' },
+          { icon: 'supportHeadset', label: t('top.support') },
+          { icon: 'emailMessage', label: t('top.notifications') },
+          { icon: 'settingsSliders', label: locale === 'en-US' ? 'Settings' : '设置' },
         ]}
         title={t('discover.module.profile.title')}>
         <ProfileModule account={account} role={role} upgradeStatus={upgradeRequest.status} />
@@ -45,14 +51,14 @@ export default function DiscoverModuleScreen() {
 
   return (
     <Screen
-      rightActions={[{ icon: 'compass', label: t('tabs.discover'), onPress: () => router.push('/partner-tools' as never) }]}
+      rightActions={[{ icon: 'discoverCompass', label: t('tabs.discover'), onPress: () => router.push('/partner-tools' as never) }]}
       subtitle={t('discover.subtitle')}
       title={t(`discover.module.${selectedDiscoverModuleId}.title`)}>
       <Card highlight>
         <View style={styles.hero}>
           <View style={styles.heroCopy}>
             <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: `${moduleMeta.color}14`, borderColor: `${moduleMeta.color}66` }])}>
-              <PhosphorIcon color={moduleMeta.color} name={moduleMeta.icon} size={22} />
+              <AppIcon color={moduleMeta.color} name={moduleMeta.icon} size={22} />
             </View>
             <View style={styles.flex}>
               <AppText tone="dim" variant="eyebrow">
@@ -109,7 +115,7 @@ export default function DiscoverModuleScreen() {
                 },
               ])}>
               <View style={StyleSheet.flatten([styles.modulePillIcon, { backgroundColor: `${meta.color}12`, borderColor: `${meta.color}55` }])}>
-                <PhosphorIcon color={meta.color} name={meta.icon} size={16} />
+                <AppIcon color={meta.color} name={meta.icon} size={16} />
               </View>
               <AppText numberOfLines={1} tone={selected ? 'brand' : 'default'} variant="caption">
                 {t(`discover.module.${moduleId}.short`)}
@@ -136,6 +142,7 @@ function ChallengeModule({ instrument }: { instrument: Instrument }) {
     <>
       <Card>
         <View style={styles.marketFocusTop}>
+          <InstrumentIcon instrument={instrument} size={42} />
           <View style={styles.flex}>
             <AppText tone="dim" variant="eyebrow">
               {locale === 'en-US' ? 'Challenge market' : '模拟赛品种'}
@@ -235,32 +242,52 @@ function ProfileModule({
   role: 'trader' | 'partner';
   upgradeStatus: 'none' | 'pending' | 'approved' | 'rejected';
 }) {
-  const { locale, palette, t, themeMode } = useProductSettings();
+  const { locale, palette, profileAvatarId, resolvedThemeMode, setProfileAvatarId, t, themeMode } = useProductSettings();
+  const [selectedAvatarId, setSelectedAvatarId] = useState<ProfileAvatarId>(() => readStoredProfileAvatarId(profileAvatarId));
   const rebateValue = role === 'partner' || upgradeStatus === 'approved' ? partnerMetrics.pendingCommission + partnerMetrics.settledCommission : 10005;
   const statCards = [
-    { icon: 'bank' as PhosphorIconName, label: locale === 'en-US' ? 'Deposit' : '入金', value: '$10K' },
-    { icon: 'chart-line-up' as PhosphorIconName, label: locale === 'en-US' ? 'Volume' : '交易量', value: '990' },
-    { icon: 'check-circle' as PhosphorIconName, label: locale === 'en-US' ? 'New Verified' : '新增认证', value: '10' },
+    { icon: 'accountBank' as AppIconName, label: locale === 'en-US' ? 'Deposit' : '入金', value: '$10K' },
+    { icon: 'marketTrend' as AppIconName, label: locale === 'en-US' ? 'Volume' : '交易量', value: '990' },
+    { icon: 'statusVerified' as AppIconName, label: locale === 'en-US' ? 'New Verified' : '新增认证', value: '10' },
   ];
   const settingsRows = [
     { label: locale === 'en-US' ? 'One-click Trading' : '一键交易', right: 'switchOff' as const },
     { label: locale === 'en-US' ? 'Sound' : '声音', right: 'switchOn' as const },
     { label: t('top.notifications'), right: 'chevron' as const },
     { label: locale === 'en-US' ? 'Language' : '语言', right: 'chevron' as const },
-    { label: locale === 'en-US' ? 'Theme Mode' : '主题模式', right: themeMode === 'lightBroker' ? 'Light' : 'Dark' },
+    {
+      label: locale === 'en-US' ? 'Appearance' : '外观',
+      onPress: () => router.push('/appearance' as never),
+      right: getThemeModeLabel(themeMode, resolvedThemeMode, locale),
+    },
   ];
-  const supportRows: { icon: PhosphorIconName; label: string }[] = [
-    { icon: 'shield-check', label: locale === 'en-US' ? 'Fraud Prevention' : '反诈保护' },
-    { icon: 'chat-circle', label: locale === 'en-US' ? 'Feedback' : '反馈' },
-    { icon: 'info', label: locale === 'en-US' ? 'Help Center' : '帮助中心' },
-    { icon: 'trophy', label: locale === 'en-US' ? 'Rating App' : '应用评分' },
+  const supportRows: { icon: AppIconName; label: string }[] = [
+    { icon: 'riskShield', label: locale === 'en-US' ? 'Fraud Prevention' : '反诈保护' },
+    { icon: 'chatFeedback', label: locale === 'en-US' ? 'Feedback' : '反馈' },
+    { icon: 'infoCircle', label: locale === 'en-US' ? 'Help Center' : '帮助中心' },
+    { icon: 'achievementTrophy', label: locale === 'en-US' ? 'Rating App' : '应用评分' },
+    { icon: 'infoCircle', label: locale === 'en-US' ? 'About Us' : '关于我们' },
   ];
+  useEffect(() => {
+    setSelectedAvatarId(profileAvatarId);
+  }, [profileAvatarId]);
+
+  const chooseAvatar = (nextId: ProfileAvatarId) => {
+    void impactLight();
+    setSelectedAvatarId(nextId);
+    writeStoredProfileAvatarId(nextId);
+    setProfileAvatarId(nextId);
+  };
+  const avatarUri = getProfileAvatarUri(selectedAvatarId);
 
   return (
     <>
       <View style={styles.profileHeader}>
-        <View style={StyleSheet.flatten([styles.avatar, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-          <PhosphorIcon color={palette.text} name="user" size={30} />
+        <View style={styles.avatarPressable}>
+          <ProfileAvatar id={selectedAvatarId} key={avatarUri} size={58} />
+          <View style={StyleSheet.flatten([styles.avatarEditBadge, { backgroundColor: palette.brand, borderColor: palette.panel }])}>
+            <AppIcon color={palette.white} name="settingsSliders" size={11} />
+          </View>
         </View>
         <View style={styles.profileIdentity}>
           <View style={styles.profileNameRow}>
@@ -269,19 +296,48 @@ function ProfileModule({
               <AppText variant="caption">{locale === 'en-US' ? 'View' : '查看'}</AppText>
             </NativePressable>
           </View>
-          <StatusPill compact icon="shield-check" label={locale === 'en-US' ? 'ID verified' : '身份已认证'} tone="brand" />
+          <StatusPill compact icon="riskShield" label={locale === 'en-US' ? 'ID verified' : '身份已认证'} tone="brand" />
         </View>
       </View>
+      <ScrollView contentContainerStyle={styles.avatarRail} horizontal showsHorizontalScrollIndicator={false}>
+        {profileAvatarOptions.map((option) => {
+          const selected = option.id === selectedAvatarId;
+
+          return (
+            <Pressable
+              accessibilityLabel={`${locale === 'en-US' ? 'Choose avatar' : '选择头像'} ${option.name}`}
+              accessibilityRole="button"
+              accessibilityState={{ selected }}
+              key={option.id}
+              onResponderRelease={() => chooseAvatar(option.id)}
+              onStartShouldSetResponder={() => true}
+              onPressIn={() => chooseAvatar(option.id)}
+              onPress={() => chooseAvatar(option.id)}
+              style={StyleSheet.flatten([
+                styles.avatarRailItem,
+                {
+                  backgroundColor: selected ? `${palette.brand}10` : palette.panel,
+                  borderColor: selected ? palette.brand : palette.lineSoft,
+                },
+              ])}>
+              <ProfileAvatar id={option.id} selected={selected} size={36} />
+              <AppText numberOfLines={1} tone={selected ? 'brand' : 'muted'} variant="caption">
+                {option.name}
+              </AppText>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
 
       <ProfileListCard
-        icon="check-circle"
+        icon="statusVerified"
         iconTone={palette.brand}
         subtitle={locale === 'en-US' ? 'Build trust with a verified badge.' : '通过认证徽章建立信任。'}
         title={locale === 'en-US' ? 'Video Verified' : '视频认证'}
       />
 
       <Card compact style={styles.profileCard}>
-        <ProfileCardHeader icon="share-network" iconTone={palette.blue} title={locale === 'en-US' ? 'Partner Portal' : 'Partner Portal'} />
+        <ProfileCardHeader icon="partnerNetwork" iconTone={palette.blue} title={locale === 'en-US' ? 'Partner Portal' : 'Partner Portal'} />
         <View style={StyleSheet.flatten([styles.profileDivider, { backgroundColor: palette.lineSoft }])} />
         <AppText variant="body">{locale === 'en-US' ? 'Total Rebate · USD' : '总返佣 · USD'}</AppText>
         <View style={styles.rebateAmountRow}>
@@ -301,7 +357,7 @@ function ProfileModule({
         {statCards.map((item) => (
           <Card compact key={item.label} style={styles.profileStatCard}>
             <View style={StyleSheet.flatten([styles.profileStatIcon, { backgroundColor: `${palette.brand}10` }])}>
-              <PhosphorIcon color={palette.brand} name={item.icon} size={18} />
+              <AppIcon color={palette.brand} name={item.icon} size={18} />
             </View>
             <AppText variant="body">{item.label}</AppText>
             <AppText variant="title">{item.value}</AppText>
@@ -313,7 +369,7 @@ function ProfileModule({
       </View>
 
       <Card compact style={styles.profileCard}>
-        <ProfileCardHeader icon="gift" iconTone={palette.amber} title={t('discover.module.rewards.title')} />
+        <ProfileCardHeader icon="rewardGift" iconTone={palette.amber} title={t('discover.module.rewards.title')} />
         <View style={StyleSheet.flatten([styles.profileDivider, { backgroundColor: palette.lineSoft }])} />
         <View style={styles.rewardProfileBody}>
           <View style={styles.flex}>
@@ -333,21 +389,19 @@ function ProfileModule({
       </Card>
 
       <Card compact style={styles.managerCard}>
-        <View style={StyleSheet.flatten([styles.managerAvatar, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-          <PhosphorIcon color={palette.textMuted} name="user-circle" size={36} />
-        </View>
+        <ProfileAvatar id="alex" size={50} />
         <View style={styles.flex}>
           <AppText variant="body">{locale === 'en-US' ? 'My Relationship Manager' : '我的客户经理'}</AppText>
           <AppText variant="subtitle">Alexander Smith</AppText>
         </View>
         <View style={StyleSheet.flatten([styles.managerChat, { backgroundColor: `${palette.down}18` }])}>
-          <PhosphorIcon color={palette.down} name="chats-circle" size={22} />
+          <AppIcon color={palette.down} name="communityChat" size={22} />
         </View>
       </Card>
 
       <Card compact style={styles.profileList}>
         {settingsRows.map((row, index) => (
-          <SettingsRow key={row.label} label={row.label} right={row.right} showDivider={index < settingsRows.length - 1} />
+          <SettingsRow key={row.label} label={row.label} onPress={row.onPress} right={row.right} showDivider={index < settingsRows.length - 1} />
         ))}
       </Card>
 
@@ -356,8 +410,6 @@ function ProfileModule({
           <SettingsRow icon={row.icon} key={row.label} label={row.label} right={row.label === (locale === 'en-US' ? 'Rating App' : '应用评分') ? 'stars' : 'chevron'} showDivider={index < supportRows.length - 1} />
         ))}
       </Card>
-
-      <ProfileListCard icon="info" iconTone={palette.text} title={locale === 'en-US' ? 'About Us' : '关于我们'} />
     </>
   );
 }
@@ -368,7 +420,7 @@ function ProfileListCard({
   subtitle,
   title,
 }: {
-  icon: PhosphorIconName;
+  icon: AppIconName;
   iconTone: string;
   subtitle?: string;
   title: string;
@@ -378,7 +430,7 @@ function ProfileListCard({
   return (
     <Card compact style={styles.profileListCard}>
       <View style={StyleSheet.flatten([styles.profileListIcon, { backgroundColor: `${iconTone}12` }])}>
-        <PhosphorIcon color={iconTone} name={icon} size={22} />
+        <AppIcon color={iconTone} name={icon} size={22} />
       </View>
       <View style={styles.flex}>
         <AppText variant="subtitle">{title}</AppText>
@@ -388,23 +440,23 @@ function ProfileListCard({
           </AppText>
         ) : null}
       </View>
-      <PhosphorIcon color={palette.textDim} name="caret-right" size={17} />
+      <AppIcon color={palette.textDim} name="navigateNext" size={17} />
     </Card>
   );
 }
 
-function ProfileCardHeader({ icon, iconTone, title }: { icon: PhosphorIconName; iconTone: string; title: string }) {
+function ProfileCardHeader({ icon, iconTone, title }: { icon: AppIconName; iconTone: string; title: string }) {
   const { palette } = useProductSettings();
 
   return (
     <View style={styles.profileCardHeader}>
       <View style={StyleSheet.flatten([styles.profileListIcon, { backgroundColor: `${iconTone}12` }])}>
-        <PhosphorIcon color={iconTone} name={icon} size={20} />
+        <AppIcon color={iconTone} name={icon} size={20} />
       </View>
       <AppText style={styles.profileCardTitle} variant="subtitle">
         {title}
       </AppText>
-      <PhosphorIcon color={palette.textDim} name="caret-right" size={17} />
+      <AppIcon color={palette.textDim} name="navigateNext" size={17} />
     </View>
   );
 }
@@ -429,7 +481,7 @@ function GiftIllustration() {
         <AppText tone="amber" variant="eyebrow">$</AppText>
       </View>
       <View style={StyleSheet.flatten([styles.giftBox, { backgroundColor: `${palette.brand}16`, borderColor: `${palette.brand}33` }])}>
-        <PhosphorIcon color={palette.brand} name="gift" size={42} />
+        <AppIcon color={palette.brand} name="rewardGift" size={42} />
       </View>
     </View>
   );
@@ -438,11 +490,13 @@ function GiftIllustration() {
 function SettingsRow({
   icon,
   label,
+  onPress,
   right,
   showDivider,
 }: {
-  icon?: PhosphorIconName;
+  icon?: AppIconName;
   label: string;
+  onPress?: () => void;
   right: 'switchOff' | 'switchOn' | 'chevron' | 'stars' | string;
   showDivider?: boolean;
 }) {
@@ -452,10 +506,11 @@ function SettingsRow({
     <NativePressable
       accessibilityLabel={label}
       minTouch={48}
+      onPress={onPress}
       style={StyleSheet.flatten([styles.settingsRow, showDivider && { borderBottomColor: palette.lineSoft, borderBottomWidth: 1 }])}>
       <View style={styles.settingsLeft}>
         <View style={styles.settingsIconSlot}>
-          {icon ? <PhosphorIcon color={palette.text} name={icon} size={20} /> : <View style={StyleSheet.flatten([styles.placeholderRing, { borderColor: palette.textDim }])} />}
+          {icon ? <AppIcon color={palette.text} name={icon} size={20} /> : <View style={StyleSheet.flatten([styles.placeholderRing, { borderColor: palette.textDim }])} />}
         </View>
         <AppText variant="body">{label}</AppText>
       </View>
@@ -484,13 +539,13 @@ function SettingsRowRight({ value }: { value: 'switchOff' | 'switchOn' | 'chevro
             ★
           </AppText>
         ))}
-        <PhosphorIcon color={palette.textDim} name="caret-right" size={16} />
+        <AppIcon color={palette.textDim} name="navigateNext" size={16} />
       </View>
     );
   }
 
   if (value === 'chevron') {
-    return <PhosphorIcon color={palette.textDim} name="caret-right" size={16} />;
+    return <AppIcon color={palette.textDim} name="navigateNext" size={16} />;
   }
 
   return (
@@ -498,7 +553,7 @@ function SettingsRowRight({ value }: { value: 'switchOff' | 'switchOn' | 'chevro
       <AppText tone="muted" variant="body">
         {value}
       </AppText>
-      <PhosphorIcon color={palette.textDim} name="caret-right" size={16} />
+      <AppIcon color={palette.textDim} name="navigateNext" size={16} />
     </View>
   );
 }
@@ -509,6 +564,37 @@ function formatCompactProfileNumber(value: number) {
   }
 
   return String(Math.floor(value));
+}
+
+function getThemeModeLabel(themeMode: ReturnType<typeof useProductSettings>['themeMode'], resolvedThemeMode: ReturnType<typeof useProductSettings>['resolvedThemeMode'], locale: ReturnType<typeof useProductSettings>['locale']) {
+  if (themeMode === 'system') {
+    if (locale === 'en-US') {
+      return resolvedThemeMode === 'lightBroker' ? 'System · Light' : 'System · Dark';
+    }
+
+    return resolvedThemeMode === 'lightBroker' ? '跟随系统 · 浅色' : '跟随系统 · 深色';
+  }
+
+  if (locale === 'en-US') {
+    return themeMode === 'lightBroker' ? 'Light' : 'Dark';
+  }
+
+  return themeMode === 'lightBroker' ? '浅色' : '深色';
+}
+
+function readStoredProfileAvatarId(fallback: ProfileAvatarId): ProfileAvatarId {
+  if (typeof window === 'undefined') {
+    return fallback;
+  }
+
+  const stored = window.localStorage.getItem(PROFILE_AVATAR_STORAGE_KEY);
+  return profileAvatarOptions.some((option) => option.id === stored) ? (stored as ProfileAvatarId) : fallback;
+}
+
+function writeStoredProfileAvatarId(id: ProfileAvatarId) {
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(PROFILE_AVATAR_STORAGE_KEY, id);
+  }
 }
 
 function OnboardingModule() {
@@ -607,6 +693,7 @@ function MarketsModule({ instruments }: { instruments: Instrument[] }) {
             minTouch={64}
             onPress={() => router.push(`/instrument/${instrument.id}` as never)}
             style={StyleSheet.flatten([styles.instrumentRow, index < movers.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: 1 }])}>
+            <InstrumentIcon instrument={instrument} size={36} />
             <View style={styles.flex}>
               <AppText variant="subtitle">{instrument.symbol}</AppText>
               <AppText numberOfLines={1} tone="muted" variant="caption">
@@ -737,30 +824,55 @@ function getModuleIds(): DiscoverModuleId[] {
 }
 
 function getModuleMeta(moduleId: DiscoverModuleId, palette: ReturnType<typeof useProductSettings>['palette']) {
-  const meta: Record<DiscoverModuleId, { color: string; icon: PhosphorIconName }> = {
-    accounts: { color: palette.blue, icon: 'user' },
-    challenge: { color: palette.amber, icon: 'trophy' },
-    community: { color: palette.textMuted, icon: 'chats-circle' },
-    education: { color: palette.brand, icon: 'graduation-cap' },
-    markets: { color: palette.up, icon: 'chart-line-up' },
-    onboarding: { color: palette.down, icon: 'identification-card' },
-    partner: { color: palette.brand, icon: 'share-network' },
-    profile: { color: palette.text, icon: 'user-circle' },
-    rewards: { color: palette.amber, icon: 'gift' },
-    support: { color: palette.textMuted, icon: 'headphones' },
+  const meta: Record<DiscoverModuleId, { color: string; icon: AppIconName }> = {
+    accounts: { color: palette.blue, icon: 'userProfile' },
+    challenge: { color: palette.amber, icon: 'achievementTrophy' },
+    community: { color: palette.textMuted, icon: 'communityChat' },
+    education: { color: palette.brand, icon: 'educationCap' },
+    markets: { color: palette.up, icon: 'marketTrend' },
+    onboarding: { color: palette.down, icon: 'identityCard' },
+    partner: { color: palette.brand, icon: 'partnerNetwork' },
+    profile: { color: palette.text, icon: 'userAvatar' },
+    rewards: { color: palette.amber, icon: 'rewardGift' },
+    support: { color: palette.textMuted, icon: 'supportHeadset' },
   };
 
   return meta[moduleId];
 }
 
 const styles = StyleSheet.create({
-  avatar: {
+  avatarEditBadge: {
+    alignItems: 'center',
+    borderRadius: 999,
+    borderWidth: 2,
+    bottom: 0,
+    height: 21,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: -1,
+    width: 21,
+  },
+  avatarRail: {
+    gap: 8,
+    paddingHorizontal: 2,
+    paddingRight: 16,
+  },
+  avatarRailItem: {
     alignItems: 'center',
     borderRadius: 999,
     borderWidth: 1,
-    height: 58,
+    flexDirection: 'row',
+    gap: 6,
+    minHeight: 46,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+  },
+  avatarPressable: {
+    height: 64,
     justifyContent: 'center',
-    width: 58,
+    position: 'relative',
+    width: 64,
+    zIndex: 2,
   },
   cardAction: {
     marginTop: 14,
@@ -879,14 +991,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
-  managerAvatar: {
-    alignItems: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
-    height: 50,
-    justifyContent: 'center',
-    width: 50,
-  },
   managerCard: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -936,16 +1040,13 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   rebateCurrency: {
-    fontSize: 34,
-    lineHeight: 40,
+    ...typography.quote,
   },
   rebateMajor: {
-    fontSize: 46,
-    lineHeight: 52,
+    ...typography.quoteLg,
   },
   rebateMinor: {
-    fontSize: 26,
-    lineHeight: 34,
+    ...typography.displayXl,
     marginBottom: 4,
   },
   rewardProfileBody: {
@@ -1008,6 +1109,7 @@ const styles = StyleSheet.create({
   },
   profileList: {
     gap: 0,
+    paddingVertical: 0,
   },
   profileListCard: {
     alignItems: 'center',

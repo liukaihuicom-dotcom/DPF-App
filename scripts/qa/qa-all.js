@@ -11,6 +11,7 @@ const scripts = [
   'check-accessibility-baseline.js',
   'check-security-rules.js',
   'check-version-record.js',
+  'check-icons.js',
 ];
 
 const results = scripts.map((script) => {
@@ -48,4 +49,3 @@ const summary = {
 
 console.log(JSON.stringify(summary, null, 2));
 process.exitCode = failed.length ? 1 : 0;
-

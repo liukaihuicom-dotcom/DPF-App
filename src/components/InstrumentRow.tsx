@@ -6,6 +6,7 @@ import { getDisplayChange } from '@/src/domain/trading';
 import type { Instrument } from '@/src/domain/types';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
+import { InstrumentIcon } from './InstrumentIcon';
 import { NativePressable } from './NativePressable';
 import { getQuoteChangeVisual } from './quoteVisuals';
 import { Sparkline } from './Sparkline';
@@ -13,21 +14,18 @@ import { AppText } from './Typography';
 
 type InstrumentRowProps = {
   instrument: Instrument;
+  showDivider?: boolean;
 };
 
-export function InstrumentRow({ instrument }: InstrumentRowProps) {
+export function InstrumentRow({ instrument, showDivider = true }: InstrumentRowProps) {
   const { locale, palette } = useProductSettings();
   const { changePercent } = getDisplayChange(instrument);
   const quoteVisual = getQuoteChangeVisual(changePercent, palette);
 
   return (
     <Link asChild href={`/instrument/${instrument.id}`}>
-      <NativePressable style={StyleSheet.flatten([styles.row, { borderBottomColor: palette.lineSoft }])}>
-        <View style={StyleSheet.flatten([styles.assetIcon, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-          <AppText numberOfLines={1} variant="caption">
-            {instrument.baseCurrency.slice(0, 2)}
-          </AppText>
-        </View>
+      <NativePressable style={StyleSheet.flatten([styles.row, showDivider && { borderBottomColor: palette.lineSoft, borderBottomWidth: 1 }])}>
+        <InstrumentIcon instrument={instrument} size={36} />
         <View style={styles.identity}>
           <AppText variant="subtitle">{instrument.symbol}</AppText>
           <AppText numberOfLines={1} tone="muted" variant="caption">
@@ -49,14 +47,6 @@ export function InstrumentRow({ instrument }: InstrumentRowProps) {
 }
 
 const styles = StyleSheet.create({
-  assetIcon: {
-    alignItems: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
-    height: 34,
-    justifyContent: 'center',
-    width: 34,
-  },
   identity: {
     flex: 1,
     gap: 3,
@@ -68,7 +58,6 @@ const styles = StyleSheet.create({
   },
   row: {
     alignItems: 'center',
-    borderBottomWidth: 1,
     flexDirection: 'row',
     gap: 10,
     minHeight: 68,

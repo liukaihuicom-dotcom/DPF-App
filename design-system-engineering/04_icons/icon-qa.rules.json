@@ -1,0 +1,50 @@
+{
+  "version": "1.0.0",
+  "severity": {
+    "blocker": [
+      "page-imports-low-level-phosphor-icon",
+      "icon-registry-missing-or-invalid",
+      "registry-glyph-missing-from-source"
+    ],
+    "critical": [
+      "semantic-icon-missing-required-metadata",
+      "brand-launcher-icon-not-1024-png",
+      "unregistered-glyph-used-by-page"
+    ],
+    "major": [
+      "unused-registry-icon",
+      "market-tone-used-for-non-market-icon",
+      "hardcoded-size-outside-size-token"
+    ],
+    "minor": [
+      "icon-description-too-short",
+      "icon-forbidden-rule-missing-specificity"
+    ]
+  },
+  "requiredMetadata": [
+    "glyph",
+    "category",
+    "platforms",
+    "defaultSize",
+    "allowedTones",
+    "states",
+    "usage",
+    "forbidden",
+    "replaces",
+    "deprecated"
+  ],
+  "brandAssetRules": {
+    "launcherIcon": {
+      "requiredPixels": 1024,
+      "format": "png"
+    },
+    "adaptiveIcon": {
+      "requiredPixels": 1024,
+      "format": "png"
+    },
+    "splashIcon": {
+      "requiredPixels": 1024,
+      "format": "png"
+    }
+  }
+}

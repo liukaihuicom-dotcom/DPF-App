@@ -4,22 +4,22 @@
     "slug": "dupoin-mvp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/dupoin-logo.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "brokerfxmvp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/dupoin-logo.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#31b3bf"
+      "backgroundColor": "#9CE56D"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/dupoin-logo.png",
-        "backgroundColor": "#31b3bf"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#9CE56D"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
@@ -31,11 +31,12 @@
     },
     "plugins": [
       "expo-router",
+      "expo-system-ui",
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#31b3bf",
-          "image": "./assets/images/dupoin-logo.png",
+          "backgroundColor": "#9CE56D",
+          "image": "./assets/images/splash-icon.png",
           "imageWidth": 220,
           "resizeMode": "contain"
         }

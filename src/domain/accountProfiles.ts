@@ -297,7 +297,7 @@ function buildManagedTradingAccount(
     equity,
     freeMargin,
     group,
-    id: `${group}-${index + 1}`,
+    id: `account-${accountNo}`,
     lastTrade,
     leverage: group === 'demo' ? account.leverageProfile : index % 2 === 0 ? '1:100' : '1:200',
     marginLevel,

@@ -7,7 +7,8 @@ import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 import { NativePressable } from './NativePressable';
-import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
+import { AppIcon, type AppIconName } from './AppIcon';
+import { HeaderIconButton } from './HeaderIconButton';
 import { TextField } from './TextField';
 import { AppText } from './Typography';
 
@@ -21,7 +22,8 @@ type AuthShellProps = PropsWithChildren<{
 
 type AuthTextFieldProps = TextInputProps & {
   error?: string;
-  icon: PhosphorIconName;
+  helperText?: string;
+  icon: AppIconName;
   label: string;
 };
 
@@ -31,21 +33,20 @@ export function AuthShell({ children, footer, kicker, step, subtitle, title }: A
   const body = (
     <SafeAreaView edges={['top']} style={StyleSheet.flatten([styles.safe, { backgroundColor: palette.bg }])}>
       <View style={styles.topBar}>
-        <NativePressable
+        <HeaderIconButton
           accessibilityLabel={t('top.back')}
-          accessibilityRole="button"
-          minTouch={44}
+          color={palette.text}
+          icon="navigateBack"
           onPress={() => {
             void impactLight();
             if (router.canGoBack()) {
               router.back();
             } else {
-              router.replace('/');
+              router.replace('/launch');
             }
           }}
-          style={StyleSheet.flatten([styles.backButton, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-          <PhosphorIcon color={palette.text} name="caret-left" size={23} />
-        </NativePressable>
+          tone="default"
+        />
         <View style={StyleSheet.flatten([styles.stepPill, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
           <AppText numberOfLines={1} tone="muted" variant="caption">
             {step ?? t('auth.flow.simulated')}
@@ -76,7 +77,7 @@ export function AuthShell({ children, footer, kicker, step, subtitle, title }: A
 
         <View style={StyleSheet.flatten([styles.securityStrip, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
           <View style={StyleSheet.flatten([styles.securityIcon, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}44` }])}>
-            <PhosphorIcon color={palette.brand} name="shield-check" size={14} />
+            <AppIcon color={palette.brand} name="riskShield" size={14} />
           </View>
           <View style={styles.flex}>
             <AppText numberOfLines={1} variant="caption">
@@ -108,8 +109,8 @@ export function AuthShell({ children, footer, kicker, step, subtitle, title }: A
   );
 }
 
-export function AuthTextField({ error, icon, label, style, ...props }: AuthTextFieldProps) {
-  return <TextField autoCapitalize="none" error={error} icon={icon} inputStyle={style} label={label} {...props} />;
+export function AuthTextField({ error, helperText, icon, label, style, ...props }: AuthTextFieldProps) {
+  return <TextField autoCapitalize="none" error={error} helperText={helperText} icon={icon} inputStyle={style} label={label} {...props} />;
 }
 
 export function AuthLink({ label, onPress }: { label: string; onPress: () => void }) {
@@ -125,14 +126,6 @@ export function AuthLink({ label, onPress }: { label: string; onPress: () => voi
 }
 
 const styles = StyleSheet.create({
-  backButton: {
-    alignItems: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
-    height: 36,
-    justifyContent: 'center',
-    width: 36,
-  },
   brandCopy: {
     gap: 8,
   },

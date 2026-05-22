@@ -3,6 +3,7 @@ import { Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleS
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useThemePalette } from '@/src/settings/ProductSettings';
+import { layout, spacing } from '@/src/theme/tokens';
 
 import { AppTopBar, type AppTopBarAction } from './AppTopBar';
 
@@ -10,6 +11,7 @@ type ScreenProps = PropsWithChildren<{
   align?: 'left' | 'center';
   back?: boolean;
   contentInsetBottom?: number;
+  contentPadding?: 'default' | 'flush';
   dismissKeyboardOnTap?: boolean;
   keyboardAware?: boolean;
   overlay?: ReactNode;
@@ -26,6 +28,7 @@ export function Screen({
   back,
   children,
   contentInsetBottom = 0,
+  contentPadding = 'default',
   dismissKeyboardOnTap,
   keyboardAware,
   overlay,
@@ -38,7 +41,7 @@ export function Screen({
 }: ScreenProps) {
   const palette = useThemePalette();
   const header = topBar ?? (title ? <AppTopBar actions={rightActions} align={align} back={back} subtitle={subtitle} title={title} /> : null);
-  const bottomPadding = stickyFooter ? 122 + contentInsetBottom : 32 + contentInsetBottom;
+  const bottomPadding = stickyFooter ? 122 + contentInsetBottom : layout.screenBottomPadding + contentInsetBottom;
   const wrapDismiss = (node: ReactNode) =>
     dismissKeyboardOnTap ? (
       <Pressable accessible={false} onPress={Keyboard.dismiss} style={styles.flex}>
@@ -52,7 +55,11 @@ export function Screen({
     <View style={StyleSheet.flatten([styles.body, { backgroundColor: palette.bg }])}>{children}</View>
   ) : (
     <ScrollView
-      contentContainerStyle={[styles.content, { paddingBottom: bottomPadding }]}
+      contentContainerStyle={[
+        styles.content,
+        contentPadding === 'flush' && styles.contentFlush,
+        { paddingBottom: bottomPadding },
+      ]}
       contentInsetAdjustmentBehavior="never"
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
@@ -96,18 +103,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    gap: layout.screenGap,
+    paddingHorizontal: layout.screenPaddingX,
+    paddingTop: spacing.xs,
+  },
+  contentFlush: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
   },
   flex: {
     flex: 1,
   },
   footer: {
-    gap: 8,
+    gap: spacing.sm,
     paddingBottom: 18,
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingHorizontal: layout.screenPaddingX,
+    paddingTop: spacing.md,
   },
   footerSafe: {
     borderTopWidth: 1,

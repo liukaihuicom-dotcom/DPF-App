@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
-import { Platform } from 'react-native';
+import { Platform, useColorScheme } from 'react-native';
 
 import {
   tradingAccountCountPresets,
@@ -10,13 +10,16 @@ import {
   type TradingAccountScenario,
   type TradingAccountStatusPreset,
 } from '@/src/domain/accountProfiles';
+import { normalizeDiscoverLayoutItems, type DiscoverLayoutItem } from '@/src/domain/discoverLayout';
 import type { Locale, TranslationKey } from '@/src/i18n/translations';
 import { translations } from '@/src/i18n/translations';
-import { themePalettes, type ThemeMode, type ThemePalette } from '@/src/theme/colors';
-import type { AuthStatus, DiscoverModuleId, Role, TradingAccountUsageOverride } from '@/src/domain/types';
+import type { ProfileAvatarId } from '@/src/components/ProfileAvatar';
+import { themePalettes, type ResolvedThemeMode, type ThemeMode, type ThemePalette } from '@/src/theme/colors';
+import type { AuthStatus, DiscoverModuleId, Role, TradeWorkspaceDataPreset, TradingAccountUsageOverride } from '@/src/domain/types';
 
 const STORAGE_KEY = 'dupoin-mvp-product-settings';
-const DEFAULT_THEME_MODE: ThemeMode = 'lightBroker';
+const DEFAULT_THEME_MODE: ThemeMode = 'system';
+const FALLBACK_SYSTEM_THEME_MODE: ResolvedThemeMode = 'lightBroker';
 const DEFAULT_DISCOVER_MODULE_BY_ROLE: Record<Role, DiscoverModuleId> = {
   partner: 'partner',
   trader: 'community',
@@ -35,19 +38,32 @@ const discoverModuleIds: DiscoverModuleId[] = [
 ];
 const tradingAccountScenarios: TradingAccountScenario[] = ['default', 'stateAnalysis'];
 const tradingAccountUsageOverrides: TradingAccountUsageOverride[] = ['auto', 'normal', 'warning', 'abnormal'];
+export const tradeWorkspaceDataPresets: TradeWorkspaceDataPreset[] = ['empty', 'sample'];
+const profileAvatarIds: ProfileAvatarId[] = ['frank', 'mika', 'alex', 'sophia'];
 
 type ProductSettings = {
   authStatus: AuthStatus;
+  discoverLayoutItems: DiscoverLayoutItem[];
   locale: Locale;
   palette: ThemePalette;
+  resolvedThemeMode: ResolvedThemeMode;
   role: Role;
+  pendingOrderDataPreset: TradeWorkspaceDataPreset;
+  positionDataPreset: TradeWorkspaceDataPreset;
+  profileAvatarId: ProfileAvatarId;
   selectedDiscoverModuleByRole: Record<Role, DiscoverModuleId>;
   selectedDiscoverModuleId: DiscoverModuleId;
+  selectedTradingAccountId: string;
   setAuthStatus: (authStatus: AuthStatus) => void;
-  setSelectedDiscoverModule: (moduleId: DiscoverModuleId) => void;
+  setDiscoverLayoutItems: (discoverLayoutItems: DiscoverLayoutItem[]) => void;
   setLocale: (locale: Locale) => void;
+  setPendingOrderDataPreset: (pendingOrderDataPreset: TradeWorkspaceDataPreset) => void;
+  setPositionDataPreset: (positionDataPreset: TradeWorkspaceDataPreset) => void;
+  setProfileAvatarId: (profileAvatarId: ProfileAvatarId) => void;
   setRole: (role: Role) => void;
+  setSelectedDiscoverModule: (moduleId: DiscoverModuleId) => void;
   setThemeMode: (themeMode: ThemeMode) => void;
+  setSelectedTradingAccountId: (selectedTradingAccountId: string) => void;
   setTradingAccountCountPreset: (tradingAccountCountPreset: TradingAccountCountPreset) => void;
   setTradingAccountDataPreset: (tradingAccountDataPreset: TradingAccountDataPreset) => void;
   setTradingAccountScenario: (tradingAccountScenario: TradingAccountScenario) => void;
@@ -101,6 +117,18 @@ function isTradingAccountStatusPreset(value: unknown): value is TradingAccountSt
   return typeof value === 'string' && tradingAccountStatusPresets.includes(value as TradingAccountStatusPreset);
 }
 
+function isTradeWorkspaceDataPreset(value: unknown): value is TradeWorkspaceDataPreset {
+  return typeof value === 'string' && tradeWorkspaceDataPresets.includes(value as TradeWorkspaceDataPreset);
+}
+
+function isProfileAvatarId(value: unknown): value is ProfileAvatarId {
+  return typeof value === 'string' && profileAvatarIds.includes(value as ProfileAvatarId);
+}
+
+function isThemeMode(value: unknown): value is ThemeMode {
+  return typeof value === 'string' && (value === 'system' || value in themePalettes);
+}
+
 function readStoredDiscoverModules(stored: Record<string, unknown>): Record<Role, DiscoverModuleId> {
   const storedModules = stored.selectedDiscoverModuleByRole;
 
@@ -117,13 +145,20 @@ function readStoredDiscoverModules(stored: Record<string, unknown>): Record<Role
 }
 
 export function ProductSettingsProvider({ children }: PropsWithChildren) {
+  const systemColorScheme = useColorScheme();
   const stored = readStoredSettings();
   const [role, setRole] = useState<Role>(stored.role === 'partner' ? 'partner' : 'trader');
   const storedAuthStatus: AuthStatus =
     stored.authStatus === 'guest' || stored.authStatus === 'signedIn' ? stored.authStatus : stored.authStatus ? 'guest' : 'signedIn';
   const [authStatus, setAuthStatus] = useState<AuthStatus>(storedAuthStatus);
+  const [discoverLayoutItems, updateDiscoverLayoutItems] = useState<DiscoverLayoutItem[]>(
+    normalizeDiscoverLayoutItems(stored.discoverLayoutItems),
+  );
+  const setDiscoverLayoutItems = (items: DiscoverLayoutItem[]) => {
+    updateDiscoverLayoutItems(normalizeDiscoverLayoutItems(items));
+  };
   const [themeMode, setThemeMode] = useState<ThemeMode>(
-    stored.themeMode && stored.themeMode in themePalettes ? stored.themeMode : DEFAULT_THEME_MODE,
+    isThemeMode(stored.themeMode) ? stored.themeMode : DEFAULT_THEME_MODE,
   );
   const [locale, setLocale] = useState<Locale>(stored.locale === 'en-US' ? 'en-US' : 'zh-CN');
   const [selectedDiscoverModuleByRole, setSelectedDiscoverModuleByRole] = useState<Record<Role, DiscoverModuleId>>(
@@ -144,6 +179,18 @@ export function ProductSettingsProvider({ children }: PropsWithChildren) {
   const [tradingAccountUsageOverride, setTradingAccountUsageOverride] = useState<TradingAccountUsageOverride>(
     isTradingAccountUsageOverride(stored.tradingAccountUsageOverride) ? stored.tradingAccountUsageOverride : 'auto',
   );
+  const [positionDataPreset, setPositionDataPreset] = useState<TradeWorkspaceDataPreset>(
+    isTradeWorkspaceDataPreset(stored.positionDataPreset) ? stored.positionDataPreset : 'empty',
+  );
+  const [pendingOrderDataPreset, setPendingOrderDataPreset] = useState<TradeWorkspaceDataPreset>(
+    isTradeWorkspaceDataPreset(stored.pendingOrderDataPreset) ? stored.pendingOrderDataPreset : 'empty',
+  );
+  const [selectedTradingAccountId, setSelectedTradingAccountId] = useState(
+    typeof stored.selectedTradingAccountId === 'string' && stored.selectedTradingAccountId ? stored.selectedTradingAccountId : 'demo-main',
+  );
+  const [profileAvatarId, setProfileAvatarId] = useState<ProfileAvatarId>(
+    isProfileAvatarId(stored.profileAvatarId) ? stored.profileAvatarId : 'frank',
+  );
   const setSelectedDiscoverModule = (moduleId: DiscoverModuleId) => {
     setSelectedDiscoverModuleByRole((current) => ({ ...current, [role]: moduleId }));
   };
@@ -157,9 +204,14 @@ export function ProductSettingsProvider({ children }: PropsWithChildren) {
       STORAGE_KEY,
       JSON.stringify({
         authStatus,
+        discoverLayoutItems,
         locale,
+        pendingOrderDataPreset,
+        positionDataPreset,
+        profileAvatarId,
         role,
         selectedDiscoverModuleByRole,
+        selectedTradingAccountId,
         themeMode,
         tradingAccountCountPreset,
         tradingAccountDataPreset,
@@ -170,9 +222,14 @@ export function ProductSettingsProvider({ children }: PropsWithChildren) {
     );
   }, [
     authStatus,
+    discoverLayoutItems,
     locale,
+    pendingOrderDataPreset,
+    positionDataPreset,
+    profileAvatarId,
     role,
     selectedDiscoverModuleByRole,
+    selectedTradingAccountId,
     themeMode,
     tradingAccountCountPreset,
     tradingAccountDataPreset,
@@ -183,17 +240,31 @@ export function ProductSettingsProvider({ children }: PropsWithChildren) {
 
   const value = useMemo<ProductSettings>(() => {
     const dictionary = translations[locale];
+    const resolvedThemeMode: ResolvedThemeMode =
+      themeMode === 'system' ? (systemColorScheme === 'dark' ? 'darkTerminal' : FALLBACK_SYSTEM_THEME_MODE) : themeMode;
+
     return {
       authStatus,
+      discoverLayoutItems,
       locale,
-      palette: themePalettes[themeMode],
+      palette: themePalettes[resolvedThemeMode],
+      pendingOrderDataPreset,
+      positionDataPreset,
+      profileAvatarId,
+      resolvedThemeMode,
       role,
       selectedDiscoverModuleByRole,
       selectedDiscoverModuleId: selectedDiscoverModuleByRole[role],
+      selectedTradingAccountId,
       setAuthStatus,
+      setDiscoverLayoutItems,
       setLocale,
+      setPendingOrderDataPreset,
+      setPositionDataPreset,
+      setProfileAvatarId,
       setRole,
       setSelectedDiscoverModule,
+      setSelectedTradingAccountId,
       setThemeMode,
       setTradingAccountCountPreset,
       setTradingAccountDataPreset,
@@ -220,9 +291,15 @@ export function ProductSettingsProvider({ children }: PropsWithChildren) {
     };
   }, [
     authStatus,
+    discoverLayoutItems,
     locale,
+    pendingOrderDataPreset,
+    positionDataPreset,
+    profileAvatarId,
     role,
     selectedDiscoverModuleByRole,
+    selectedTradingAccountId,
+    systemColorScheme,
     themeMode,
     tradingAccountCountPreset,
     tradingAccountDataPreset,

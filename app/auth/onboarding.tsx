@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { ActionButton } from '@/src/components/ActionButton';
 import { AuthLink, AuthShell } from '@/src/components/AuthShell';
 import { NativePressable } from '@/src/components/NativePressable';
-import { PhosphorIcon, type PhosphorIconName } from '@/src/components/PhosphorIcon';
+import { AppIcon, type AppIconName } from '@/src/components/AppIcon';
 import { AppText } from '@/src/components/Typography';
 import { dupoinOnboardingSteps } from '@/src/domain/dupoinMvp';
 import { localizeText } from '@/src/domain/format';
@@ -14,13 +14,13 @@ import { useProductSettings } from '@/src/settings/ProductSettings';
 export default function OnboardingScreen() {
   const { locale, palette, t } = useProductSettings();
   const steps = [
-    ['user-plus', t('onboarding.step.account'), t('onboarding.step.accountHint')],
-    ['shield-check', t('onboarding.step.risk'), t('onboarding.step.riskHint')],
-    ['chart-line-up', t('onboarding.step.workspace'), t('onboarding.step.workspaceHint')],
+    ['addUser', t('onboarding.step.account'), t('onboarding.step.accountHint')],
+    ['riskShield', t('onboarding.step.risk'), t('onboarding.step.riskHint')],
+    ['marketTrend', t('onboarding.step.workspace'), t('onboarding.step.workspaceHint')],
   ] as const;
   const quickChoices = [
-    ['arrows-left-right', t('onboarding.choice.trader'), t('onboarding.choice.traderHint')],
-    ['share-network', t('onboarding.choice.partner'), t('onboarding.choice.partnerHint')],
+    ['transferSwitch', t('onboarding.choice.trader'), t('onboarding.choice.traderHint')],
+    ['partnerNetwork', t('onboarding.choice.partner'), t('onboarding.choice.partnerHint')],
   ] as const;
 
   return (
@@ -38,7 +38,7 @@ export default function OnboardingScreen() {
       <View style={StyleSheet.flatten([styles.heroPanel, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
         <View style={styles.heroRow}>
           <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: palette.text, borderColor: palette.text }])}>
-            <PhosphorIcon color={palette.panel} name="globe" size={19} />
+            <AppIcon color={palette.panel} name="globalMarket" size={19} />
           </View>
           <View style={styles.flex}>
             <AppText variant="subtitle">{t('onboarding.heroTitle')}</AppText>
@@ -50,8 +50,8 @@ export default function OnboardingScreen() {
         <View style={styles.stepRail}>
           {steps.map(([icon, title, hint], index) => (
             <View key={title} style={styles.stepRow}>
-              <View style={StyleSheet.flatten([styles.stepIndex, { backgroundColor: index === 0 ? palette.brand : palette.panelSoft, borderColor: index === 0 ? palette.brand : palette.lineSoft }])}>
-                <PhosphorIcon color={index === 0 ? palette.white : palette.textDim} name={icon as PhosphorIconName} size={13} />
+              <View style={StyleSheet.flatten([styles.stepIndex, { backgroundColor: index === 0 ? palette.brand : palette.panelSoft }])}>
+                <AppIcon color={index === 0 ? palette.white : palette.textDim} name={icon as AppIconName} size={13} />
               </View>
               <View style={styles.flex}>
                 <AppText variant="body">{title}</AppText>
@@ -110,7 +110,7 @@ export default function OnboardingScreen() {
             }}
             style={StyleSheet.flatten([styles.choiceCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
             <View style={StyleSheet.flatten([styles.choiceIcon, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}55` }])}>
-              <PhosphorIcon color={palette.brand} name={icon as PhosphorIconName} size={15} />
+              <AppIcon color={palette.brand} name={icon as AppIconName} size={15} />
             </View>
             <AppText variant="body">{title}</AppText>
             <AppText numberOfLines={3} tone="muted" variant="caption">
@@ -121,7 +121,7 @@ export default function OnboardingScreen() {
       </View>
 
       <View style={StyleSheet.flatten([styles.notice, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
-        <PhosphorIcon color={palette.textMuted} name="info" size={15} />
+        <AppIcon color={palette.textMuted} name="infoCircle" size={15} />
         <AppText numberOfLines={3} tone="muted" variant="caption">
           {t('onboarding.notice')}
         </AppText>
@@ -228,7 +228,6 @@ const styles = StyleSheet.create({
   stepIndex: {
     alignItems: 'center',
     borderRadius: 999,
-    borderWidth: 1,
     height: 30,
     justifyContent: 'center',
     width: 30,

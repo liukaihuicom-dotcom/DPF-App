@@ -6,6 +6,8 @@ export type TradingAccountUsageOverride = 'auto' | 'normal' | 'warning' | 'abnor
 
 export type TradingAccountUsageStatus = 'normal' | 'warning' | 'abnormal';
 
+export type TradeWorkspaceDataPreset = 'empty' | 'sample';
+
 export type DiscoverModuleId =
   | 'challenge'
   | 'education'
@@ -20,7 +22,7 @@ export type DiscoverModuleId =
 
 export type Direction = 'buy' | 'sell';
 
-export type OrderType = 'market' | 'limit';
+export type OrderType = 'market' | 'limit' | 'stop';
 
 export type OrderStatus = 'filled' | 'pending' | 'closed' | 'cancelled';
 

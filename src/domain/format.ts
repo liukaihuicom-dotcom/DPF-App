@@ -2,21 +2,25 @@ import type { Locale } from '@/src/i18n/translations';
 import type { Direction, Instrument, LocalizedText } from './types';
 
 export function formatMoney(value: number, currency = 'USD', digits = 2, locale: Locale = 'zh-CN') {
-  return new Intl.NumberFormat(locale, {
+  return normalizeCurrencySymbol(new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
-  }).format(value);
+  }).format(value), currency);
 }
 
 export function formatCompactMoney(value: number, currency = 'USD', locale: Locale = 'zh-CN') {
-  return new Intl.NumberFormat(locale, {
+  return normalizeCurrencySymbol(new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     notation: 'compact',
     maximumFractionDigits: 1,
-  }).format(value);
+  }).format(value), currency);
+}
+
+function normalizeCurrencySymbol(value: string, currency: string) {
+  return currency.toUpperCase() === 'USD' ? value.replace('US$', '$') : value;
 }
 
 export function formatNumber(value: number, digits = 2, locale: Locale = 'zh-CN') {
@@ -51,12 +55,20 @@ export function directionLabel(direction: Direction, locale: Locale = 'zh-CN') {
   return direction === 'buy' ? '买入' : '卖出';
 }
 
-export function orderTypeLabel(type: 'market' | 'limit', locale: Locale = 'zh-CN') {
+export function orderTypeLabel(type: 'market' | 'limit' | 'stop', locale: Locale = 'zh-CN') {
   if (locale === 'en-US') {
-    return type === 'market' ? 'Market' : 'Limit';
+    if (type === 'market') {
+      return 'Market';
+    }
+
+    return type === 'limit' ? 'Limit' : 'Stop';
   }
 
-  return type === 'market' ? '市价' : '限价';
+  if (type === 'market') {
+    return '市价';
+  }
+
+  return type === 'limit' ? '限价' : '止损';
 }
 
 export function statusLabel(status: string, locale: Locale = 'zh-CN') {
