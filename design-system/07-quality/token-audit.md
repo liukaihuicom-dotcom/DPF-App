@@ -2,7 +2,7 @@
 
 | Token Category | Status | Notes |
 |---|---|---|
-| Color | Exists | Runtime palette has semantic fields |
+| Color | Runtime export + DTCG source exists | `tokens.color.json` defines L1/L2 color tokens; `ThemeColors` maps semantic color modes for App runtime |
 | Typography | Runtime export exists | `src/theme/tokens.ts` maps documented type scale for `AppText` and exceptional quote numbers |
 | Spacing | Runtime export exists | `src/theme/tokens.ts` maps app spacing scale and layout defaults |
 | Size | Runtime export exists | `src/theme/tokens.ts` maps control, input, button, tag, tab, icon, touch, sheet, viewport, and surface dimensions |
@@ -16,6 +16,11 @@
 ## QA Gate
 
 - `qa:style` fails on raw color syntax outside token sources.
+- `qa:style` fails when required color token artifacts are missing.
+- `qa:style` fails when L1 color ramps are missing any `50-950` step.
+- `qa:style` fails when semantic status or market states miss `fg`, `bg`, `border`, `solid`, or `onSolid`.
+- `qa:style` fails on new deprecated `palette.*` / `useThemePalette()` usage outside the compatibility runtime.
+- `qa:style` fails on new page/component `colorPrimitives.*` usage.
 - `qa:style` fails on page/component typography literals outside `src/theme/tokens.ts` and `AppText`.
 - `qa:style` fails on direct `TextInput` usage outside shared input wrappers.
 - `qa:style` fails on new page-level `AppText style.color` usage outside registered text color exception files.
@@ -106,6 +111,18 @@ Allowed component-owned line-width exceptions:
 These exceptions represent selected-state controls, preview swatches, or instrument medallion emphasis. Ordinary UI borders in these files should still use `lineWidth.hairline`; only declared selected/visual emphasis may use `lineWidth.strong` or `lineWidth.selected`.
 
 Icon registry stroke widths, SVG/chart strokes, canvas strokes, and brand illustration strokes are governed separately and must not be migrated to page border tokens.
+
+## Deprecated Color Compatibility
+
+Temporary compatibility remains only in `src/theme/colors.ts` and `src/settings/ProductSettings.tsx`:
+
+- `ThemePalette`
+- `themePalettes`
+- `palette`
+- `useThemePalette()`
+- `ProductSettings.palette`
+
+New and migrated code must use `ThemeColors`, `themeColors`, `useThemeColors()`, and `colors.*`.
 
 ## Legacy Text Color Migration Baseline
 

@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
+import { resolveThemeTone } from '@/src/theme/colors';
 import { radius, size, spacing } from '@/src/theme/tokens';
 
 import type { IconTone } from '../AppIcon';
@@ -12,11 +13,11 @@ type LegendDotProps = {
 };
 
 export function LegendDot({ label, tone }: LegendDotProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
 
   return (
     <View style={styles.item}>
-      <View style={StyleSheet.flatten([styles.dot, { backgroundColor: palette[tone] }])} />
+      <View style={StyleSheet.flatten([styles.dot, { backgroundColor: resolveThemeTone(colors, tone) }])} />
       <AppText tone="muted" variant="caption">
         {label}
       </AppText>

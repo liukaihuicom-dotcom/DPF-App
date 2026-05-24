@@ -36,7 +36,7 @@ function TraderAccountsScreen() {
   const { account, positions } = useBroker();
   const {
     locale,
-    palette,
+    colors,
     t,
     tradingAccountCountPreset,
     tradingAccountDataPreset,
@@ -78,7 +78,7 @@ function TraderAccountsScreen() {
 }
 
 function AccountListCard({ profile }: { profile: TradingAccountProfile }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const status = profile.group !== 'active' ? getAccountStatusLabel(profile.group, locale) : '';
   const statusTone: StatusPillTone = profile.group === 'demo' ? 'brand' : profile.group === 'disabled' || profile.group === 'archived' ? 'danger' : 'warning';
 
@@ -87,8 +87,8 @@ function AccountListCard({ profile }: { profile: TradingAccountProfile }) {
       accessibilityLabel={profile.accountNo}
       minTouch={86}
       onPress={() => router.push(`/account-details/${profile.id}`)}
-      style={StyleSheet.flatten([styles.accountCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-      <View style={StyleSheet.flatten([styles.walletIcon, { backgroundColor: palette.panelSoft }])}>
+      style={StyleSheet.flatten([styles.accountCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
+      <View style={StyleSheet.flatten([styles.walletIcon, { backgroundColor: colors.surface.subtle }])}>
         <AppIcon tone="text" name="icon.account.trading" size={18} />
       </View>
       <View style={styles.accountCardBody}>
@@ -108,7 +108,7 @@ function AccountListCard({ profile }: { profile: TradingAccountProfile }) {
           <AppIcon tone="textDim" name="icon.system.chevron_right" size={16} />
         </View>
 
-        <View style={StyleSheet.flatten([styles.accountDivider, { backgroundColor: palette.lineSoft }])} />
+        <View style={StyleSheet.flatten([styles.accountDivider, { backgroundColor: colors.border.subtle }])} />
         <View style={styles.accountValues}>
           <View style={styles.accountValueCell}>
             <AppText variant="subtitle">{formatMoney(profile.equity, profile.currency, 2, locale)}</AppText>
@@ -149,7 +149,7 @@ type AccountOverview = {
 };
 
 function AccountOverviewCard({ overview }: { overview: AccountOverview }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const bottomSheet = useBottomSheet();
   const totalEquityLabel = t('accounts.overview.totalEquity');
   const totalEquityValue = formatMoney(overview.totalEquity, 'USD', 2, locale);
@@ -186,12 +186,12 @@ function AccountOverviewCard({ overview }: { overview: AccountOverview }) {
               </AppText>
             </View>
             <View style={styles.overviewTrend}>
-              <Sparkline edgeToEdge color={overview.todayPnl >= 0 ? palette.down : palette.up} height={56} values={overview.trendValues} width="100%" />
+              <Sparkline edgeToEdge color={overview.todayPnl >= 0 ? colors.market.down.fg : colors.market.up.fg} height={56} values={overview.trendValues} width="100%" />
             </View>
           </View>
         </View>
 
-        <View style={StyleSheet.flatten([styles.overviewVerticalDivider, { backgroundColor: palette.lineSoft }])} />
+        <View style={StyleSheet.flatten([styles.overviewVerticalDivider, { backgroundColor: colors.border.subtle }])} />
 
         <View style={styles.overviewSide}>
           <OverviewSideMetric
@@ -212,11 +212,11 @@ function AccountOverviewCard({ overview }: { overview: AccountOverview }) {
 }
 
 function MetricDescriptionSheet({ description, label, value }: { description: string; label: string; value: string }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
 
   return (
     <View style={styles.descriptionSheet}>
-      <View style={StyleSheet.flatten([styles.descriptionValueCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.descriptionValueCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <AppText tone="muted" variant="caption">
           {label}
         </AppText>
@@ -243,7 +243,7 @@ function OverviewSideMetric({ label, tone, value }: { label: string; tone?: 'dow
 }
 
 function CommissionScreen() {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
 
   return (
     <Screen title={t('commission.title')}>
@@ -274,7 +274,7 @@ function CommissionScreen() {
       </View>
       <Card compact>
         {commissions.map((commission) => (
-          <View key={commission.id} style={StyleSheet.flatten([styles.recordRow, { borderBottomColor: palette.lineSoft }])}>
+          <View key={commission.id} style={StyleSheet.flatten([styles.recordRow, { borderBottomColor: colors.border.subtle }])}>
             <View style={styles.recordMain}>
               <AppText variant="body">{commission.clientName}</AppText>
               <AppText tone="muted" variant="caption">

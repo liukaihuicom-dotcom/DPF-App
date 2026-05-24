@@ -2,7 +2,7 @@ import { Image, ImageSourcePropType, StyleProp, StyleSheet, View, ViewStyle } fr
 import { SvgUri } from 'react-native-svg';
 
 import { flagAssetRegistry, type FlagCode, type FlagShape } from '@/src/assets/flags';
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth } from '@/src/theme/tokens';
 
 type FlagIconProps = {
@@ -14,7 +14,7 @@ type FlagIconProps = {
 };
 
 export function FlagIcon({ accessibilityLabel, code, shape = 'circle', size = 18, style }: FlagIconProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const normalizedCode = normalizeFlagCode(code);
   const flag = normalizedCode ? flagAssetRegistry[normalizedCode] : undefined;
   const aspect = shape === 'rectangle' ? '4x3' : '1x1';
@@ -27,8 +27,8 @@ export function FlagIcon({ accessibilityLabel, code, shape = 'circle', size = 18
       style={StyleSheet.flatten([
         styles.frame,
         {
-          backgroundColor: palette.panelSoft,
-          borderColor: palette.lineSoft,
+          backgroundColor: colors.surface.subtle,
+          borderColor: colors.border.subtle,
           borderRadius: shape === 'circle' ? size / 2 : Math.max(2, Math.round(size * 0.12)),
           height: size,
           width,
@@ -38,7 +38,7 @@ export function FlagIcon({ accessibilityLabel, code, shape = 'circle', size = 18
       {uri ? (
         <SvgUri height="100%" uri={uri} width="100%" />
       ) : (
-        <View style={StyleSheet.flatten([styles.fallback, { backgroundColor: palette.panelSoft }])} />
+        <View style={StyleSheet.flatten([styles.fallback, { backgroundColor: colors.surface.subtle }])} />
       )}
     </View>
   );

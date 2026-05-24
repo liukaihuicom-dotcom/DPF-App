@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth, radius, size } from '@/src/theme/tokens';
 
 import { NativePressable } from '../NativePressable';
@@ -13,7 +13,7 @@ type StepperButtonProps = {
 };
 
 export function StepperButton({ label, onPress, symbol }: StepperButtonProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
 
   return (
     <NativePressable
@@ -21,7 +21,7 @@ export function StepperButton({ label, onPress, symbol }: StepperButtonProps) {
       accessibilityRole="button"
       minTouch={size.control.md}
       onPress={onPress}
-      style={StyleSheet.flatten([styles.button, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      style={StyleSheet.flatten([styles.button, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
       <AppText variant="titleMd">{symbol}</AppText>
     </NativePressable>
   );

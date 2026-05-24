@@ -14,7 +14,7 @@ const TITLE_ENTER_DELAY_MS = 110;
 const SUBTITLE_ENTER_DELAY_MS = 220;
 
 export default function LaunchScreen() {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const reducedMotion = useReducedMotion();
   const titleOpacity = useSharedValue(reducedMotion ? 1 : 0);
   const titleTranslateY = useSharedValue(reducedMotion ? 0 : spacing.lg);
@@ -58,7 +58,7 @@ export default function LaunchScreen() {
   }));
 
   return (
-    <SafeAreaView edges={['top', 'bottom']} style={StyleSheet.flatten([styles.safe, { backgroundColor: palette.panelHigh }])}>
+    <SafeAreaView edges={['top', 'bottom']} style={StyleSheet.flatten([styles.safe, { backgroundColor: colors.surface.raised }])}>
       <View style={styles.screen}>
         <View style={styles.visualStage}>
           <View style={styles.brandHalo}>

@@ -24,7 +24,7 @@ type UpgradeChatCardProps = {
 
 export function UpgradeChatCard({ request, readonly }: UpgradeChatCardProps) {
   const { submitUpgradeRequest, upgradeRequest } = useBroker();
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const toast = useToast();
   const activeRequest = request ?? upgradeRequest;
   const [reason, setReason] = useState(t('upgrade.defaultReason'));
@@ -70,8 +70,8 @@ export function UpgradeChatCard({ request, readonly }: UpgradeChatCardProps) {
                 styles.messageBubble,
                 {
                   alignSelf: trader ? 'flex-end' : 'flex-start',
-                  backgroundColor: trader ? palette.text : palette.panelSoft,
-                  borderColor: trader ? palette.text : palette.lineSoft,
+                  backgroundColor: trader ? colors.text.primary : colors.surface.subtle,
+                  borderColor: trader ? colors.text.primary : colors.border.subtle,
                 },
               ])}>
               <AppText tone={trader ? 'panel' : 'default'} variant="caption">
@@ -94,7 +94,7 @@ export function UpgradeChatCard({ request, readonly }: UpgradeChatCardProps) {
                 key={chip}
                 minTouch={34}
                 onPress={() => setReason(chip)}
-                style={StyleSheet.flatten([styles.reasonChip, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+                style={StyleSheet.flatten([styles.reasonChip, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
                 <AppText numberOfLines={1} variant="caption">
                   {chip}
                 </AppText>
@@ -114,7 +114,7 @@ export function UpgradeChatCard({ request, readonly }: UpgradeChatCardProps) {
       ) : null}
 
       {!readonly && pending ? (
-        <View style={StyleSheet.flatten([styles.waitingBox, { backgroundColor: `${palette.amber}10`, borderColor: palette.amber }])}>
+        <View style={StyleSheet.flatten([styles.waitingBox, { backgroundColor: `${colors.status.warning.fg}10`, borderColor: colors.status.warning.fg }])}>
           <AppIcon tone="amber" name="icon.trading.history" size={15} />
           <AppText tone="amber" variant="caption">
             {t('upgrade.pendingHint')}

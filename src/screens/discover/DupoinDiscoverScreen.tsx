@@ -22,7 +22,7 @@ import { useProductSettings } from '@/src/settings/ProductSettings';
 import { lineWidth, radius, size, spacing } from '@/src/theme/tokens';
 
 export default function DupoinDiscoverScreen() {
-  const { locale, palette, role, t } = useProductSettings();
+  const { locale, colors, role, t } = useProductSettings();
   const visibleEntries = discoverEntryDefinitions.filter((entry) => entry.roles.includes(role) || entry.roles.includes('guest'));
   const visibleCampaigns = discoverCampaignDefinitions.filter((campaign) => campaign.roles.includes(role) || campaign.roles.includes('guest')).slice(0, 5);
 
@@ -61,7 +61,7 @@ export default function DupoinDiscoverScreen() {
 }
 
 function LatestCampaigns({ campaigns }: { campaigns: DiscoverCampaignDefinition[] }) {
-  const { locale, palette, setSelectedDiscoverModule, t } = useProductSettings();
+  const { locale, colors, setSelectedDiscoverModule, t } = useProductSettings();
   const toast = useToast();
 
   return (
@@ -88,9 +88,9 @@ function LatestCampaigns({ campaigns }: { campaigns: DiscoverCampaignDefinition[
               });
               router.push('/quick' as never);
             }}
-            style={StyleSheet.flatten([styles.campaignCard, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+            style={StyleSheet.flatten([styles.campaignCard, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
             <View style={styles.campaignCopy}>
-              <View style={StyleSheet.flatten([styles.campaignBadge, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}55` }])}>
+              <View style={StyleSheet.flatten([styles.campaignBadge, { backgroundColor: `${colors.brand.fg}12`, borderColor: `${colors.brand.fg}55` }])}>
                 <AppText numberOfLines={1} tone="brand" variant="caption">
                   {localizeText(campaign.badge, locale)}
                 </AppText>
@@ -102,7 +102,7 @@ function LatestCampaigns({ campaigns }: { campaigns: DiscoverCampaignDefinition[
                 {localizeText(campaign.subtitle, locale)}
               </AppText>
             </View>
-            <View style={StyleSheet.flatten([styles.campaignIcon, { backgroundColor: `${palette.brand}16` }])}>
+            <View style={StyleSheet.flatten([styles.campaignIcon, { backgroundColor: `${colors.brand.fg}16` }])}>
               <AppIcon name={campaign.icon} size={size.icon.lg} tone="brand" />
             </View>
           </NativePressable>
@@ -113,7 +113,7 @@ function LatestCampaigns({ campaigns }: { campaigns: DiscoverCampaignDefinition[
 }
 
 function DiscoverEntryRow({ entry, showDivider }: { entry: DiscoverEntryDefinition; showDivider: boolean }) {
-  const { locale, palette, setSelectedDiscoverModule } = useProductSettings();
+  const { locale, colors, setSelectedDiscoverModule } = useProductSettings();
 
   return (
     <NativePressable
@@ -124,8 +124,8 @@ function DiscoverEntryRow({ entry, showDivider }: { entry: DiscoverEntryDefiniti
         void impactLight();
         router.push('/quick' as never);
       }}
-      style={StyleSheet.flatten([styles.entryRow, showDivider && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
-      <View style={StyleSheet.flatten([styles.entryIcon, { backgroundColor: `${palette.brand}12` }])}>
+      style={StyleSheet.flatten([styles.entryRow, showDivider && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
+      <View style={StyleSheet.flatten([styles.entryIcon, { backgroundColor: `${colors.brand.fg}12` }])}>
         <AppIcon tone="brand" name={entry.icon} size={18} />
       </View>
       <View style={styles.entryCopy}>

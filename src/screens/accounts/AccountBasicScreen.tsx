@@ -32,7 +32,7 @@ export default function AccountBasicScreen() {
   const { account, orders, positions } = useBroker();
   const {
     locale,
-    palette,
+    colors,
     t,
     tradingAccountCountPreset,
     tradingAccountDataPreset,
@@ -102,7 +102,7 @@ export default function AccountBasicScreen() {
               key={row.label}
               style={StyleSheet.flatten([
                 styles.infoRow,
-                rowIndex < section.rows.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline },
+                rowIndex < section.rows.length - 1 && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline },
               ])}>
               <InfoLabel row={row} onPress={() => openDescription(row)} />
               <AppText numberOfLines={1} style={styles.infoValue} tone={row.tone} variant="body">
@@ -117,7 +117,7 @@ export default function AccountBasicScreen() {
 }
 
 function InfoLabel({ onPress, row }: { onPress: () => void; row: ProfileRow }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
 
   if (!row.descriptionKey) {
     return (
@@ -129,7 +129,7 @@ function InfoLabel({ onPress, row }: { onPress: () => void; row: ProfileRow }) {
 
   return (
     <NativePressable accessibilityLabel={row.label} minTouch={32} onPress={onPress} style={styles.infoLabelButton}>
-      <AppText style={StyleSheet.flatten([styles.explainableLabel, { borderBottomColor: palette.text }])} tone="default" variant="body">
+      <AppText style={StyleSheet.flatten([styles.explainableLabel, { borderBottomColor: colors.text.primary }])} tone="default" variant="body">
         {row.label}
       </AppText>
     </NativePressable>
@@ -145,11 +145,11 @@ function MetricDescriptionSheet({
   label: string;
   value: string;
 }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
 
   return (
     <View style={styles.descriptionSheet}>
-      <View style={StyleSheet.flatten([styles.descriptionValueCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.descriptionValueCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <AppText tone="muted" variant="caption">
           {label}
         </AppText>

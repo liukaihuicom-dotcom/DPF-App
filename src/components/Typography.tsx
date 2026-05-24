@@ -1,7 +1,8 @@
 import { PropsWithChildren } from 'react';
 import { StyleSheet, Text, TextProps } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
+import { resolveThemeTone } from '@/src/theme/colors';
 import { typography, type TypographyToken } from '@/src/theme/tokens';
 
 export type AppTextTone =
@@ -38,30 +39,11 @@ type AppTextProps = PropsWithChildren<
 >;
 
 export function AppText({ children, tone = 'default', variant = 'body', style, ...props }: AppTextProps) {
-  const palette = useThemePalette();
-  const toneMap = {
-    amber: palette.amber,
-    bg: palette.bg,
-    blue: palette.blue,
-    brand: palette.brand,
-    cyan: palette.cyan,
-    danger: palette.danger,
-    default: palette.text,
-    dim: palette.textDim,
-    disabled: palette.disabledText,
-    down: palette.down,
-    link: palette.link,
-    muted: palette.textMuted,
-    panel: palette.panel,
-    panelMuted: `${palette.panel}CC`,
-    up: palette.up,
-    white: palette.white,
-  };
-
+  const colors = useThemeColors();
   const variantStyle = variantStyles[variant];
 
   return (
-    <Text {...props} style={StyleSheet.flatten([styles.base, variantStyle, { color: toneMap[tone] }, style])}>
+    <Text {...props} style={StyleSheet.flatten([styles.base, variantStyle, { color: resolveThemeTone(colors, tone) }, style])}>
       {children}
     </Text>
   );

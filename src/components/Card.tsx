@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { shadows } from '@/src/theme/colors';
 import { lineWidth, radius, spacing } from '@/src/theme/tokens';
 
@@ -12,15 +12,15 @@ type CardProps = PropsWithChildren<{
 }>;
 
 export function Card({ children, compact, highlight, style }: CardProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
 
   return (
     <View
       style={StyleSheet.flatten([
         styles.card,
         {
-          backgroundColor: highlight ? palette.panelHigh : palette.panel,
-          borderColor: highlight ? palette.line : palette.lineSoft,
+          backgroundColor: highlight ? colors.surface.raised : colors.surface.panel,
+          borderColor: highlight ? colors.border.default : colors.border.subtle,
         },
         highlight && shadows.panel,
         compact && styles.compact,

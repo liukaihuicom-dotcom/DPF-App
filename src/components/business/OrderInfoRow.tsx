@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth, size, spacing } from '@/src/theme/tokens';
 
 import { AppText } from '../Typography';
@@ -12,10 +12,10 @@ type OrderInfoRowProps = {
 };
 
 export function OrderInfoRow({ label, tone = 'default', value }: OrderInfoRowProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
 
   return (
-    <View style={StyleSheet.flatten([styles.row, { borderBottomColor: palette.lineSoft }])}>
+    <View style={StyleSheet.flatten([styles.row, { borderBottomColor: colors.border.subtle }])}>
       <AppText tone="muted" variant="caption">
         {label}
       </AppText>

@@ -7,21 +7,21 @@ import { useProductSettings } from '@/src/settings/ProductSettings';
 import { typography } from '@/src/theme/tokens';
 
 export default function TabLayout() {
-  const { palette, selectedDiscoverModuleId, t } = useProductSettings();
+  const { colors, selectedDiscoverModuleId, t } = useProductSettings();
   const selectedModule = getDiscoverModuleMeta(selectedDiscoverModuleId);
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: palette.brand,
-        tabBarInactiveTintColor: palette.textDim,
+        tabBarActiveTintColor: colors.brand.fg,
+        tabBarInactiveTintColor: colors.text.tertiary,
         tabBarItemStyle: {
           minHeight: 44,
         },
         tabBarStyle: {
-          backgroundColor: palette.panel,
-          borderTopColor: palette.line,
+          backgroundColor: colors.surface.panel,
+          borderTopColor: colors.border.default,
           height: 68,
           paddingBottom: 7,
           paddingTop: 6,

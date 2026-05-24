@@ -3,7 +3,7 @@ import type { Href } from 'expo-router';
 import { Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth, layout, spacing } from '@/src/theme/tokens';
 
 import { AppTopBar, type AppTopBarAction } from './AppTopBar';
@@ -44,10 +44,10 @@ export function Screen({
   title,
   topBar,
 }: ScreenProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const header = topBar ?? (title ? <AppTopBar actions={rightActions} align={align} back={back} backHref={backHref} subtitle={subtitle} title={title} /> : null);
   const bottomPadding = stickyFooter ? 122 + contentInsetBottom : layout.screenBottomPadding + contentInsetBottom;
-  const stickyFooterBackgroundColor = stickyFooterBackground === 'page' ? palette.bg : palette.panelHigh;
+  const stickyFooterBackgroundColor = stickyFooterBackground === 'page' ? colors.surface.canvas : colors.surface.raised;
   const wrapDismiss = (node: ReactNode) =>
     dismissKeyboardOnTap ? (
       <Pressable accessible={false} onPress={Keyboard.dismiss} style={styles.flex}>
@@ -58,7 +58,7 @@ export function Screen({
     );
 
   const body = !scroll ? (
-    <View style={StyleSheet.flatten([styles.body, { backgroundColor: palette.bg }])}>{children}</View>
+    <View style={StyleSheet.flatten([styles.body, { backgroundColor: colors.surface.canvas }])}>{children}</View>
   ) : (
     <ScrollView
       contentContainerStyle={[
@@ -69,18 +69,18 @@ export function Screen({
       contentInsetAdjustmentBehavior="never"
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
-      style={StyleSheet.flatten([styles.body, { backgroundColor: palette.bg }])}>
+      style={StyleSheet.flatten([styles.body, { backgroundColor: colors.surface.canvas }])}>
       {children}
     </ScrollView>
   );
 
   const content = (
-    <View style={StyleSheet.flatten([styles.safe, { backgroundColor: palette.bg }])}>
+    <View style={StyleSheet.flatten([styles.safe, { backgroundColor: colors.surface.canvas }])}>
       <SafeAreaView edges={['top']} style={styles.flex}>
         {header}
         {wrapDismiss(body)}
         {stickyFooter ? (
-          <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.footerSafe, { backgroundColor: stickyFooterBackgroundColor, borderTopColor: palette.lineSoft }])}>
+          <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.footerSafe, { backgroundColor: stickyFooterBackgroundColor, borderTopColor: colors.border.subtle }])}>
             <View style={styles.footer}>{stickyFooter}</View>
           </SafeAreaView>
         ) : null}

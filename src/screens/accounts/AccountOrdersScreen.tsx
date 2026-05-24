@@ -17,7 +17,7 @@ import { lineWidth, radius, size, spacing } from '@/src/theme/tokens';
 
 export default function AccountOrdersScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const groups = groupClosedOrdersByDate(closedOrderHistory);
   const realized = closedOrderHistory.reduce((total, order) => total + order.pnl, 0);
 
@@ -33,7 +33,7 @@ export default function AccountOrdersScreen() {
           </View>
           <StatusPill compact icon="icon.trading.history" label={t('status.closed')} tone="neutral" />
         </View>
-        <View style={StyleSheet.flatten([styles.summaryGrid, { borderTopColor: palette.lineSoft }])}>
+        <View style={StyleSheet.flatten([styles.summaryGrid, { borderTopColor: colors.border.subtle }])}>
           <SummaryMetric label={t('accountOrders.realizedPnl')} tone={realized >= 0 ? 'down' : 'up'} value={formatMoney(realized, 'USD', 2, locale)} />
           <SummaryMetric label={t('accountOrders.closedCount')} value={String(closedOrderHistory.length)} />
         </View>
@@ -47,7 +47,7 @@ export default function AccountOrdersScreen() {
             {groups.map((group) => (
               <View key={group.title} style={styles.dateGroup}>
                 <AppText tone="muted" variant="caption">{group.title}</AppText>
-                <View style={StyleSheet.flatten([styles.listFrame, { borderColor: palette.lineSoft }])}>
+                <View style={StyleSheet.flatten([styles.listFrame, { borderColor: colors.border.subtle }])}>
                   {group.rows.map((order, index) => (
                     <ClosedOrderRow key={order.id} order={order} showDivider={index < group.rows.length - 1} />
                   ))}
@@ -62,13 +62,13 @@ export default function AccountOrdersScreen() {
 }
 
 function ClosedOrderRow({ order, showDivider }: { order: ClosedOrder; showDivider?: boolean }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
 
   return (
     <NativePressable
       accessibilityLabel={`${order.symbol} ${directionLabel(order.direction, locale)} ${order.lots}`}
       minTouch={76}
-      style={StyleSheet.flatten([styles.orderRow, showDivider && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
+      style={StyleSheet.flatten([styles.orderRow, showDivider && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
       <View style={styles.orderTop}>
         <TradeDirectionIcon direction={order.direction} size={40} />
         <View style={styles.orderMain}>
@@ -86,7 +86,7 @@ function ClosedOrderRow({ order, showDivider }: { order: ClosedOrder; showDivide
         </View>
         <AppIcon tone="textDim" name="icon.system.chevron_right" size={14} />
       </View>
-      <View style={StyleSheet.flatten([styles.detailBox, { borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.detailBox, { borderColor: colors.border.subtle }])}>
         <DetailRow row={{ label: t('portfolio.openTime'), value: order.openTime }} showDivider />
         <DetailRow row={{ label: t('portfolio.closeTime'), value: order.closeTime }} showDivider />
         <DetailRow row={{ label: t('portfolio.commissionSwap'), value: `${formatNumber(order.commission, 2, locale)} / ${formatNumber(order.swap, 2, locale)}` }} />

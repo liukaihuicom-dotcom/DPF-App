@@ -40,15 +40,15 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const { authStatus, palette, pinGateStatus, pinStatus, resolvedThemeMode } = useProductSettings();
+  const { authStatus, colors, pinGateStatus, pinStatus, resolvedThemeMode } = useProductSettings();
   const pathname = usePathname();
   const navigationRef = useNavigationContainerRef();
   const router = useRouter();
   const navigationTheme = resolvedThemeMode === 'lightBroker' ? DefaultTheme : DarkTheme;
 
   useEffect(() => {
-    SystemUI.setBackgroundColorAsync(pathname === '/brand-splash' ? palette.brand : palette.bg);
-  }, [palette.bg, palette.brand, pathname]);
+    SystemUI.setBackgroundColorAsync(pathname === '/brand-splash' ? colors.brand.fg : colors.surface.canvas);
+  }, [colors.surface.canvas, colors.brand.fg, pathname]);
 
   useEffect(() => {
     if (!navigationRef.isReady()) {
@@ -90,11 +90,11 @@ function RootLayoutNav() {
         ...navigationTheme,
         colors: {
           ...navigationTheme.colors,
-          background: palette.bg,
-          border: palette.line,
-          card: palette.panel,
-          primary: palette.brand,
-          text: palette.text,
+          background: colors.surface.canvas,
+          border: colors.border.default,
+          card: colors.surface.panel,
+          primary: colors.brand.fg,
+          text: colors.text.primary,
         },
       }}>
       <BrokerProvider>
@@ -103,14 +103,14 @@ function RootLayoutNav() {
             <AppViewport>
               <Stack
                 screenOptions={{
-                  contentStyle: { backgroundColor: palette.bg },
+                  contentStyle: { backgroundColor: colors.surface.canvas },
                   headerShown: false,
                 }}>
                 <Stack.Screen name="index" />
                 <Stack.Screen
                   name="brand-splash"
                   options={{
-                    contentStyle: { backgroundColor: palette.brand },
+                    contentStyle: { backgroundColor: colors.brand.fg },
                   }}
                 />
                 <Stack.Screen name="launch" />

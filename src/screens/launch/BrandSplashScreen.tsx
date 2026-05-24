@@ -11,7 +11,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { layout, size } from '@/src/theme/tokens';
 
 const LOGO_SIZE = Math.round(size.viewport.appMaxWidth * 0.58);
@@ -20,7 +20,7 @@ const HOLD_DURATION_MS = 340;
 const REDUCED_MOTION_DELAY_MS = 240;
 
 export default function BrandSplashScreen() {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const reducedMotion = useReducedMotion();
   const opacity = useSharedValue(reducedMotion ? 1 : 0);
   const scale = useSharedValue(reducedMotion ? 1 : 0.96);
@@ -69,7 +69,7 @@ export default function BrandSplashScreen() {
   }));
 
   return (
-    <View style={StyleSheet.flatten([styles.screen, { backgroundColor: palette.brand }])}>
+    <View style={StyleSheet.flatten([styles.screen, { backgroundColor: colors.brand.fg }])}>
       <Animated.View accessible accessibilityLabel="Dupoin" accessibilityRole="image" style={logoStyle}>
         <Image resizeMode="contain" source={require('@/assets/images/dupoin-logo-white.png')} style={styles.logo} />
       </Animated.View>

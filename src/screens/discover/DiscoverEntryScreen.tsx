@@ -14,7 +14,7 @@ import { lineWidth, radius, size, spacing } from '@/src/theme/tokens';
 
 export default function DiscoverEntryScreen({ entryId }: { entryId?: string } = {}) {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const entry = getDiscoverEntryById(entryId ?? id ?? '');
 
   if (!entry) {
@@ -37,7 +37,7 @@ export default function DiscoverEntryScreen({ entryId }: { entryId?: string } = 
     <Screen back title={localizeText(entry.title, locale)}>
       <Card highlight>
         <View style={styles.heroTop}>
-          <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}55` }])}>
+          <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: `${colors.brand.fg}12`, borderColor: `${colors.brand.fg}55` }])}>
             <AppIcon tone="brand" name={entry.icon} size={24} />
           </View>
           <View style={styles.flex}>
@@ -56,7 +56,7 @@ export default function DiscoverEntryScreen({ entryId }: { entryId?: string } = 
 
       <Card compact style={styles.detailCard}>
         {details.map((item, index) => (
-          <View key={item.label} style={StyleSheet.flatten([styles.detailRow, index < details.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
+          <View key={item.label} style={StyleSheet.flatten([styles.detailRow, index < details.length - 1 && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
             <AppText tone="muted" variant="caption">
               {item.label}
             </AppText>

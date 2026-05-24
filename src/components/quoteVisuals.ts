@@ -1,4 +1,4 @@
-import type { ThemePalette } from '@/src/theme/colors';
+import type { ThemeColors } from '@/src/theme/colors';
 
 import type { AppTextTone } from './Typography';
 
@@ -7,14 +7,14 @@ type QuoteChangeVisual = {
   tone: AppTextTone;
 };
 
-export function getQuoteChangeVisual(changePercent: number, palette: ThemePalette): QuoteChangeVisual {
+export function getQuoteChangeVisual(changePercent: number, colors: ThemeColors): QuoteChangeVisual {
   if (changePercent > 0) {
-    return { color: palette.down, tone: 'down' };
+    return { color: colors.market.down.fg, tone: 'down' };
   }
 
   if (changePercent < 0) {
-    return { color: palette.up, tone: 'up' };
+    return { color: colors.market.up.fg, tone: 'up' };
   }
 
-  return { color: palette.textMuted, tone: 'muted' };
+  return { color: colors.text.secondary, tone: 'muted' };
 }

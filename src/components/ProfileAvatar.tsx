@@ -38,7 +38,7 @@ export const profileAvatarOptions: { id: ProfileAvatarId; name: string }[] = [
 ];
 
 export function ProfileAvatar({ id, selected, size = 58, style }: ProfileAvatarProps) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
   const borderWidth = selected ? 3 : 1;
 
   return (
@@ -46,8 +46,8 @@ export function ProfileAvatar({ id, selected, size = 58, style }: ProfileAvatarP
       style={StyleSheet.flatten([
         styles.frame,
         {
-          backgroundColor: palette.panelSoft,
-          borderColor: selected ? palette.brand : palette.lineSoft,
+          backgroundColor: colors.surface.subtle,
+          borderColor: selected ? colors.brand.fg : colors.border.subtle,
           borderRadius: size / 2,
           borderWidth,
           height: size,

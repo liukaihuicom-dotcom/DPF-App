@@ -6,12 +6,12 @@ import { useProductSettings } from '@/src/settings/ProductSettings';
 import { spacing } from '@/src/theme/tokens';
 
 export default function NotFoundScreen() {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
 
   return (
     <>
       <Stack.Screen options={{ title: t('notFound.title') }} />
-      <View style={StyleSheet.flatten([styles.container, { backgroundColor: palette.bg }])}>
+      <View style={StyleSheet.flatten([styles.container, { backgroundColor: colors.surface.canvas }])}>
         <AppText variant="title">{t('notFound.title')}</AppText>
         <Link href="/launch" style={styles.link}>
           <AppText tone="brand">{t('notFound.back')}</AppText>

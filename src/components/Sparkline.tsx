@@ -1,7 +1,7 @@
 import { memo, useId, useMemo, useState } from 'react';
 import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 
 type SparklineProps = {
   values: number[];
@@ -14,10 +14,10 @@ type SparklineProps = {
 const fallbackResponsiveWidth = 180;
 
 function SparklineComponent({ values, width = 92, height = 34, color, edgeToEdge = false }: SparklineProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const gradientIdSource = useId();
   const gradientId = useMemo(() => `sparkline-fill-${gradientIdSource.replace(/[^a-zA-Z0-9_-]/g, '')}`, [gradientIdSource]);
-  const strokeColor = color ?? palette.up;
+  const strokeColor = color ?? colors.market.up.fg;
   const [measuredWidth, setMeasuredWidth] = useState(typeof width === 'number' ? width : 0);
   const chartWidth = typeof width === 'number' ? width : measuredWidth || fallbackResponsiveWidth;
   const chart = useMemo(() => {

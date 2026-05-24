@@ -32,7 +32,7 @@ import { impactLight, notifySuccess, notifyWarning } from '@/src/feedback/haptic
 import { localeOptions, type Locale, type TranslationKey } from '@/src/i18n/translations';
 import { tradeWorkspaceDataPresets, useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
-import { shadows, themePalettes, type ThemeMode, type ThemePalette } from '@/src/theme/colors';
+import { resolveThemeTone, shadows, themeColors, type ThemeMode, type ThemeColors } from '@/src/theme/colors';
 import { lineWidth, radius, spacing, size } from '@/src/theme/tokens';
 
 import { AppIcon, type AppIconName, type IconTone } from './AppIcon';
@@ -65,7 +65,7 @@ type QuickScenario = {
   tone: ScenarioTone;
 };
 
-const themeModes = ['system', ...Object.keys(themePalettes)] as ThemeMode[];
+const themeModes = ['system', ...Object.keys(themeColors)] as ThemeMode[];
 const authStatuses: AuthStatus[] = ['guest', 'signedIn'];
 const authChannels: AuthChannel[] = ['email', 'phone'];
 const kycStatuses: KycStatus[] = ['notStarted', 'reviewing', 'approved', 'rejected'];
@@ -128,7 +128,7 @@ export function ProductControlPanel() {
     lastLoginAccount,
     lastLoginChannel,
     locale,
-    palette,
+    colors,
     pendingOrderDataPreset,
     pinGateStatus,
     pinStatus,
@@ -549,12 +549,12 @@ export function ProductControlPanel() {
   return (
     <View style={styles.host}>
       {open ? (
-        <View style={StyleSheet.flatten([styles.panel, shadows.dialog, { backgroundColor: palette.bg, borderColor: palette.line }])}>
-          <View style={StyleSheet.flatten([styles.panelTop, { borderBottomColor: palette.lineSoft }])}>
+        <View style={StyleSheet.flatten([styles.panel, shadows.dialog, { backgroundColor: colors.surface.canvas, borderColor: colors.border.default }])}>
+          <View style={StyleSheet.flatten([styles.panelTop, { borderBottomColor: colors.border.subtle }])}>
             {screen !== 'home' ? (
               <HeaderIconButton accessibilityLabel={t('top.back')} icon="icon.system.back" onPress={() => setScreen('home')} variant="ghost" />
             ) : (
-              <View accessibilityLabel="Dupoin" accessibilityRole="image" style={StyleSheet.flatten([styles.headerLogo, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+              <View accessibilityLabel="Dupoin" accessibilityRole="image" style={StyleSheet.flatten([styles.headerLogo, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
                 <Image resizeMode="contain" source={require('@/assets/images/dupoin-logo.png')} style={styles.headerLogoImage} />
               </View>
             )}
@@ -575,7 +575,7 @@ export function ProductControlPanel() {
                 {contextControls}
 
                 <SectionTitle title={t('control.pageConsole.menu.pages')} />
-                <View style={StyleSheet.flatten([styles.moduleBlock, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
+                <View style={StyleSheet.flatten([styles.moduleBlock, { backgroundColor: colors.surface.raised, borderColor: colors.border.subtle }])}>
                   <ModuleAction
                     body={t('control.pageConsole.menu.pagesBody')}
                     icon="icon.navigation.function_center"
@@ -598,7 +598,7 @@ export function ProductControlPanel() {
                   accessibilityRole="button"
                   minTouch={40}
                   onPress={() => setAdvancedOpen((value) => !value)}
-                  style={StyleSheet.flatten([styles.foldButton, { borderColor: palette.lineSoft }])}>
+                  style={StyleSheet.flatten([styles.foldButton, { borderColor: colors.border.subtle }])}>
                   <View style={styles.foldTitle}>
                     <AppIcon tone="textDim" name="icon.system.settings" size={size.icon.sm} />
                     <AppText variant="caption">{t('control.devConsole.advanced')}</AppText>
@@ -611,7 +611,7 @@ export function ProductControlPanel() {
                 ) : null}
 
                 <SectionTitle title={t('control.devConsole.quickScenarios')} />
-                <View style={StyleSheet.flatten([styles.scenarioPanel, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
+                <View style={StyleSheet.flatten([styles.scenarioPanel, { backgroundColor: colors.surface.raised, borderColor: colors.border.subtle }])}>
                   <View style={styles.scenarioGrid}>
                     {visibleScenarios.map((scenario) => (
                       <ScenarioTile key={scenario.id} onPress={() => applyScenario(scenario)} scenario={scenario} />
@@ -620,7 +620,7 @@ export function ProductControlPanel() {
                 </View>
 
                 <SectionTitle title={t('control.pageConsole.menu.runtime')} />
-                <View style={StyleSheet.flatten([styles.statusLine, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
+                <View style={StyleSheet.flatten([styles.statusLine, { backgroundColor: colors.surface.raised, borderColor: colors.border.subtle }])}>
                   <CompactMetric label={t('control.pageConsole.quoteState')} value={quoteStatus} />
                   <CompactMetric label={t('control.tradingUsage.positions')} value={formatNumber(positions.length, 0, locale)} />
                   <CompactMetric label={t('control.tradingUsage.orders')} value={formatNumber(orders.length, 0, locale)} />
@@ -632,7 +632,7 @@ export function ProductControlPanel() {
                     accessibilityRole="button"
                     minTouch={40}
                     onPress={() => setScreen('pages')}
-                    style={StyleSheet.flatten([styles.secondaryButton, { borderColor: palette.lineSoft }])}>
+                    style={StyleSheet.flatten([styles.secondaryButton, { borderColor: colors.border.subtle }])}>
                     <AppIcon tone="textDim" name="icon.navigation.function_center" size={size.icon.sm} />
                     <AppText numberOfLines={1} variant="caption">
                       {t('control.pageConsole.menu.pages')}
@@ -642,7 +642,7 @@ export function ProductControlPanel() {
                     accessibilityRole="button"
                     minTouch={40}
                     onPress={handleReset}
-                    style={StyleSheet.flatten([styles.resetButton, { borderColor: resetArmed ? palette.danger : palette.lineSoft }])}>
+                    style={StyleSheet.flatten([styles.resetButton, { borderColor: resetArmed ? colors.status.danger.fg : colors.border.subtle }])}>
                     <AppIcon name="icon.system.settings" size={size.icon.sm} tone={resetArmed ? 'danger' : 'textDim'} />
                     <AppText numberOfLines={1} tone={resetArmed ? 'danger' : 'default'} variant="caption">
                       {resetArmed ? t('control.devConsole.resetConfirm') : t('control.devConsole.reset')}
@@ -667,8 +667,8 @@ export function ProductControlPanel() {
               </View>
             ) : (
               <View style={styles.detailStack}>
-                <View style={StyleSheet.flatten([styles.stateSummary, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
-                  <View style={StyleSheet.flatten([styles.compactIconBox, { backgroundColor: `${palette.amber}12` }])}>
+                <View style={StyleSheet.flatten([styles.stateSummary, { backgroundColor: colors.surface.raised, borderColor: colors.border.subtle }])}>
+                  <View style={StyleSheet.flatten([styles.compactIconBox, { backgroundColor: `${colors.status.warning.fg}12` }])}>
                     <AppIcon name="icon.security.risk_shield" size={size.icon.sm} tone="amber" />
                   </View>
                   <View style={styles.rowText}>
@@ -693,7 +693,7 @@ export function ProductControlPanel() {
         accessibilityRole="button"
         minTouch={48}
         onPress={open ? closePanel : () => setOpen(true)}
-        style={StyleSheet.flatten([styles.fab, shadows.panel, { backgroundColor: palette.panelHigh, borderColor: palette.brand }])}>
+        style={StyleSheet.flatten([styles.fab, shadows.panel, { backgroundColor: colors.surface.raised, borderColor: colors.brand.fg }])}>
         <AppIcon tone="brand" name={open ? 'icon.system.close' : 'icon.system.settings'} size={size.icon.md} />
       </NativePressable>
     </View>
@@ -842,16 +842,16 @@ function TopSelectControl({
 }
 
 function ScenarioTile({ onPress, scenario }: { onPress: () => void; scenario: QuickScenario }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const tone = scenarioToneKeys[scenario.tone];
-  const color = resolvePaletteIconTone(palette, tone);
+  const color = resolvePaletteIconTone(colors, tone);
 
   return (
     <NativePressable
       accessibilityRole="button"
       minTouch={40}
       onPress={onPress}
-      style={StyleSheet.flatten([styles.scenarioTile, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      style={StyleSheet.flatten([styles.scenarioTile, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
       <View style={StyleSheet.flatten([styles.compactIconBox, { backgroundColor: `${color}12` }])}>
         <AppIcon name={scenario.icon} size={size.icon.sm} tone={tone} />
       </View>
@@ -882,8 +882,8 @@ function ModuleAction({
   onPress: () => void;
   tone: IconTone;
 }) {
-  const { palette } = useProductSettings();
-  const color = resolvePaletteIconTone(palette, tone);
+  const { colors } = useProductSettings();
+  const color = resolvePaletteIconTone(colors, tone);
 
   return (
     <NativePressable
@@ -891,7 +891,7 @@ function ModuleAction({
       accessibilityRole="button"
       minTouch={44}
       onPress={onPress}
-      style={StyleSheet.flatten([styles.moduleAction, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      style={StyleSheet.flatten([styles.moduleAction, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
       <View style={StyleSheet.flatten([styles.moduleIcon, { backgroundColor: `${color}12`, borderColor: `${color}44` }])}>
         <AppIcon name={icon} size={size.icon.md} tone={tone} />
       </View>
@@ -914,9 +914,9 @@ function ModuleAction({
 }
 
 function PageRow({ entry, onClose }: { entry: PageConsoleEntry; onClose: () => void }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const tone = scenarioToneKeys[entry.tone];
-  const color = resolvePaletteIconTone(palette, tone);
+  const color = resolvePaletteIconTone(colors, tone);
 
   return (
     <NativePressable
@@ -927,7 +927,7 @@ function PageRow({ entry, onClose }: { entry: PageConsoleEntry; onClose: () => v
         onClose();
         router.push(entry.route);
       }}
-      style={StyleSheet.flatten([styles.row, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      style={StyleSheet.flatten([styles.row, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
       <View style={StyleSheet.flatten([styles.rowIcon, { backgroundColor: `${color}12`, borderColor: `${color}44` }])}>
         <AppIcon name={entry.icon} size={size.icon.sm} tone={tone} />
       </View>
@@ -946,8 +946,8 @@ function PageRow({ entry, onClose }: { entry: PageConsoleEntry; onClose: () => v
   );
 }
 
-function resolvePaletteIconTone(palette: ThemePalette, tone: IconTone) {
-  return tone === 'disabled' ? palette.disabledText : palette[tone];
+function resolvePaletteIconTone(colors: ThemeColors, tone: IconTone) {
+  return resolveThemeTone(colors, tone);
 }
 
 function SectionTitle({ title }: { title: string }) {
@@ -959,10 +959,10 @@ function SectionTitle({ title }: { title: string }) {
 }
 
 function CompactMetric({ label, value }: { label: string; value: string }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
 
   return (
-    <View style={StyleSheet.flatten([styles.compactMetric, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+    <View style={StyleSheet.flatten([styles.compactMetric, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
       <AppText numberOfLines={1} tone="dim" variant="eyebrow">
         {label}
       </AppText>

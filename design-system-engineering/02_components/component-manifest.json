@@ -790,7 +790,8 @@
         "AuthTextField",
         "AuthInlineSwitch",
         "AuthLink",
-        "AuthDescriptionAction"
+        "AuthDescriptionAction",
+        "AuthLanguageAction"
       ],
       "props": [
         "documented in TypeScript props"
@@ -838,6 +839,7 @@
         "PasswordRuleList",
         "AuthErrorSheet",
         "AuthErrorDialog",
+        "AuthLeaveVerifiedStepDialog",
         "FlagBadge",
         "useCountdown"
       ],

@@ -1,4 +1,11 @@
-const { complete, fail, pass, read, requireFiles, walk } = require('./qa-utils.cjs');
+const { complete, exists, fail, pass, read, requireFiles, walk } = require('./qa-utils.cjs');
+
+const COLOR_STEPS = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
+const COLOR_STATE_FIELDS = ['fg', 'bg', 'border', 'solid', 'onSolid'];
+const colorCompatibilityFiles = new Set([
+  'src/theme/colors.ts',
+  'src/settings/ProductSettings.tsx',
+]);
 
 const allowedFiles = new Set([
   'src/theme/colors.ts',
@@ -161,6 +168,102 @@ const sourceFiles = ['app', 'src']
   .flatMap((dir) => walk(dir))
   .filter((file) => /\.(ts|tsx|js|jsx)$/.test(file))
   .filter((file) => !allowedFiles.has(file));
+
+const allSourceFiles = ['app', 'src']
+  .flatMap((dir) => walk(dir))
+  .filter((file) => /\.(ts|tsx|js|jsx)$/.test(file));
+
+function readJson(relPath) {
+  return JSON.parse(read(relPath));
+}
+
+function getPath(root, path) {
+  return path.reduce((value, key) => (value && typeof value === 'object' ? value[key] : undefined), root);
+}
+
+function requireRamp(root, path, label) {
+  const ramp = getPath(root, path);
+  if (!ramp || typeof ramp !== 'object') {
+    return [fail('QA_COLOR_RAMP', `Missing ${label} color ramp`, 'design-system-engineering/01_tokens/tokens.color.json')];
+  }
+
+  return COLOR_STEPS.map((step) =>
+    ramp[step]?.$type === 'color' && typeof ramp[step]?.$value === 'string'
+      ? pass('QA_COLOR_RAMP', `${label}.${step} exists`, 'design-system-engineering/01_tokens/tokens.color.json')
+      : fail('QA_COLOR_RAMP', `${label}.${step} must be a DTCG color token`, 'design-system-engineering/01_tokens/tokens.color.json'),
+  );
+}
+
+function createColorTokenIssues() {
+  const issues = [];
+  const tokenFile = 'design-system-engineering/01_tokens/tokens.color.json';
+  const modeFile = 'design-system-engineering/01_tokens/token-mode.matrix.json';
+
+  if (!exists(tokenFile) || !exists(modeFile)) {
+    return [fail('QA_COLOR_TOKEN_FILE', 'Color token source and mode matrix are required', tokenFile)];
+  }
+
+  const tokens = readJson(tokenFile);
+  const matrix = readJson(modeFile);
+  const primitive = tokens.color?.primitive;
+  issues.push(
+    ...requireRamp(tokens, ['color', 'primitive', 'neutral'], 'neutral'),
+    ...requireRamp(tokens, ['color', 'primitive', 'brand', 'teal'], 'brand.teal'),
+    ...requireRamp(tokens, ['color', 'primitive', 'red'], 'red'),
+    ...requireRamp(tokens, ['color', 'primitive', 'green'], 'green'),
+    ...requireRamp(tokens, ['color', 'primitive', 'amber'], 'amber'),
+    ...requireRamp(tokens, ['color', 'primitive', 'blue'], 'blue'),
+    ...requireRamp(tokens, ['color', 'primitive', 'cyan'], 'cyan'),
+    ...requireRamp(tokens, ['color', 'primitive', 'purple'], 'purple'),
+    ...requireRamp(tokens, ['color', 'primitive', 'market', 'up'], 'market.up'),
+    ...requireRamp(tokens, ['color', 'primitive', 'market', 'down'], 'market.down'),
+  );
+
+  if (primitive?.brand?.teal?.['500']?.$value !== '#2EB5C4') {
+    issues.push(fail('QA_COLOR_BRAND', 'brand.teal.500 must remain #2EB5C4', tokenFile));
+  } else {
+    issues.push(pass('QA_COLOR_BRAND', 'brand.teal.500 remains #2EB5C4', tokenFile));
+  }
+
+  ['lightBroker', 'darkTerminal', 'midnightBlue'].forEach((mode) => {
+    const colors = matrix.modes?.[mode]?.colors;
+    if (!colors) {
+      issues.push(fail('QA_COLOR_MODE', `${mode} must be present in token-mode.matrix.json`, modeFile));
+      return;
+    }
+
+    ['info', 'success', 'warning', 'danger', 'neutral'].forEach((tone) => {
+      COLOR_STATE_FIELDS.forEach((field) => {
+        const value = colors.status?.[tone]?.[field];
+        issues.push(typeof value === 'string' ? pass('QA_COLOR_STATE', `${mode}.status.${tone}.${field} exists`, modeFile) : fail('QA_COLOR_STATE', `${mode}.status.${tone}.${field} is required`, modeFile));
+      });
+    });
+
+    ['up', 'down', 'flat'].forEach((tone) => {
+      COLOR_STATE_FIELDS.forEach((field) => {
+        const value = colors.market?.[tone]?.[field];
+        issues.push(typeof value === 'string' ? pass('QA_COLOR_STATE', `${mode}.market.${tone}.${field} exists`, modeFile) : fail('QA_COLOR_STATE', `${mode}.market.${tone}.${field} is required`, modeFile));
+      });
+    });
+  });
+
+  return issues;
+}
+
+const colorTokenIssues = createColorTokenIssues();
+const deprecatedColorUsageIssues = allSourceFiles
+  .filter((file) => !colorCompatibilityFiles.has(file))
+  .flatMap((file) => {
+    const text = read(file);
+    const issues = [];
+    if (/\bpalette\./.test(text) || /\buseThemePalette\b/.test(text) || /\bThemePalette\b/.test(text) || /\bthemePalettes\b/.test(text)) {
+      issues.push(fail('QA_COLOR_DEPRECATED_API', 'Deprecated palette APIs are compatibility-only; use ThemeColors/useThemeColors/colors.*', file));
+    }
+    if (/\bcolorPrimitives\./.test(text)) {
+      issues.push(fail('QA_COLOR_L1_USAGE', 'Page and component code must not use L1 colorPrimitives directly', file));
+    }
+    return issues;
+  });
 
 const colorPattern = /#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(/g;
 const hardcodedColorIssues = sourceFiles.flatMap((file) => {
@@ -348,7 +451,7 @@ if (!/push: \(options: BottomSheetOptions\) => void/.test(bottomSheetRuntimeText
 if (!/BottomSheetStackDepthContext/.test(bottomSheetRuntimeText) || !/isNested=\{stackDepth > 1\}/.test(bottomSheetRuntimeText) || !/icon: 'icon.system.back'/.test(bottomSheetRuntimeText)) {
   bottomSheetFooterIssues.push(fail('QA_STYLE_BOTTOM_SHEET_HEADER', 'Nested global BottomSheet layers must automatically use the left back action', 'src/components/BottomSheet.tsx'));
 }
-if (!/resolvedThemeMode === 'darkTerminal' \|\| resolvedThemeMode === 'midnightBlue' \? palette\.bg : palette\.text/.test(bottomSheetRuntimeText)) {
+if (!/const backdropColor = colors\.overlay\.backdrop/.test(bottomSheetRuntimeText)) {
   bottomSheetFooterIssues.push(fail('QA_STYLE_BOTTOM_SHEET_BACKDROP', 'Global BottomSheet backdrop must use a visible token-derived overlay for both light and dark themes', 'src/components/BottomSheet.tsx'));
 }
 if (/\$\{color\}12/.test(fundActionGridText) || /\$\{color\}55/.test(fundActionGridText) || /icon:\s*\{[^}]*borderWidth:/m.test(fundActionGridText)) {
@@ -361,7 +464,7 @@ if (
 ) {
   bottomSheetFooterIssues.push(fail('QA_STYLE_ICON_SIZE', 'Fund action icons must use the 24px icon.fund-action size inside a 40px reserved box', 'src/components/FundActionGrid.tsx'));
 }
-if (!/deposit: palette\.down/.test(fundActionGridText) || !/withdraw: palette\.amber/.test(fundActionGridText) || !/transfer: palette\.blue/.test(fundActionGridText)) {
+if (!/deposit: colors\.market\.down\.fg/.test(fundActionGridText) || !/withdraw: colors\.status\.warning\.fg/.test(fundActionGridText) || !/transfer: colors\.status\.info\.fg/.test(fundActionGridText)) {
   bottomSheetFooterIssues.push(fail('QA_STYLE_ICON_COLOR', 'Fund action tones must map deposit to green, withdraw to yellow, and transfer to blue', 'src/components/FundActionGrid.tsx'));
 }
 if (/tone: ['"](down|amber|blue)['"]/.test(fundActionGridText)) {
@@ -382,12 +485,24 @@ complete('qa:style', [
     'DESIGN.md',
     'src/theme/colors.ts',
     'src/theme/tokens.ts',
+    'design-system-engineering/01_tokens/tokens.color.json',
+    'design-system-engineering/01_tokens/token-mode.matrix.json',
+    'design-system-engineering/08_code_mapping/css-variable.mapping.css',
+    'design-system-engineering/08_code_mapping/tailwind.mapping.js',
     'design-system/01-tokens/token-architecture.md',
     'design-system/01-tokens/color-tokens.md',
     'design-system/01-tokens/typography-tokens.md',
     'design-system/01-tokens/spacing-tokens.md',
     'design-system/01-tokens/line-width-tokens.md',
   ], 'QA_STYLE_FILE'),
+  colorTokenIssues.every((issue) => issue.ok)
+    ? pass('QA_COLOR_TOKEN', 'Color token ramps, modes, and state fields are complete')
+    : fail('QA_COLOR_TOKEN', 'Color token ramp, mode, or state-field issues found'),
+  ...colorTokenIssues,
+  deprecatedColorUsageIssues.length === 0
+    ? pass('QA_COLOR_DEPRECATED_API', 'No deprecated palette APIs found outside compatibility runtime')
+    : fail('QA_COLOR_DEPRECATED_API', 'Deprecated palette APIs found outside compatibility runtime'),
+  ...deprecatedColorUsageIssues,
   hardcodedColorIssues.length === 0 ? pass('QA_STYLE_COLOR', 'No hardcoded colors found outside token source files') : fail('QA_STYLE_COLOR', 'Hardcoded colors found outside token source files'),
   ...hardcodedColorIssues,
   hardcodedTypographyIssues.length === 0

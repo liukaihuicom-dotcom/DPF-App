@@ -55,7 +55,7 @@ const operationTabs: { labelKey: TranslationKey; value: OperationFilter }[] = [
 const depositQuickAmounts = [500000, 1000000, 2000000, 5000000, 20000000];
 
 export function FundingHomeScreen() {
-  const { accounts, gate, locale, palette, t, transactions } = useFundingData();
+  const { accounts, gate, locale, colors, t, transactions } = useFundingData();
   const primary = accounts[0];
   const recent = transactions.slice(0, 3);
 
@@ -74,7 +74,7 @@ export function FundingHomeScreen() {
       <FundingRiskBanner />
       <Card>
         <View style={styles.heroHeader}>
-          <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: `${palette.blue}14` }])}>
+          <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: `${colors.status.info.fg}14` }])}>
             <AppIcon tone="blue" name="icon.wallet.balance" size={24} />
           </View>
           <View style={styles.flex}>
@@ -83,7 +83,7 @@ export function FundingHomeScreen() {
           </View>
         </View>
         {primary ? (
-          <View style={StyleSheet.flatten([styles.summaryGrid, { borderTopColor: palette.lineSoft }])}>
+          <View style={StyleSheet.flatten([styles.summaryGrid, { borderTopColor: colors.border.subtle }])}>
             <MiniSummary label={t('accountDetails.accountNo')} value={primary.accountNo} />
             <MiniSummary label={t('funding.account.available')} value={formatMoney(primary.freeMargin, primary.currency, 0, locale)} />
           </View>
@@ -98,7 +98,7 @@ export function FundingHomeScreen() {
         {recent.length === 0 ? (
           <EmptyState body={t('funding.transactions.empty')} />
         ) : (
-          <View style={StyleSheet.flatten([styles.listFrame, { borderColor: palette.lineSoft }])}>
+          <View style={StyleSheet.flatten([styles.listFrame, { borderColor: colors.border.subtle }])}>
             {recent.map((transaction, index) => (
               <FundingTransactionRow
                 key={transaction.id}
@@ -128,7 +128,7 @@ export function TransferScreen() {
 
 function FundingFormScreen({ operation }: { operation: FundingOperation }) {
   const params = useLocalSearchParams<{ accountId?: string }>();
-  const { accounts, gate, kycStatus, locale, palette, profiles, t, tradingUsageStatus } = useFundingData();
+  const { accounts, gate, kycStatus, locale, colors, profiles, t, tradingUsageStatus } = useFundingData();
   const bottomSheet = useBottomSheet();
   const toast = useToast();
   const eligibleAccounts = useMemo(() => accounts.filter((account) => isFundingSelectableAccount(account, tradingUsageStatus)), [accounts, tradingUsageStatus]);
@@ -445,7 +445,7 @@ function FundingFormScreen({ operation }: { operation: FundingOperation }) {
 
 export function FundingTransactionsScreen() {
   const params = useLocalSearchParams<{ accountId?: string; operation?: FundingOperation }>();
-  const { gate, palette, t, transactions } = useFundingData({
+  const { gate, colors, t, transactions } = useFundingData({
     operation: params.operation ?? 'all',
     tradingAccountId: params.accountId,
   });
@@ -476,7 +476,7 @@ export function FundingTransactionsScreen() {
             {groupedRows.map((group) => (
               <View key={group.title} style={styles.transactionDateGroup}>
                 <AppText tone="muted" variant="caption">{group.title}</AppText>
-                <View style={StyleSheet.flatten([styles.listFrame, { borderColor: palette.lineSoft }])}>
+                <View style={StyleSheet.flatten([styles.listFrame, { borderColor: colors.border.subtle }])}>
                   {group.rows.map((transaction, index) => (
                     <FundingTransactionRow
                       key={transaction.id}
@@ -497,7 +497,7 @@ export function FundingTransactionsScreen() {
 
 export function FundingTransactionDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { gate, locale, palette, t } = useFundingData();
+  const { gate, locale, colors, t } = useFundingData();
   const [transaction, setTransaction] = useState<FundingTransaction | null>(null);
 
   useEffect(() => {
@@ -525,7 +525,7 @@ export function FundingTransactionDetailScreen() {
     <Screen align="center" back title={t('funding.detail.title')}>
       <Card>
         <View style={styles.detailHero}>
-          <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: `${resolveStatusColor(transaction.status, palette)}14` }])}>
+          <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: resolveStatusOverlay(transaction.status, colors) }])}>
             <AppIcon name={detailStatusIcon(transaction.status)} size={24} tone={resolveStatusIconTone(transaction.status)} />
           </View>
           <StatusPill compact label={statusText(transaction.status, t)} tone={statusTone} />
@@ -537,7 +537,7 @@ export function FundingTransactionDetailScreen() {
       </Card>
       <FundingRiskBanner />
       <Card>
-        <View style={StyleSheet.flatten([styles.detailRows, { borderColor: palette.lineSoft }])}>
+        <View style={StyleSheet.flatten([styles.detailRows, { borderColor: colors.border.subtle }])}>
           {buildDetailRows(transaction, locale, t).map((row, index, rows) => (
             <DetailRow key={row.label} row={row} showDivider={index < rows.length - 1} />
           ))}
@@ -549,8 +549,8 @@ export function FundingTransactionDetailScreen() {
           {transaction.timeline.map((item, index) => (
             <View key={`${item.status}-${item.at}`} style={styles.timelineRow}>
               <View style={styles.timelineMarker}>
-                <View style={StyleSheet.flatten([styles.timelineDot, { backgroundColor: resolveStatusColor(item.status, palette) }])} />
-                {index < transaction.timeline.length - 1 ? <View style={StyleSheet.flatten([styles.timelineLine, { backgroundColor: palette.lineSoft }])} /> : null}
+                <View style={StyleSheet.flatten([styles.timelineDot, { backgroundColor: resolveStatusColor(item.status, colors) }])} />
+                {index < transaction.timeline.length - 1 ? <View style={StyleSheet.flatten([styles.timelineLine, { backgroundColor: colors.border.subtle }])} /> : null}
               </View>
               <View style={styles.flex}>
                 <AppText variant="caption">{localizeText(item.label, locale)}</AppText>
@@ -595,7 +595,7 @@ function useFundingData(filters?: { operation?: OperationFilter; tradingAccountI
     gate: resolveFundingGate(settings.authStatus, settings.role, settings.t),
     kycStatus: settings.kycStatus,
     locale: settings.locale,
-    palette: settings.palette,
+    colors: settings.colors,
     profiles,
     t: settings.t,
     tradingUsageStatus: resolveTradingUsageStatus(settings.tradingAccountUsageOverride),
@@ -645,7 +645,7 @@ function AccountSheetField({
   label: string;
   onPress: () => void;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
 
   return (
     <View style={styles.sheetFieldWrap}>
@@ -654,7 +654,7 @@ function AccountSheetField({
         accessibilityRole="button"
         minTouch={58}
         onPress={onPress}
-        style={StyleSheet.flatten([styles.sheetField, { backgroundColor: palette.panel, borderColor: error ? palette.danger : palette.line }])}>
+        style={StyleSheet.flatten([styles.sheetField, { backgroundColor: colors.surface.panel, borderColor: error ? colors.status.danger.fg : colors.border.default }])}>
         <AppIcon tone="textDim" name="icon.account.trading" size={15} />
         <View style={styles.flex}>
           <AppText numberOfLines={1} tone="muted" variant="eyebrow">{label}</AppText>
@@ -684,7 +684,7 @@ function PaymentMethodField({
   method?: FundingPaymentMethod;
   onPress: () => void;
 }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
 
   return (
     <View style={styles.sheetFieldWrap}>
@@ -693,7 +693,7 @@ function PaymentMethodField({
         accessibilityRole="button"
         minTouch={58}
         onPress={onPress}
-        style={StyleSheet.flatten([styles.sheetField, { backgroundColor: palette.panel, borderColor: error ? palette.danger : palette.line }])}>
+        style={StyleSheet.flatten([styles.sheetField, { backgroundColor: colors.surface.panel, borderColor: error ? colors.status.danger.fg : colors.border.default }])}>
         <AppIcon tone="textDim" name={method?.icon ?? 'icon.wallet.balance'} size={15} />
         <View style={styles.flex}>
           <AppText numberOfLines={1} tone="muted" variant="eyebrow">{label}</AppText>
@@ -759,7 +759,7 @@ function PaymentMethodRow({
   onPress: () => void;
   selected: boolean;
 }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const disabled = !method.available;
   const helper = disabled && method.maintenanceNote ? localizeText(method.maintenanceNote, locale) : t('funding.method.estimated', { minutes: method.estimatedMinutes });
   const borderWidth = selected ? lineWidth.selected : lineWidth.hairline;
@@ -776,14 +776,14 @@ function PaymentMethodRow({
       style={StyleSheet.flatten([
         styles.methodRow,
         {
-          backgroundColor: palette.panel,
-          borderColor: selected ? palette.textDim : palette.lineSoft,
+          backgroundColor: colors.surface.panel,
+          borderColor: selected ? colors.text.tertiary : colors.border.subtle,
           borderWidth,
           padding: spacing.md - paddingOffset,
         },
         disabled && { opacity: 0.5 },
       ])}>
-      <View style={StyleSheet.flatten([styles.methodIcon, { backgroundColor: palette.panelSoft }])}>
+      <View style={StyleSheet.flatten([styles.methodIcon, { backgroundColor: colors.surface.subtle }])}>
         <AppIcon name={method.icon} size={18} tone={disabled ? 'textDim' : 'text'} />
       </View>
       <View style={styles.flex}>
@@ -825,12 +825,12 @@ function AmountStageField({
   supportingRows?: { label: string; value: string }[];
   value: string;
 }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
 
   return (
-    <View style={StyleSheet.flatten([styles.amountStageWrap, { backgroundColor: palette.panelHigh, borderColor: error ? palette.danger : palette.lineSoft }])}>
+    <View style={StyleSheet.flatten([styles.amountStageWrap, { backgroundColor: colors.surface.raised, borderColor: error ? colors.status.danger.fg : colors.border.subtle }])}>
       <View style={styles.amountStageHeader}>
-        <View style={StyleSheet.flatten([styles.amountStageIcon, { backgroundColor: `${palette.brand}14` }])}>
+        <View style={StyleSheet.flatten([styles.amountStageIcon, { backgroundColor: `${colors.brand.fg}14` }])}>
           <AppIcon tone="brand" name={icon} size={16} />
         </View>
         <View style={styles.flex}>
@@ -860,7 +860,7 @@ function AmountStageField({
             <AppText tone={maxDisabled ? 'dim' : 'brand'} variant="subtitle">{t('funding.amount.max')}</AppText>
           </NativePressable>
         ) : null}
-        shellStyle={StyleSheet.flatten([styles.amountStageShell, { backgroundColor: 'transparent', borderBottomColor: error ? palette.danger : palette.brand, borderColor: 'transparent' }])}
+        shellStyle={StyleSheet.flatten([styles.amountStageShell, { backgroundColor: 'transparent', borderBottomColor: error ? colors.status.danger.fg : colors.brand.fg, borderColor: 'transparent' }])}
         value={value}
         variant="stage"
       />
@@ -887,7 +887,7 @@ function AmountStageField({
               key={item}
               minTouch={size.tag.chipMinHeight}
               onPress={() => onQuickAmountPress?.(item)}
-              style={StyleSheet.flatten([styles.quickAmountChip, { backgroundColor: palette.panel, borderColor: Number(value) === item ? palette.textDim : palette.lineSoft }])}>
+              style={StyleSheet.flatten([styles.quickAmountChip, { backgroundColor: colors.surface.panel, borderColor: Number(value) === item ? colors.text.tertiary : colors.border.subtle }])}>
               <AppText numberOfLines={1} variant="caption">{formatCompactAmount(item, currency, locale)}</AppText>
             </NativePressable>
           ))}
@@ -898,11 +898,11 @@ function AmountStageField({
 }
 
 function FundingRiskBanner() {
-  const { kycStatus, palette, t } = useProductSettings();
+  const { kycStatus, colors, t } = useProductSettings();
   const kycApproved = kycStatus === 'approved';
 
   return (
-    <View style={StyleSheet.flatten([styles.riskBanner, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+    <View style={StyleSheet.flatten([styles.riskBanner, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
       <AppIcon tone={kycApproved ? 'down' : 'amber'} name={kycApproved ? 'icon.status.verified' : 'icon.security.risk_shield'} size={18} />
       <View style={styles.flex}>
         <AppText variant="caption">{kycApproved ? t('funding.kyc.approved') : t('funding.kyc.required')}</AppText>
@@ -913,11 +913,11 @@ function FundingRiskBanner() {
 }
 
 function FundingTransactionRow({ onPress, showDivider, transaction }: { onPress: () => void; showDivider?: boolean; transaction: FundingTransaction }) {
-  const { locale, palette, t } = useProductSettings();
-  const color = resolveOperationColor(transaction.operation, palette);
+  const { locale, colors, t } = useProductSettings();
+  const color = resolveOperationColor(transaction.operation, colors);
 
   return (
-    <NativePressable accessibilityLabel={localizeText(transaction.note, locale)} accessibilityRole="button" minTouch={58} onPress={onPress} style={StyleSheet.flatten([styles.transactionRow, showDivider && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
+    <NativePressable accessibilityLabel={localizeText(transaction.note, locale)} accessibilityRole="button" minTouch={58} onPress={onPress} style={StyleSheet.flatten([styles.transactionRow, showDivider && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
       <View style={StyleSheet.flatten([styles.rowIcon, { backgroundColor: `${color}14` }])}>
         <AppIcon name={getFundingOperationIcon(transaction.operation)} size={18} tone={resolveOperationIconTone(transaction.operation)} />
       </View>
@@ -958,12 +958,12 @@ function FundingFooterSummary({
   rows: { label: string; value: string }[];
   title: string;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const canExpand = rows.length > 1;
   const visibleRows = canExpand && !expanded ? rows.slice(0, 1) : rows;
 
   return (
-    <View style={StyleSheet.flatten([styles.fundingFooterSummary, { borderTopColor: palette.lineSoft }])}>
+    <View style={StyleSheet.flatten([styles.fundingFooterSummary, { borderTopColor: colors.border.subtle }])}>
       <View style={styles.fundingFooterSummaryHeader}>
         <AppText numberOfLines={1} variant="caption">{title}</AppText>
         <StatusPill compact label={badge} tone="neutral" />
@@ -975,7 +975,7 @@ function FundingFooterSummary({
             style={StyleSheet.flatten([
               styles.fundingFooterRow,
               index > 0 && {
-                borderTopColor: palette.lineSoft,
+                borderTopColor: colors.border.subtle,
                 borderTopWidth: lineWidth.hairline,
               },
             ])}>
@@ -1075,11 +1075,18 @@ function detailStatusIcon(status: FundingStatus): AppIconName {
   return 'icon.trading.history';
 }
 
-function resolveStatusColor(status: FundingStatus, palette: ReturnType<typeof useProductSettings>['palette']) {
-  if (status === 'completed' || status === 'paid') return palette.down;
-  if (status === 'failed' || status === 'rejected' || status === 'expired') return palette.danger;
-  if (status === 'reviewing' || status === 'awaiting_payment' || status === 'processing') return palette.amber;
-  return palette.blue;
+function resolveStatusColor(status: FundingStatus, colors: ReturnType<typeof useProductSettings>['colors']) {
+  if (status === 'completed' || status === 'paid') return colors.market.down.fg;
+  if (status === 'failed' || status === 'rejected' || status === 'expired') return colors.status.danger.fg;
+  if (status === 'reviewing' || status === 'awaiting_payment' || status === 'processing') return colors.status.warning.fg;
+  return colors.status.info.fg;
+}
+
+function resolveStatusOverlay(status: FundingStatus, colors: ReturnType<typeof useProductSettings>['colors']) {
+  if (status === 'completed' || status === 'paid') return colors.overlay.down.subtle;
+  if (status === 'failed' || status === 'rejected' || status === 'expired') return colors.overlay.danger.subtle;
+  if (status === 'reviewing' || status === 'awaiting_payment' || status === 'processing') return colors.overlay.warning.subtle;
+  return colors.overlay.info.subtle;
 }
 
 function resolveStatusIconTone(status: FundingStatus): IconTone {
@@ -1089,10 +1096,10 @@ function resolveStatusIconTone(status: FundingStatus): IconTone {
   return 'blue';
 }
 
-function resolveOperationColor(operation: FundingOperation, palette: ReturnType<typeof useProductSettings>['palette']) {
-  if (operation === 'deposit') return palette.down;
-  if (operation === 'withdrawal') return palette.amber;
-  return palette.blue;
+function resolveOperationColor(operation: FundingOperation, colors: ReturnType<typeof useProductSettings>['colors']) {
+  if (operation === 'deposit') return colors.market.down.fg;
+  if (operation === 'withdrawal') return colors.status.warning.fg;
+  return colors.status.info.fg;
 }
 
 function resolveOperationIconTone(operation: FundingOperation): IconTone {

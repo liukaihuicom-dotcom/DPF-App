@@ -1,91 +1,96 @@
 # Color Tokens
 
-## Brand
+## Source Of Truth
 
-| Token | Value | Use |
+Color now has a standards-oriented token source and a TypeScript runtime:
+
+| Layer | File | Use |
 |---|---|---|
-| brand.teal | `#2EB5C4` | Accent, selected state, focus, badges, icons |
-| brand.teal.active | `#2399A5` | Pressed or active accent |
-| brand.teal.disabled | `#B9E5EA` | Disabled accent |
+| DTCG source | `design-system-engineering/01_tokens/tokens.color.json` | Machine-readable L1/L2 color tokens for Figma, Web, Admin, and app governance |
+| Mode matrix | `design-system-engineering/01_tokens/token-mode.matrix.json` | Required theme coverage for `lightBroker`, `darkTerminal`, and `midnightBlue` |
+| Runtime | `src/theme/colors.ts` | React Native `ThemeColors`, `themeColors`, `colorPrimitives`, and deprecated compatibility aliases |
+| CSS mapping | `design-system-engineering/08_code_mapping/css-variable.mapping.css` | Web/Admin CSS custom properties |
+| Tailwind mapping | `design-system-engineering/08_code_mapping/tailwind.mapping.js` | Tailwind extension map backed by CSS variables |
 
-## Semantic Runtime Palette
+Pages and components must consume `useThemeColors()` and semantic `colors.*` paths. `ThemePalette`, `themePalettes`, `palette`, and `useThemePalette()` are deprecated compatibility exports only.
 
-| Semantic Token | `ThemePalette` Field | Use |
+## L1 Primitive Ramps
+
+Every primitive ramp uses the 11-step mainstream scale `50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950`.
+
+| Ramp | Runtime Path | Primary Use |
 |---|---|---|
-| bg.app | `bg` | Screen background |
-| surface.panel | `panel` | Main card and tab surfaces |
-| surface.panelHigh | `panelHigh` | Elevated or high emphasis card |
-| surface.panelSoft | `panelSoft` | Neutral button and subtle fill |
-| border.default | `line` | Dividers and prominent card borders |
-| border.soft | `lineSoft` | Subtle card borders |
-| text.primary | `text` | Primary text |
-| text.muted | `textMuted` | Secondary text |
-| text.dim | `textDim` | Tertiary text |
-| state.up | `up` | China-style positive/up movement in this app |
-| state.down | `down` | China-style negative/down movement in this app |
-| state.warning | `amber` | Review, pending, risk caution |
-| state.danger | `danger` | Error and destructive action |
+| Neutral | `colorPrimitives.neutral.*` | Surfaces, text, borders, disabled states |
+| Brand Teal | `colorPrimitives.brand.teal.*` | Dupoin brand, focus, selected states |
+| Red | `colorPrimitives.red.*` | Danger, destructive, rejected, market up base |
+| Green | `colorPrimitives.green.*` | Success, completed, market down base |
+| Amber | `colorPrimitives.amber.*` | Warning, pending, review, caution |
+| Blue | `colorPrimitives.blue.*` | Information, links, guidance, transfer |
+| Cyan | `colorPrimitives.cyan.*` | Secondary accent and data visualization |
+| Purple | `colorPrimitives.purple.*` | Chart categorical/data visualization |
+| Market Up | `colorPrimitives.market.up.*` | China-style positive/up movement, red |
+| Market Down | `colorPrimitives.market.down.*` | China-style negative/down movement, green |
 
-## Dark Theme Contrast Rules
+`brand.teal.500` remains `#2EB5C4`.
 
-Dark modes must preserve a clear separation between page background, card surfaces, borders, and text. The runtime dark palettes use a near-black `bg`, visibly raised `panel` / `panelHigh`, stronger `line` / `lineSoft`, and brighter secondary text so dense financial content remains readable.
+## L2 Semantic Runtime
 
-| Surface Pair | Minimum Intent |
+| Semantic Group | Runtime Path | Use |
+|---|---|---|
+| Surface | `colors.surface.canvas/panel/raised/subtle/disabled/inverse` | Page, card, sheet, control backgrounds |
+| Text | `colors.text.primary/secondary/tertiary/disabled/link/inverse` | All text meaning and inverse text |
+| Border | `colors.border.default/subtle/strong/focus/disabled` | Dividers, frames, focus, disabled edges |
+| Brand | `colors.brand.fg/bg/border/solid/onSolid/active/disabled/launch` | Brand foreground, fill, focus, launch |
+| Status | `colors.status.info/success/warning/danger/neutral` | Business states; every state has `fg/bg/border/solid/onSolid` |
+| Market | `colors.market.up/down/flat` | Trading direction only; every state has `fg/bg/border/solid/onSolid` |
+| Accent | `colors.accent.blue/cyan/purple` | Secondary accents and chart support |
+| Overlay | `colors.overlay.*.subtle/muted/strong/scrim` | Tokenized transparency; no page-level color string concatenation |
+| Chart | `colors.chart.categorical/sequential/diverging` | Financial charts and data visualization |
+
+## Deprecated Alias Map
+
+| Old Field | New Path |
 |---|---|
-| `bg` to `panel` | Cards must read as a distinct surface without relying only on shadow |
-| `panel` to `panelHigh` | Elevated cards, sheets, and active regions must step up visibly |
-| `panel` to `lineSoft` | Ordinary cards, inputs, lists, and bottom bars must keep a perceptible edge |
-| `panel` to `textMuted` | Secondary text must remain comfortable for body-level reading |
-| `panel` to `textDim` | Tertiary text is quiet but cannot fall below placeholder/readability baseline |
-
-Shared surfaces such as `Card`, `TextField`, tab bars, bottom sheets, quick-action rows, and list frames must consume these semantic fields instead of defining local dark colors.
+| `bg` | `surface.canvas` |
+| `panel` | `surface.panel` |
+| `panelHigh` | `surface.raised` |
+| `panelSoft` | `surface.subtle` |
+| `line` | `border.default` |
+| `lineSoft` | `border.subtle` |
+| `text` | `text.primary` |
+| `textMuted` | `text.secondary` |
+| `textDim` | `text.tertiary` |
+| `brand` | `brand.fg` |
+| `amber` | `status.warning.fg` |
+| `danger` | `status.danger.fg` |
+| `blue` | `status.info.fg` |
+| `up` | `market.up.fg` |
+| `down` | `market.down.fg` |
+| `disabledSurface` | `surface.disabled` |
+| `disabledText` | `text.disabled` |
+| `disabledBorder` | `border.disabled` |
 
 ## Text Color System
 
-All text color decisions must start from information meaning, not visual preference. Page builders choose typography with `AppText variant` and choose color with `AppText tone`; they should not invent local text colors.
+All text color decisions start from information meaning, not visual preference. Page builders choose typography with `AppText variant` and color with `AppText tone`.
 
-| Text Token | Runtime Use | Code Mapping | Allowed Use | Forbidden Use |
-|---|---|---|---|---|
-| text.primary | Primary content | `AppText tone="default"` / `palette.text` | Page titles, section titles, key fields, core amounts, primary body text, selected labels | Decorative emphasis or inverse text on filled surfaces |
-| text.secondary | Supporting content | `AppText tone="muted"` / `palette.textMuted` | Helper copy, subtitles, list details, normal metadata, secondary body text | Weakening required risk or legal text |
-| text.tertiary | Low-priority content | `AppText tone="dim"` / `palette.textDim` | Eyebrow labels, placeholders, disabled hints, quiet metadata, non-actionable timestamps | Main body copy, active controls, important financial values |
-| text.brand | Brand or active emphasis | `AppText tone="brand"` / `palette.brand` | Current module, selected state, brand entry, primary action context | Making ordinary headings look brighter |
-| text.warning | Pending or caution | `AppText tone="amber"` / `palette.amber` | Pending, review, caution, risk attention that is not failed | Decorative labels or ordinary categories |
-| text.danger | Error or destructive | `AppText tone="danger"` / `palette.danger` | Error, failed, rejected, blocked, destructive action | Ordinary negative mood, marketing urgency, non-risk emphasis |
-| text.up | Market up direction | `AppText tone="up"` / `palette.up` | Real market movement, PnL, trade direction using China-style up semantics | Generic success, approval, completed state |
-| text.down | Market down direction | `AppText tone="down"` / `palette.down` | Real market movement, PnL, trade direction using China-style down semantics | Generic success, approval, completed state |
-| text.info | Informational accent | `AppText tone="blue"` or `tone="cyan"` | Informational hints, link-like secondary actions, system guidance | Page decoration or arbitrary visual variety |
-| text.inverse / on-fill | Component-owned contrast text | Component internal foreground mapping | Filled buttons, dark message bubbles, logo marks, toast/status surfaces | Page-level `style={{ color: palette.white }}` or `palette.panel` |
+| Text Token | Code Mapping | Allowed Use | Forbidden Use |
+|---|---|---|---|
+| text.primary | `AppText tone="default"` / `colors.text.primary` | Page titles, key fields, primary body, selected labels | Decorative emphasis or inverse text on filled surfaces |
+| text.secondary | `AppText tone="muted"` / `colors.text.secondary` | Helper copy, subtitles, metadata, secondary body | Weakening required risk or legal text |
+| text.tertiary | `AppText tone="dim"` / `colors.text.tertiary` | Eyebrow labels, placeholders, quiet metadata | Main body, active controls, important financial values |
+| text.brand | `AppText tone="brand"` / `colors.brand.fg` | Current module, selected state, brand entry | Making ordinary headings brighter |
+| text.warning | `AppText tone="amber"` / `colors.status.warning.fg` | Pending, review, caution, risk attention | Decorative labels |
+| text.danger | `AppText tone="danger"` / `colors.status.danger.fg` | Error, failed, rejected, destructive action | Marketing urgency |
+| text.up/down | `AppText tone="up/down"` / `colors.market.*.fg` | Market movement, PnL, trade direction | Generic success/failure |
+| text.info | `AppText tone="blue"` / `colors.status.info.fg` | Informational hints, links, guidance | Arbitrary visual variety |
+| text.inverse | component-owned foreground | Filled buttons, toast/status fills, logo marks | Page-level direct inverse text |
 
-## Text Color Selection
+## Rules
 
-1. Pick the information role first: primary, secondary, tertiary, status, market direction, or inverse.
-2. Use `AppText tone` for normal text. Keep `variant` responsible only for size and weight.
-3. Use status tones only when the text can be traced to a real business state.
-4. Use `up` and `down` only for real market movement, PnL, and trading direction.
-5. Let components own contrast foregrounds for filled surfaces. Pages should pass component props, not handwrite inverse colors.
-6. If the required meaning is missing, add a semantic token and document allowed and forbidden uses before page implementation.
-
-## Forbidden Text Color Usage
-
-- Do not use `style={{ color: palette.* }}` for ordinary page text.
-- Do not use raw hex, `rgb`, `rgba`, `hsl`, or transparency strings for text colors outside token source files and registered component internals.
-- Do not use `brand`, `danger`, `amber`, `up`, or `down` to make text feel more important without a matching business state.
-- Do not define local text color variables such as `primaryColor`, `grayText`, `lightText`, or `activeText` in page code.
-- Do not use native `Text` for new page text; use `AppText` so tone and variant stay governed.
-- Do not use `palette.white` or `palette.panel` directly for text in page code. Use component-owned inverse foreground behavior.
-
-## Component-Owned Foreground Exceptions
-
-Some components need dynamic or inverse text color to preserve contrast. These cases must stay inside shared component implementations or documented business components:
-
-- `ActionButton` foreground for `filled`, `outline`, `text`, disabled, and loading states.
-- `StatusPill` state text mapping.
-- `TextField` input, disabled input, placeholder, helper, and error text.
-- `Toast` title and status foreground mapping.
-- Message bubbles, logo marks, and filled operation surfaces that need inverse foreground.
-- Web form controls that cannot consume `AppText`, such as the existing product control select shell.
-
-## Rule
-
-Raw hex values belong in token source files only.
+1. Raw hex values belong in token source files, token runtime, shadows, and registered asset exceptions only.
+2. Page code must not use L1 `colorPrimitives.*`.
+3. Page code must not use deprecated `palette.*`; use `colors.*` or shared component props.
+4. Do not concatenate alpha strings such as `${color}14`; use `colors.overlay.*`.
+5. Status, market, and brand states must carry `fg`, `bg`, `border`, `solid`, and `onSolid`.
+6. `up` and `down` keep China-style financial semantics: `up = red`, `down = green`.

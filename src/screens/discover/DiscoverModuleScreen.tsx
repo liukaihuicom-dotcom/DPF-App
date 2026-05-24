@@ -25,15 +25,15 @@ import { useToast } from '@/src/feedback/Toast';
 import { impactLight, notifySuccess, notifyWarning } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
-import type { ThemePalette } from '@/src/theme/colors';
+import { resolveThemeTone, type ThemeColors } from '@/src/theme/colors';
 import { lineWidth, typography } from '@/src/theme/tokens';
 
 export default function DiscoverModuleScreen() {
   const { account, instruments, positions, role, submitUpgradeRequest, upgradeRequest } = useBroker();
-  const { locale, palette, selectedDiscoverModuleId, setSelectedDiscoverModule, t } = useProductSettings();
+  const { locale, colors, selectedDiscoverModuleId, setSelectedDiscoverModule, t } = useProductSettings();
   const selectedInstrument = getPrimaryInstrument(selectedDiscoverModuleId, instruments);
   const moduleMeta = getModuleMeta(selectedDiscoverModuleId);
-  const moduleMetaColor = resolvePaletteIconTone(palette, moduleMeta.tone);
+  const moduleMetaColor = resolvePaletteIconTone(colors, moduleMeta.tone);
 
   if (selectedDiscoverModuleId === 'profile') {
     return (
@@ -93,7 +93,7 @@ export default function DiscoverModuleScreen() {
       <ScrollView contentContainerStyle={styles.moduleRail} horizontal showsHorizontalScrollIndicator={false}>
         {getModuleIds().map((moduleId) => {
           const meta = getModuleMeta(moduleId);
-          const metaColor = resolvePaletteIconTone(palette, meta.tone);
+          const metaColor = resolvePaletteIconTone(colors, meta.tone);
           const selected = selectedDiscoverModuleId === moduleId;
 
           return (
@@ -111,8 +111,8 @@ export default function DiscoverModuleScreen() {
               style={StyleSheet.flatten([
                 styles.modulePill,
                 {
-                  backgroundColor: selected ? `${palette.brand}12` : palette.panel,
-                  borderColor: selected ? palette.brand : palette.lineSoft,
+                  backgroundColor: selected ? `${colors.brand.fg}12` : colors.surface.panel,
+                  borderColor: selected ? colors.brand.fg : colors.border.subtle,
                 },
               ])}>
               <View style={StyleSheet.flatten([styles.modulePillIcon, { backgroundColor: `${metaColor}12`, borderColor: `${metaColor}55` }])}>
@@ -130,9 +130,9 @@ export default function DiscoverModuleScreen() {
 }
 
 function ChallengeModule({ instrument }: { instrument: Instrument }) {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const { changePercent } = getDisplayChange(instrument);
-  const quoteVisual = getQuoteChangeVisual(changePercent, palette);
+  const quoteVisual = getQuoteChangeVisual(changePercent, colors);
   const rows = [
     { label: locale !== 'zh-CN' ? 'Weekly ROI' : '周收益率', tone: 'down', value: '+18.6%' },
     { label: locale !== 'zh-CN' ? 'Risk score' : '风险评分', tone: 'amber', value: '82' },
@@ -176,7 +176,7 @@ function ChallengeModule({ instrument }: { instrument: Instrument }) {
 }
 
 function EducationModule() {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const lessons = [
     [locale !== 'zh-CN' ? 'Spread basics' : '点差基础', locale !== 'zh-CN' ? 'Bid, ask, and cost' : '买价、卖价与成本'],
     [locale !== 'zh-CN' ? 'Margin call' : '保证金追缴', locale !== 'zh-CN' ? 'When equity drops' : '净值下行时的规则'],
@@ -188,7 +188,7 @@ function EducationModule() {
       <View style={styles.timeline}>
         {lessons.map(([title, body], index) => (
           <View key={title} style={styles.timelineRow}>
-            <View style={StyleSheet.flatten([styles.timelineMark, { backgroundColor: index === 0 ? palette.brand : palette.panelSoft, borderColor: index === 0 ? palette.brand : palette.lineSoft }])}>
+            <View style={StyleSheet.flatten([styles.timelineMark, { backgroundColor: index === 0 ? colors.brand.fg : colors.surface.subtle, borderColor: index === 0 ? colors.brand.fg : colors.border.subtle }])}>
               <AppText tone={index === 0 ? 'white' : 'dim'} variant="eyebrow">
                 {index + 1}
               </AppText>
@@ -208,13 +208,13 @@ function EducationModule() {
 }
 
 function CommunityModule() {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
 
   return (
     <Card>
       <View style={styles.insightList}>
         {dupoinInsights.map((insight) => (
-          <View key={insight.id} style={StyleSheet.flatten([styles.insightRow, { borderTopColor: palette.lineSoft }])}>
+          <View key={insight.id} style={StyleSheet.flatten([styles.insightRow, { borderTopColor: colors.border.subtle }])}>
             <View style={styles.flex}>
               <AppText tone="brand" variant="eyebrow">
                 {localizeText(insight.category, locale)}
@@ -245,7 +245,7 @@ export function ProfileModule({
 }) {
   const {
     locale,
-    palette,
+    colors,
     profileAvatarId,
     profileNickname,
     rememberedLoginSnapshot,
@@ -325,7 +325,7 @@ export function ProfileModule({
           onPress={openProfileEditSheet}
           style={styles.avatarPressable}>
           <ProfileAvatar id={profileAvatarId} key={avatarUri} size={58} />
-          <View style={StyleSheet.flatten([styles.avatarEditBadge, { backgroundColor: palette.brand, borderColor: palette.panel }])}>
+          <View style={StyleSheet.flatten([styles.avatarEditBadge, { backgroundColor: colors.brand.fg, borderColor: colors.surface.panel }])}>
             <AppIcon tone="white" name="icon.system.settings" size={11} />
           </View>
         </NativePressable>
@@ -353,7 +353,7 @@ export function ProfileModule({
 
       <Card compact style={styles.profileCard}>
         <ProfileCardHeader icon="icon.ib.network" iconTone="blue" title={locale !== 'zh-CN' ? 'Partner Portal' : 'Partner Portal'} />
-        <View style={StyleSheet.flatten([styles.profileDivider, { backgroundColor: palette.lineSoft }])} />
+        <View style={StyleSheet.flatten([styles.profileDivider, { backgroundColor: colors.border.subtle }])} />
         <AppText variant="body">{locale !== 'zh-CN' ? 'Total Rebate · USD' : '总返佣 · USD'}</AppText>
         <View style={styles.rebateAmountRow}>
           <AppText style={styles.rebateCurrency} variant="largeNumber">$</AppText>
@@ -362,8 +362,8 @@ export function ProfileModule({
           </AppText>
           <AppText style={styles.rebateMinor} variant="number">.09</AppText>
         </View>
-        <MiniTrendLine color={palette.down} />
-        <View style={StyleSheet.flatten([styles.profileDivider, { backgroundColor: palette.lineSoft }])} />
+        <MiniTrendLine color={colors.market.down.fg} />
+        <View style={StyleSheet.flatten([styles.profileDivider, { backgroundColor: colors.border.subtle }])} />
         <AppText variant="number">{formatMoney(rebateValue, account.currency, 2, locale)}</AppText>
         <StatusPill compact label={locale !== 'zh-CN' ? '↑ 2.20% vs yesterday' : '↑ 2.20% 较昨日'} tone="success" />
       </Card>
@@ -371,7 +371,7 @@ export function ProfileModule({
       <View style={styles.profileStatsGrid}>
         {statCards.map((item) => (
           <Card compact key={item.label} style={styles.profileStatCard}>
-            <View style={StyleSheet.flatten([styles.profileStatIcon, { backgroundColor: `${palette.brand}10` }])}>
+            <View style={StyleSheet.flatten([styles.profileStatIcon, { backgroundColor: `${colors.brand.fg}10` }])}>
               <AppIcon tone="brand" name={item.icon} size={18} />
             </View>
             <AppText variant="body">{item.label}</AppText>
@@ -385,7 +385,7 @@ export function ProfileModule({
 
       <Card compact style={styles.profileCard}>
         <ProfileCardHeader icon="icon.promotion.reward" iconTone="amber" title={t('discover.module.rewards.title')} />
-        <View style={StyleSheet.flatten([styles.profileDivider, { backgroundColor: palette.lineSoft }])} />
+        <View style={StyleSheet.flatten([styles.profileDivider, { backgroundColor: colors.border.subtle }])} />
         <View style={styles.rewardProfileBody}>
           <View style={styles.flex}>
             <AppText variant="body">{locale !== 'zh-CN' ? 'Total Rewards Value' : '总奖励价值'}</AppText>
@@ -397,7 +397,7 @@ export function ProfileModule({
           </View>
           <GiftIllustration />
         </View>
-        <View style={StyleSheet.flatten([styles.profileDivider, { backgroundColor: palette.lineSoft }])} />
+        <View style={StyleSheet.flatten([styles.profileDivider, { backgroundColor: colors.border.subtle }])} />
         <AppText tone="muted" variant="body">
           {locale !== 'zh-CN' ? 'Participating in 3 Campaigns' : '正在参与 3 个活动'}
         </AppText>
@@ -409,7 +409,7 @@ export function ProfileModule({
           <AppText variant="body">{locale !== 'zh-CN' ? 'My Relationship Manager' : '我的客户经理'}</AppText>
           <AppText variant="subtitle">Alexander Smith</AppText>
         </View>
-        <View style={StyleSheet.flatten([styles.managerChat, { backgroundColor: `${palette.down}18` }])}>
+        <View style={StyleSheet.flatten([styles.managerChat, { backgroundColor: `${colors.market.down.fg}18` }])}>
           <AppIcon tone="down" name="icon.copy.community" size={22} />
         </View>
       </Card>
@@ -432,7 +432,7 @@ export function ProfileModule({
 }
 
 function ProfileEditSheetContent() {
-  const { locale, palette, profileAvatarId, profileNickname, setProfileAvatarId, setProfileNickname, t } = useProductSettings();
+  const { locale, colors, profileAvatarId, profileNickname, setProfileAvatarId, setProfileNickname, t } = useProductSettings();
   const chooseAvatar = (nextId: ProfileAvatarId) => {
     void impactLight();
     setProfileAvatarId(nextId);
@@ -472,8 +472,8 @@ function ProfileEditSheetContent() {
               style={StyleSheet.flatten([
                 styles.avatarRailItem,
                 {
-                  backgroundColor: selected ? `${palette.brand}10` : palette.panel,
-                  borderColor: selected ? palette.brand : palette.lineSoft,
+                  backgroundColor: selected ? `${colors.brand.fg}10` : colors.surface.panel,
+                  borderColor: selected ? colors.brand.fg : colors.border.subtle,
                 },
               ])}>
               <ProfileAvatar id={option.id} selected={selected} size={36} />
@@ -499,8 +499,8 @@ function ProfileListCard({
   subtitle?: string;
   title: string;
 }) {
-  const { palette } = useProductSettings();
-  const iconColor = resolvePaletteIconTone(palette, iconTone);
+  const { colors } = useProductSettings();
+  const iconColor = resolvePaletteIconTone(colors, iconTone);
 
   return (
     <Card compact style={styles.profileListCard}>
@@ -521,8 +521,8 @@ function ProfileListCard({
 }
 
 function ProfileCardHeader({ icon, iconTone, title }: { icon: AppIconName; iconTone: IconTone; title: string }) {
-  const { palette } = useProductSettings();
-  const iconColor = resolvePaletteIconTone(palette, iconTone);
+  const { colors } = useProductSettings();
+  const iconColor = resolvePaletteIconTone(colors, iconTone);
 
   return (
     <View style={styles.profileCardHeader}>
@@ -546,17 +546,17 @@ function MiniTrendLine({ color }: { color: string }) {
 }
 
 function GiftIllustration() {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
 
   return (
     <View style={styles.giftScene}>
-      <View style={StyleSheet.flatten([styles.coin, styles.coinOne, { backgroundColor: `${palette.amber}25`, borderColor: `${palette.amber}66` }])}>
+      <View style={StyleSheet.flatten([styles.coin, styles.coinOne, { backgroundColor: `${colors.status.warning.fg}25`, borderColor: `${colors.status.warning.fg}66` }])}>
         <AppText tone="amber" variant="eyebrow">$</AppText>
       </View>
-      <View style={StyleSheet.flatten([styles.coin, styles.coinTwo, { backgroundColor: `${palette.amber}25`, borderColor: `${palette.amber}66` }])}>
+      <View style={StyleSheet.flatten([styles.coin, styles.coinTwo, { backgroundColor: `${colors.status.warning.fg}25`, borderColor: `${colors.status.warning.fg}66` }])}>
         <AppText tone="amber" variant="eyebrow">$</AppText>
       </View>
-      <View style={StyleSheet.flatten([styles.giftBox, { backgroundColor: `${palette.brand}16`, borderColor: `${palette.brand}33` }])}>
+      <View style={StyleSheet.flatten([styles.giftBox, { backgroundColor: `${colors.brand.fg}16`, borderColor: `${colors.brand.fg}33` }])}>
         <AppIcon tone="brand" name="icon.promotion.reward" size={42} />
       </View>
     </View>
@@ -576,17 +576,17 @@ function SettingsRow({
   right: 'switchOff' | 'switchOn' | 'chevron' | 'stars' | string;
   showDivider?: boolean;
 }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
 
   return (
     <NativePressable
       accessibilityLabel={label}
       minTouch={48}
       onPress={onPress}
-      style={StyleSheet.flatten([styles.settingsRow, showDivider && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
+      style={StyleSheet.flatten([styles.settingsRow, showDivider && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
       <View style={styles.settingsLeft}>
         <View style={styles.settingsIconSlot}>
-          {icon ? <AppIcon tone="text" name={icon} size={20} /> : <View style={StyleSheet.flatten([styles.placeholderRing, { borderColor: palette.textDim }])} />}
+          {icon ? <AppIcon tone="text" name={icon} size={20} /> : <View style={StyleSheet.flatten([styles.placeholderRing, { borderColor: colors.text.tertiary }])} />}
         </View>
         <AppText variant="body">{label}</AppText>
       </View>
@@ -596,13 +596,13 @@ function SettingsRow({
 }
 
 function SettingsRowRight({ value }: { value: 'switchOff' | 'switchOn' | 'chevron' | 'stars' | string }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
 
   if (value === 'switchOff' || value === 'switchOn') {
     const enabled = value === 'switchOn';
     return (
-      <View style={StyleSheet.flatten([styles.switchTrack, { backgroundColor: enabled ? palette.down : palette.textDim }])}>
-        <View style={StyleSheet.flatten([styles.switchKnob, enabled && styles.switchKnobOn, { backgroundColor: palette.white }])} />
+      <View style={StyleSheet.flatten([styles.switchTrack, { backgroundColor: enabled ? colors.market.down.fg : colors.text.tertiary }])}>
+        <View style={StyleSheet.flatten([styles.switchKnob, enabled && styles.switchKnobOn, { backgroundColor: colors.text.inverse }])} />
       </View>
     );
   }
@@ -659,14 +659,14 @@ function getThemeModeLabel(themeMode: ReturnType<typeof useProductSettings>['the
 }
 
 function OnboardingModule() {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
 
   return (
     <Card>
       <View style={styles.timeline}>
         {dupoinOnboardingSteps.map((step, index) => (
           <View key={step.id} style={styles.timelineRow}>
-            <View style={StyleSheet.flatten([styles.timelineMark, { backgroundColor: index < 2 ? palette.down : palette.brand, borderColor: index < 2 ? palette.down : palette.brand }])}>
+            <View style={StyleSheet.flatten([styles.timelineMark, { backgroundColor: index < 2 ? colors.market.down.fg : colors.brand.fg, borderColor: index < 2 ? colors.market.down.fg : colors.brand.fg }])}>
               <AppText tone="white" variant="eyebrow">
                 {index + 1}
               </AppText>
@@ -738,14 +738,14 @@ function PartnerModule({
 }
 
 function MarketsModule({ instruments }: { instruments: Instrument[] }) {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const movers = [...instruments].sort((a, b) => Math.abs(getDisplayChange(b).changePercent) - Math.abs(getDisplayChange(a).changePercent)).slice(0, 4);
 
   return (
     <Card compact>
       {movers.map((instrument, index) => {
         const { changePercent } = getDisplayChange(instrument);
-        const quoteVisual = getQuoteChangeVisual(changePercent, palette);
+        const quoteVisual = getQuoteChangeVisual(changePercent, colors);
 
         return (
           <NativePressable
@@ -753,7 +753,7 @@ function MarketsModule({ instruments }: { instruments: Instrument[] }) {
             key={instrument.id}
             minTouch={64}
             onPress={() => router.push(`/instrument/${instrument.id}` as never)}
-            style={StyleSheet.flatten([styles.instrumentRow, index < movers.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
+            style={StyleSheet.flatten([styles.instrumentRow, index < movers.length - 1 && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
             <InstrumentIcon instrument={instrument} size={36} />
             <View style={styles.flex}>
               <AppText variant="subtitle">{instrument.symbol}</AppText>
@@ -801,7 +801,7 @@ function AccountsModule({ account, positionsCount }: { account: Account; positio
 }
 
 function SupportModule() {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const toast = useToast();
   const rows = [
     [t('top.support'), locale !== 'zh-CN' ? 'Online help desk' : '在线帮助中心'],
@@ -822,7 +822,7 @@ function SupportModule() {
           void impactLight();
           toast.show({ message: t('top.placeholderMessage'), title: t('top.placeholderTitle', { action: t('top.support') }) });
         }}
-        style={StyleSheet.flatten([styles.cardAction, { borderColor: palette.lineSoft }])}
+        style={StyleSheet.flatten([styles.cardAction, { borderColor: colors.border.subtle }])}
         tone="neutral"
       />
     </Card>
@@ -830,7 +830,7 @@ function SupportModule() {
 }
 
 function RewardsModule() {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const missions = [
     [locale !== 'zh-CN' ? 'Watchlist' : '自选任务', '75%'],
     [locale !== 'zh-CN' ? 'First order' : '首单任务', '40%'],
@@ -847,8 +847,8 @@ function RewardsModule() {
         {missions.map(([label, value]) => (
           <View key={label} style={styles.rewardRow}>
             <AppText variant="body">{label}</AppText>
-            <View style={StyleSheet.flatten([styles.rewardProgressTrack, { backgroundColor: palette.lineSoft }])}>
-              <View style={StyleSheet.flatten([styles.rewardProgressFill, { backgroundColor: palette.brand, width: value }])} />
+            <View style={StyleSheet.flatten([styles.rewardProgressTrack, { backgroundColor: colors.border.subtle }])}>
+              <View style={StyleSheet.flatten([styles.rewardProgressFill, { backgroundColor: colors.brand.fg, width: value }])} />
             </View>
             <AppText tone="dim" variant="caption">
               {value}
@@ -861,10 +861,10 @@ function RewardsModule() {
 }
 
 function DetailRow({ label, value }: { label: string; value: string }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
 
   return (
-    <View style={StyleSheet.flatten([styles.detailRow, { borderBottomColor: palette.lineSoft }])}>
+    <View style={StyleSheet.flatten([styles.detailRow, { borderBottomColor: colors.border.subtle }])}>
       <AppText tone="muted" variant="caption">
         {label}
       </AppText>
@@ -901,8 +901,8 @@ function getModuleMeta(moduleId: DiscoverModuleId) {
   return meta[moduleId];
 }
 
-function resolvePaletteIconTone(palette: ThemePalette, tone: IconTone) {
-  return tone === 'disabled' ? palette.disabledText : palette[tone];
+function resolvePaletteIconTone(colors: ThemeColors, tone: IconTone) {
+  return resolveThemeTone(colors, tone);
 }
 
 const styles = StyleSheet.create({

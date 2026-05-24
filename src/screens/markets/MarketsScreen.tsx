@@ -52,7 +52,7 @@ export default function HomeScreen() {
 function AccountMiniCard({ account, positions }: { account: ReturnType<typeof useBroker>['account']; positions: ReturnType<typeof useBroker>['positions'] }) {
   const {
     locale,
-    palette,
+    colors,
     selectedTradingAccountId,
     setSelectedTradingAccountId,
     t,
@@ -116,7 +116,7 @@ function AccountMiniCard({ account, positions }: { account: ReturnType<typeof us
     <Card compact style={styles.accountCard}>
       <View style={styles.accountCardHeader}>
         <NativePressable accessibilityLabel={locale !== 'zh-CN' ? 'Switch trading account' : '切换交易账号'} minTouch={40} onPress={openAccountPicker} style={styles.accountSwitcher}>
-          <View style={StyleSheet.flatten([styles.accountAvatar, { backgroundColor: palette.panelSoft }])}>
+          <View style={StyleSheet.flatten([styles.accountAvatar, { backgroundColor: colors.surface.subtle }])}>
             <AppIcon tone="text" name="icon.account.trading" size={17} />
           </View>
           <View style={styles.accountIdentity}>
@@ -136,7 +136,7 @@ function AccountMiniCard({ account, positions }: { account: ReturnType<typeof us
 
       <View style={styles.accountMetrics}>
         {metrics.map((metric, index) => (
-          <View key={metric.label} style={StyleSheet.flatten([styles.accountMetric, index > 0 && { borderLeftColor: palette.lineSoft, borderLeftWidth: lineWidth.hairline }])}>
+          <View key={metric.label} style={StyleSheet.flatten([styles.accountMetric, index > 0 && { borderLeftColor: colors.border.subtle, borderLeftWidth: lineWidth.hairline }])}>
             <AppText numberOfLines={1} tone="muted" variant="caption">
               {metric.label}
             </AppText>
@@ -151,7 +151,7 @@ function AccountMiniCard({ account, positions }: { account: ReturnType<typeof us
 }
 
 function MarketList({ instruments }: { instruments: Instrument[] }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const [selectedTab, setSelectedTab] = useState<MarketTabKey>('watchlist');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -194,7 +194,7 @@ function MarketList({ instruments }: { instruments: Instrument[] }) {
               onChangeText={setSearchQuery}
               placeholder={t('markets.search')}
               returnKeyType="search"
-              shellStyle={StyleSheet.flatten([styles.marketSearchExpanded, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}
+              shellStyle={StyleSheet.flatten([styles.marketSearchExpanded, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}
               value={searchQuery}
             />
             <NativePressable
@@ -202,7 +202,7 @@ function MarketList({ instruments }: { instruments: Instrument[] }) {
               accessibilityRole="button"
               minTouch={38}
               onPress={closeSearch}
-              style={StyleSheet.flatten([styles.marketSearchClose, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+              style={StyleSheet.flatten([styles.marketSearchClose, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
               <AppIcon tone="textDim" name="icon.system.close" size={14} />
             </NativePressable>
           </View>
@@ -223,8 +223,8 @@ function MarketList({ instruments }: { instruments: Instrument[] }) {
                     style={StyleSheet.flatten([
                       styles.marketTab,
                       {
-                        backgroundColor: selected ? palette.text : palette.panelSoft,
-                        borderColor: selected ? palette.text : palette.lineSoft,
+                        backgroundColor: selected ? colors.text.primary : colors.surface.subtle,
+                        borderColor: selected ? colors.text.primary : colors.border.subtle,
                       },
                     ])}>
                     <AppText numberOfLines={1} tone={selected ? 'bg' : 'muted'} variant="caption">
@@ -239,7 +239,7 @@ function MarketList({ instruments }: { instruments: Instrument[] }) {
               accessibilityRole="button"
               minTouch={38}
               onPress={() => setSearchOpen(true)}
-              style={StyleSheet.flatten([styles.marketSearchTrigger, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+              style={StyleSheet.flatten([styles.marketSearchTrigger, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
               <AppIcon tone="textDim" name="icon.system.search" size={17} />
             </NativePressable>
           </>
@@ -252,7 +252,7 @@ function MarketList({ instruments }: { instruments: Instrument[] }) {
             <InstrumentRow instrument={instrument} key={instrument.id} showDivider={index < filteredInstruments.length - 1} />
           ))
         ) : (
-          <View style={StyleSheet.flatten([styles.emptyMarketRows, { backgroundColor: palette.panelSoft }])}>
+          <View style={StyleSheet.flatten([styles.emptyMarketRows, { backgroundColor: colors.surface.subtle }])}>
             <AppText tone="muted" variant="caption">
               {t('markets.empty')}
             </AppText>

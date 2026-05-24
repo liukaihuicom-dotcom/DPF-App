@@ -11,10 +11,10 @@ import { AppText } from '@/src/components/Typography';
 import type { DiscoverModuleId } from '@/src/domain/types';
 import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
-import type { ThemePalette } from '@/src/theme/colors';
+import { resolveThemeTone, type ThemeColors } from '@/src/theme/colors';
 
 export default function PartnerToolsScreen() {
-  const { palette, role, selectedDiscoverModuleId, setSelectedDiscoverModule, t } = useProductSettings();
+  const { colors, role, selectedDiscoverModuleId, setSelectedDiscoverModule, t } = useProductSettings();
   const tiles: DiscoverTile[] = [
     { group: 'growth', icon: 'icon.promotion.achievement', id: 'challenge', tone: 'amber' },
     { group: 'growth', icon: 'icon.education.academy', id: 'education', tone: 'brand' },
@@ -107,8 +107,8 @@ type DiscoverTile = {
 };
 
 function DiscoverSelectableTile({ onPress, selected, tile }: { onPress: () => void; selected: boolean; tile: DiscoverTile }) {
-  const { palette, t } = useProductSettings();
-  const tileColor = resolvePaletteIconTone(palette, tile.tone);
+  const { colors, t } = useProductSettings();
+  const tileColor = resolvePaletteIconTone(colors, tile.tone);
 
   return (
     <NativePressable
@@ -119,8 +119,8 @@ function DiscoverSelectableTile({ onPress, selected, tile }: { onPress: () => vo
       style={StyleSheet.flatten([
         styles.selectableTile,
         {
-          backgroundColor: palette.panel,
-          borderColor: selected ? palette.brand : palette.lineSoft,
+          backgroundColor: colors.surface.panel,
+          borderColor: selected ? colors.brand.fg : colors.border.subtle,
         },
       ])}>
       <View style={styles.tileHead}>
@@ -128,13 +128,13 @@ function DiscoverSelectableTile({ onPress, selected, tile }: { onPress: () => vo
           style={StyleSheet.flatten([
             styles.tileIcon,
             {
-              backgroundColor: selected ? `${palette.brand}12` : `${tileColor}12`,
-              borderColor: selected ? palette.brand : `${tileColor}55`,
+              backgroundColor: selected ? `${colors.brand.fg}12` : `${tileColor}12`,
+              borderColor: selected ? colors.brand.fg : `${tileColor}55`,
             },
           ])}>
           <AppIcon name={tile.icon} size={18} tone={selected ? 'brand' : tile.tone} />
         </View>
-        <View style={StyleSheet.flatten([styles.selectedDot, { backgroundColor: selected ? palette.brand : palette.lineSoft }])} />
+        <View style={StyleSheet.flatten([styles.selectedDot, { backgroundColor: selected ? colors.brand.fg : colors.border.subtle }])} />
       </View>
       <AppText numberOfLines={1} variant="subtitle">
         {t(`discover.module.${tile.id}.title`)}
@@ -211,6 +211,6 @@ const styles = StyleSheet.create({
   },
 });
 
-function resolvePaletteIconTone(palette: ThemePalette, tone: IconTone) {
-  return tone === 'disabled' ? palette.disabledText : palette[tone];
+function resolvePaletteIconTone(colors: ThemeColors, tone: IconTone) {
+  return resolveThemeTone(colors, tone);
 }

@@ -26,7 +26,7 @@ export default function LoginScreen() {
   const {
     locale,
     localPinCode,
-    palette,
+    colors,
     profileAvatarId,
     profileNickname,
     setPinGateStatus,
@@ -129,7 +129,7 @@ export default function LoginScreen() {
       subtitle={remembered ? t('auth.login.returningSubtitle') : t('auth.login.subtitleV2')}
       title={remembered ? t('auth.login.welcomeBack') : t('auth.login.title')}>
       {remembered && rememberedLoginSnapshot ? (
-        <View style={StyleSheet.flatten([styles.accountSummary, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+        <View style={StyleSheet.flatten([styles.accountSummary, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
           <ProfileAvatar id={rememberedLoginSnapshot.avatarId} size={48} />
           <View style={styles.flex}>
             <AppText numberOfLines={1} variant="subtitle">
@@ -156,7 +156,7 @@ export default function LoginScreen() {
             accessibilityRole="button"
             minTouch={40}
             onPress={switchAccount}
-            style={StyleSheet.flatten([styles.switchAccountButton, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+            style={StyleSheet.flatten([styles.switchAccountButton, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
             <AppIcon name="icon.account.add_user" size={20} tone="text" />
           </NativePressable>
         </View>

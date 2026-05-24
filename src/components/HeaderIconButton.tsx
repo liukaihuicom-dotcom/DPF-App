@@ -1,6 +1,6 @@
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { layout, radius } from '@/src/theme/tokens';
 
 import { AppIcon, type AppIconName, type IconTone } from './AppIcon';
@@ -25,12 +25,12 @@ export function HeaderIconButton({
   tone = 'muted',
   variant = 'filled',
 }: HeaderIconButtonProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const iconTone = tone === 'default' ? 'text' : tone === 'muted' ? 'textDim' : tone;
   const buttonStyle = StyleSheet.flatten([
     styles.button,
     variant === 'filled' && {
-      backgroundColor: palette.panelSoft,
+      backgroundColor: colors.surface.subtle,
     },
     variant === 'ghost' && styles.ghost,
     style,

@@ -23,7 +23,7 @@ const DRAG_ROW_HEIGHT = 118;
 const viewModes: DiscoverLayoutViewMode[] = ['large', 'medium', 'list'];
 
 export default function DiscoverLayoutScreen() {
-  const { discoverLayoutItems, locale, palette, setDiscoverLayoutItems } = useProductSettings();
+  const { discoverLayoutItems, locale, colors, setDiscoverLayoutItems } = useProductSettings();
   const [draftItems, setDraftItems] = useState<DiscoverLayoutItem[]>(discoverLayoutItems);
   const modeLabels: Record<DiscoverLayoutViewMode, string> = {
     large: locale !== 'zh-CN' ? 'Large' : '大卡',
@@ -68,12 +68,12 @@ export default function DiscoverLayoutScreen() {
       contentInsetBottom={18}
       stickyFooter={
         <View style={styles.footerActions}>
-          <ActionButton label={locale !== 'zh-CN' ? 'Cancel' : '取消'} onPress={close} style={StyleSheet.flatten([styles.footerButton, { backgroundColor: palette.panelSoft }])} tone="neutral" />
+          <ActionButton label={locale !== 'zh-CN' ? 'Cancel' : '取消'} onPress={close} style={StyleSheet.flatten([styles.footerButton, { backgroundColor: colors.surface.subtle }])} tone="neutral" />
           <ActionButton label={locale !== 'zh-CN' ? 'Save' : '保存'} onPress={save} style={styles.footerButton} tone="neutral" />
         </View>
       }
       title={title}>
-      <View style={StyleSheet.flatten([styles.introCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.introCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <AppIcon tone="brand" name="icon.system.settings" size={20} />
         <View style={styles.flex}>
           <AppText variant="subtitle">{title}</AppText>
@@ -129,7 +129,7 @@ function LayoutEditorRow({
   onViewModeChange: (id: DiscoverLayoutItem['id'], viewMode: DiscoverLayoutViewMode) => void;
   title: string;
 }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
   const dragY = useSharedValue(0);
   const gesture = useMemo(
     () =>
@@ -157,7 +157,7 @@ function LayoutEditorRow({
       <Animated.View
         style={[
           styles.editorRow,
-          { backgroundColor: palette.panel, borderColor: palette.lineSoft },
+          { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle },
           animatedStyle,
         ]}>
         <View style={styles.editorRowHeader}>
@@ -178,7 +178,7 @@ function LayoutEditorRow({
               disabled={!canMoveUp}
               minTouch={32}
               onPress={() => moveItem(index, index - 1)}
-              style={StyleSheet.flatten([styles.moveButton, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+              style={StyleSheet.flatten([styles.moveButton, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
               <AppIcon tone="textDim" name="icon.system.chevron_down" size={13} style={styles.moveUpIcon} />
             </NativePressable>
             <NativePressable
@@ -186,12 +186,12 @@ function LayoutEditorRow({
               disabled={!canMoveDown}
               minTouch={32}
               onPress={() => moveItem(index, index + 1)}
-              style={StyleSheet.flatten([styles.moveButton, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+              style={StyleSheet.flatten([styles.moveButton, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
               <AppIcon tone="textDim" name="icon.system.chevron_down" size={13} />
             </NativePressable>
           </View>
         </View>
-        <View style={StyleSheet.flatten([styles.segment, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+        <View style={StyleSheet.flatten([styles.segment, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
           {viewModes.map((mode) => {
             const selected = item.viewMode === mode;
 
@@ -205,7 +205,7 @@ function LayoutEditorRow({
                 onPress={() => onViewModeChange(item.id, mode)}
                 style={StyleSheet.flatten([
                   styles.segmentButton,
-                  selected && { backgroundColor: palette.panel, borderColor: palette.line },
+                  selected && { backgroundColor: colors.surface.panel, borderColor: colors.border.default },
                 ])}>
                 <AppText numberOfLines={1} tone={selected ? 'default' : 'muted'} variant="caption">
                   {modeLabels[mode]}

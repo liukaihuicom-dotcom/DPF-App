@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
-import type { ThemePalette } from '@/src/theme/colors';
+import { useThemeColors } from '@/src/settings/ProductSettings';
+import type { ThemeColors } from '@/src/theme/colors';
 import { lineWidth, radius } from '@/src/theme/tokens';
 
 import { AppIcon, type AppIconName, type IconTone } from './AppIcon';
@@ -19,31 +19,31 @@ export type StatusPillProps = {
   tone: StatusPillTone;
 };
 
-function resolveTone(palette: ThemePalette, tone: StatusPillTone): { color: string; iconTone: IconTone; textTone: AppTextTone } {
+function resolveTone(colors: ThemeColors, tone: StatusPillTone): { color: string; iconTone: IconTone; textTone: AppTextTone } {
   switch (tone) {
     case 'success':
-      return { color: palette.down, iconTone: 'down', textTone: 'down' };
+      return { color: colors.market.down.fg, iconTone: 'down', textTone: 'down' };
     case 'warning':
-      return { color: palette.amber, iconTone: 'amber', textTone: 'amber' };
+      return { color: colors.status.warning.fg, iconTone: 'amber', textTone: 'amber' };
     case 'danger':
-      return { color: palette.danger, iconTone: 'danger', textTone: 'danger' };
+      return { color: colors.status.danger.fg, iconTone: 'danger', textTone: 'danger' };
     case 'info':
-      return { color: palette.blue, iconTone: 'blue', textTone: 'blue' };
+      return { color: colors.status.info.fg, iconTone: 'blue', textTone: 'blue' };
     case 'brand':
-      return { color: palette.brand, iconTone: 'brand', textTone: 'brand' };
+      return { color: colors.brand.fg, iconTone: 'brand', textTone: 'brand' };
     case 'up':
-      return { color: palette.up, iconTone: 'up', textTone: 'up' };
+      return { color: colors.market.up.fg, iconTone: 'up', textTone: 'up' };
     case 'down':
-      return { color: palette.down, iconTone: 'down', textTone: 'down' };
+      return { color: colors.market.down.fg, iconTone: 'down', textTone: 'down' };
     case 'neutral':
     default:
-      return { color: palette.textDim, iconTone: 'textDim', textTone: 'muted' };
+      return { color: colors.text.tertiary, iconTone: 'textDim', textTone: 'muted' };
   }
 }
 
 export function StatusPill({ compact, icon, label, size = compact ? 'sm' : 'md', style, tone }: StatusPillProps) {
-  const palette = useThemePalette();
-  const toneConfig = resolveTone(palette, tone);
+  const colors = useThemeColors();
+  const toneConfig = resolveTone(colors, tone);
   const isSmall = size === 'sm';
   const iconNode =
     typeof icon === 'string' ? <AppIcon name={icon as AppIconName} size={isSmall ? 11 : 14} tone={toneConfig.iconTone} /> : icon ?? null;
@@ -54,8 +54,8 @@ export function StatusPill({ compact, icon, label, size = compact ? 'sm' : 'md',
         styles.pill,
         isSmall && styles.small,
         {
-          backgroundColor: tone === 'neutral' ? palette.panelSoft : `${toneConfig.color}12`,
-          borderColor: tone === 'neutral' ? palette.lineSoft : `${toneConfig.color}55`,
+          backgroundColor: tone === 'neutral' ? colors.surface.subtle : `${toneConfig.color}12`,
+          borderColor: tone === 'neutral' ? colors.border.subtle : `${toneConfig.color}55`,
         },
         style,
       ])}>

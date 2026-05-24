@@ -7,7 +7,7 @@ import { AppText } from '@/src/components/Typography';
 import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { lineWidth, radius, spacing } from '@/src/theme/tokens';
-import { themePalettes, type ResolvedThemeMode, type ThemeMode, type ThemePalette } from '@/src/theme/colors';
+import { themeColors, type ResolvedThemeMode, type ThemeMode, type ThemeColors } from '@/src/theme/colors';
 
 type AppearanceOption = {
   description: {
@@ -70,7 +70,7 @@ const appearanceOptions: AppearanceOption[] = [
 ];
 
 export default function AppearanceScreen() {
-  const { locale, palette, setThemeMode, themeMode } = useProductSettings();
+  const { locale, colors, setThemeMode, themeMode } = useProductSettings();
   const selectedOption = appearanceOptions.find((item) => item.value === themeMode) ?? appearanceOptions[0];
 
   return (
@@ -80,11 +80,11 @@ export default function AppearanceScreen() {
       contentInsetBottom={32}
       rightActions={[]}
       title={locale === 'zh-CN' ? '外观' : locale === 'id-ID' ? 'Tampilan' : 'Appearance'}>
-      <View style={StyleSheet.flatten([styles.optionCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.optionCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <View style={styles.options}>
           {appearanceOptions.map((option) => {
             const selected = option.value === themeMode;
-            const previewPalette = themePalettes[option.previewMode];
+            const previewColors = themeColors[option.previewMode];
 
             return (
               <NativePressable
@@ -98,7 +98,7 @@ export default function AppearanceScreen() {
                   void impactLight();
                 }}
                 style={styles.option}>
-                <ThemePreview palette={previewPalette} split={option.value === 'system'} />
+                <ThemePreview colors={previewColors} split={option.value === 'system'} />
                 <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.optionLabel} variant="subtitle">
                   {option.label[locale]}
                 </AppText>
@@ -116,13 +116,13 @@ export default function AppearanceScreen() {
   );
 }
 
-function ThemePreview({ palette, split }: { palette: ThemePalette; split?: boolean }) {
-  const darkPalette = themePalettes.darkTerminal;
-  const lightPalette = themePalettes.lightBroker;
+function ThemePreview({ colors, split }: { colors: ThemeColors; split?: boolean }) {
+  const darkColors = themeColors.darkTerminal;
+  const lightColors = themeColors.lightBroker;
 
   return (
-    <View style={StyleSheet.flatten([styles.previewFrame, { backgroundColor: split ? lightPalette.panel : palette.panel, borderColor: palette.line }])}>
-      {split ? <View style={StyleSheet.flatten([styles.previewSplit, { backgroundColor: darkPalette.panel }])} /> : null}
+    <View style={StyleSheet.flatten([styles.previewFrame, { backgroundColor: split ? lightColors.surface.panel : colors.surface.panel, borderColor: colors.border.default }])}>
+      {split ? <View style={StyleSheet.flatten([styles.previewSplit, { backgroundColor: darkColors.surface.panel }])} /> : null}
       <View style={styles.previewContent}>
         {[0, 1, 2].map((item) => (
           <View key={item} style={styles.previewRow}>
@@ -130,7 +130,7 @@ function ThemePreview({ palette, split }: { palette: ThemePalette; split?: boole
               style={StyleSheet.flatten([
                 styles.previewDot,
                 {
-                  backgroundColor: split && item !== 0 ? lightPalette.textDim : palette.textDim,
+                  backgroundColor: split && item !== 0 ? lightColors.text.tertiary : colors.text.tertiary,
                 },
               ])}
             />
@@ -139,7 +139,7 @@ function ThemePreview({ palette, split }: { palette: ThemePalette; split?: boole
                 style={StyleSheet.flatten([
                   styles.previewLine,
                   {
-                    backgroundColor: split && item !== 1 ? lightPalette.panelSoft : `${palette.textMuted}45`,
+                    backgroundColor: split && item !== 1 ? lightColors.surface.subtle : colors.overlay.inverse.muted,
                   },
                 ])}
               />
@@ -148,7 +148,7 @@ function ThemePreview({ palette, split }: { palette: ThemePalette; split?: boole
                   style={StyleSheet.flatten([
                     styles.previewBlock,
                     {
-                      backgroundColor: `${palette.blue}28`,
+                      backgroundColor: colors.overlay.info.muted,
                     },
                   ])}
                 />
@@ -157,7 +157,7 @@ function ThemePreview({ palette, split }: { palette: ThemePalette; split?: boole
                   style={StyleSheet.flatten([
                     styles.previewBlockMuted,
                     {
-                      backgroundColor: split && item !== 1 ? lightPalette.lineSoft : `${palette.textMuted}30`,
+                      backgroundColor: split && item !== 1 ? lightColors.border.subtle : colors.overlay.inverse.subtle,
                     },
                   ])}
                 />
@@ -171,14 +171,14 @@ function ThemePreview({ palette, split }: { palette: ThemePalette; split?: boole
 }
 
 function RadioMark({ selected }: { selected: boolean }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
 
   return (
     <View
       style={StyleSheet.flatten([
         styles.radio,
         {
-          borderColor: selected ? palette.brand : palette.textDim,
+          borderColor: selected ? colors.brand.fg : colors.text.tertiary,
           borderWidth: selected ? 9 : 3,
         },
       ])}

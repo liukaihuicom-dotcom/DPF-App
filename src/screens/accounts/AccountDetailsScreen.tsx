@@ -24,7 +24,7 @@ import { useBroker } from '@/src/state/BrokerStore';
 export default function AccountDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { account, positions } = useBroker();
-  const { locale, palette, t, tradingAccountCountPreset, tradingAccountDataPreset, tradingAccountScenario, tradingAccountStatusPreset } = useProductSettings();
+  const { locale, colors, t, tradingAccountCountPreset, tradingAccountDataPreset, tradingAccountScenario, tradingAccountStatusPreset } = useProductSettings();
   const bottomSheet = useBottomSheet();
   const toast = useToast();
   const profiles = buildTradingAccountProfiles(account, positions, tradingAccountScenario, {
@@ -70,7 +70,7 @@ export default function AccountDetailsScreen() {
       title={t('accountDetails.title')}>
       <Card compact>
         <View style={styles.detailHeader}>
-          <View style={StyleSheet.flatten([styles.walletIcon, { backgroundColor: palette.panelSoft }])}>
+          <View style={StyleSheet.flatten([styles.walletIcon, { backgroundColor: colors.surface.subtle }])}>
             <AppIcon tone="text" name="icon.account.trading" size={18} />
           </View>
           <View style={styles.detailTitleBlock}>
@@ -102,7 +102,7 @@ export default function AccountDetailsScreen() {
           <MarginGauge value={profile.marginLevel} />
         </View>
 
-        <View style={StyleSheet.flatten([styles.divider, { backgroundColor: palette.lineSoft }])} />
+        <View style={StyleSheet.flatten([styles.divider, { backgroundColor: colors.border.subtle }])} />
         <View style={styles.detailMetrics}>
           <SmallMetric label={t('account.freeMargin')} value={formatNumber(profile.freeMargin, 2, locale)} />
           <SmallMetric label={t('account.usedMargin')} value={formatNumber(profile.usedMargin, 2, locale)} />
@@ -123,7 +123,7 @@ export default function AccountDetailsScreen() {
         ] satisfies FundActionGridItem[]}
       />
 
-      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <GlobalMenuList
           contained
           items={[
@@ -143,7 +143,7 @@ export default function AccountDetailsScreen() {
           <AppIcon tone="textDim" name="icon.system.chevron_right" size={14} />
         </View>
         {positionRows.map((position, index) => (
-          <View key={position.id} style={StyleSheet.flatten([styles.positionRow, index < positionRows.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
+          <View key={position.id} style={StyleSheet.flatten([styles.positionRow, index < positionRows.length - 1 && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
             <TradeDirectionIcon direction={position.direction} size={30} />
             <View style={styles.positionMain}>
               <View style={styles.positionTitle}>
@@ -173,9 +173,9 @@ export default function AccountDetailsScreen() {
         <ClosedPnlChart realizedPnl={profile.realizedPnl} />
         <View style={styles.symbolLegendRow}>
           {[
-            ['Total', palette.brand],
-            ['XAUUSD', palette.textDim],
-            ['EURUSD', palette.line],
+            ['Total', colors.brand.fg],
+            ['XAUUSD', colors.text.tertiary],
+            ['EURUSD', colors.border.default],
           ].map(([label, color]) => (
             <View key={label} style={styles.symbolLegendItem}>
               <View style={StyleSheet.flatten([styles.symbolLegendDot, { backgroundColor: color }])} />
@@ -206,9 +206,9 @@ export default function AccountDetailsScreen() {
             const day = index + 1;
             const positive = [6, 7, 9, 10, 13, 15, 16, 20, 21, 22, 23, 24, 27].includes(day);
             const negative = [8, 14, 17, 28].includes(day);
-            const bg = positive ? `${palette.down}20` : negative ? `${palette.up}18` : palette.panelSoft;
+            const bg = positive ? `${colors.market.down.fg}20` : negative ? `${colors.market.up.fg}18` : colors.surface.subtle;
             return (
-              <View key={day} style={StyleSheet.flatten([styles.dayCell, { backgroundColor: bg, borderColor: palette.lineSoft }])}>
+              <View key={day} style={StyleSheet.flatten([styles.dayCell, { backgroundColor: bg, borderColor: colors.border.subtle }])}>
                 <AppText variant="eyebrow">{day}</AppText>
                 <AppText tone={positive ? 'down' : negative ? 'up' : 'muted'} variant="eyebrow">
                   {positive || negative ? '12.42' : '0.00'}
@@ -227,7 +227,7 @@ export default function AccountDetailsScreen() {
 }
 
 function AccountMoreSheet({ onSelect }: { onSelect: (label: string, tone?: 'danger' | 'default') => void }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const items = [
     { icon: 'icon.trading.order' as const, label: t('accountDetails.tradingJournal'), tone: 'default' as const },
     { icon: 'icon.account.archive' as const, label: t('accountDetails.archiveAccount'), tone: 'default' as const },
@@ -236,7 +236,7 @@ function AccountMoreSheet({ onSelect }: { onSelect: (label: string, tone?: 'dang
 
   return (
     <View style={styles.moreSheet}>
-      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <GlobalMenuList
           contained
           items={items.map((item) => ({
@@ -251,7 +251,7 @@ function AccountMoreSheet({ onSelect }: { onSelect: (label: string, tone?: 'dang
 }
 
 function MarginGauge({ value }: { value: number }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const normalized = Math.max(0, Math.min(value / 1000, 100));
   const needleAngle = (-150 + normalized * 1.2) * (Math.PI / 180);
   const centerX = 120;
@@ -266,17 +266,17 @@ function MarginGauge({ value }: { value: number }) {
     <View style={styles.gaugeWrap}>
       <View style={styles.gaugeStage}>
         <Svg height={106} width={240}>
-          <Path d="M 34 96 A 86 86 0 0 1 206 96" fill="none" stroke={palette.lineSoft} strokeLinecap="round" strokeWidth={14} />
-          <Path d="M 34 96 A 86 86 0 0 1 65 30" fill="none" stroke={palette.danger} strokeLinecap="butt" strokeWidth={14} />
-          <Path d="M 69 28 A 86 86 0 0 1 102 13" fill="none" stroke={palette.amber} strokeLinecap="butt" strokeWidth={14} />
-          <Path d="M 108 12 A 86 86 0 0 1 132 12" fill="none" stroke={palette.textDim} strokeLinecap="butt" strokeWidth={14} />
-          <Path d="M 138 13 A 86 86 0 0 1 171 28" fill="none" stroke={palette.down} strokeLinecap="butt" strokeWidth={14} />
-          <Path d="M 175 30 A 86 86 0 0 1 206 96" fill="none" stroke={palette.down} strokeLinecap="butt" strokeWidth={14} />
+          <Path d="M 34 96 A 86 86 0 0 1 206 96" fill="none" stroke={colors.border.subtle} strokeLinecap="round" strokeWidth={14} />
+          <Path d="M 34 96 A 86 86 0 0 1 65 30" fill="none" stroke={colors.status.danger.fg} strokeLinecap="butt" strokeWidth={14} />
+          <Path d="M 69 28 A 86 86 0 0 1 102 13" fill="none" stroke={colors.status.warning.fg} strokeLinecap="butt" strokeWidth={14} />
+          <Path d="M 108 12 A 86 86 0 0 1 132 12" fill="none" stroke={colors.text.tertiary} strokeLinecap="butt" strokeWidth={14} />
+          <Path d="M 138 13 A 86 86 0 0 1 171 28" fill="none" stroke={colors.market.down.fg} strokeLinecap="butt" strokeWidth={14} />
+          <Path d="M 175 30 A 86 86 0 0 1 206 96" fill="none" stroke={colors.market.down.fg} strokeLinecap="butt" strokeWidth={14} />
           {[34, 65, 102, 120, 138, 175, 206].map((x, index) => (
-            <Line key={`${x}-${index}`} opacity={0.22} stroke={palette.textDim} strokeLinecap="round" strokeWidth={2} x1={x} x2={x} y1={92} y2={98} />
+            <Line key={`${x}-${index}`} opacity={0.22} stroke={colors.text.tertiary} strokeLinecap="round" strokeWidth={2} x1={x} x2={x} y1={92} y2={98} />
           ))}
-          <Line stroke={palette.text} strokeLinecap="round" strokeWidth={4} x1={centerX} x2={needleEndX} y1={centerY} y2={needleEndY} />
-          <Circle cx={centerX} cy={centerY} fill={palette.bg} r={8} stroke={palette.text} strokeWidth={3} />
+          <Line stroke={colors.text.primary} strokeLinecap="round" strokeWidth={4} x1={centerX} x2={needleEndX} y1={centerY} y2={needleEndY} />
+          <Circle cx={centerX} cy={centerY} fill={colors.surface.canvas} r={8} stroke={colors.text.primary} strokeWidth={3} />
         </Svg>
         <View style={styles.gaugeLabels}>
           <AppText tone="muted" variant="caption">{riskLabel}</AppText>
@@ -290,14 +290,14 @@ function MarginGauge({ value }: { value: number }) {
 }
 
 function ClosedPnlChart({ realizedPnl }: { realizedPnl: number }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
   const width = 292;
   const height = 132;
   const chartTotal = realizedPnl === 0 ? 100 : realizedPnl;
   const totalValues = buildClosedPnlSeries(chartTotal, [0, 0.2, 0.08, 0.48, 0.36, 0.68, 0.58, 0.86, 1]);
   const symbolSeries = [
-    { color: palette.textDim, values: buildClosedPnlSeries(chartTotal * 0.44, [0, 0.12, 0.04, 0.26, 0.2, 0.38, 0.34, 0.5, 0.62]) },
-    { color: palette.line, values: buildClosedPnlSeries(chartTotal * -0.18, [0, -0.08, -0.02, -0.16, -0.1, -0.22, -0.18, -0.28, -0.34]) },
+    { color: colors.text.tertiary, values: buildClosedPnlSeries(chartTotal * 0.44, [0, 0.12, 0.04, 0.26, 0.2, 0.38, 0.34, 0.5, 0.62]) },
+    { color: colors.border.default, values: buildClosedPnlSeries(chartTotal * -0.18, [0, -0.08, -0.02, -0.16, -0.1, -0.22, -0.18, -0.28, -0.34]) },
   ];
   const allValues = [...totalValues, ...symbolSeries.flatMap((series) => series.values)];
 
@@ -319,7 +319,7 @@ function ClosedPnlChart({ realizedPnl }: { realizedPnl: number }) {
         <Polyline
           fill="none"
           points={pointsForSeries(totalValues, allValues, width, height)}
-          stroke={palette.brand}
+          stroke={colors.brand.fg}
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={4}

@@ -21,7 +21,7 @@ type QuickActionSheetProps = {
 
 export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
   const { instruments, role, submitUpgradeRequest, upgradeRequest } = useBroker();
-  const { authStatus, palette, t } = useProductSettings();
+  const { authStatus, colors, t } = useProductSettings();
   const toast = useToast();
   const anchor = instruments.find((instrument) => instrument.symbol === 'EUR/USD') ?? instruments[0];
   const requireSignedIn = () => {
@@ -153,12 +153,12 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
 
   return (
     <View style={styles.host}>
-      <NativePressable accessibilityLabel={t('common.cancel')} onPress={onClose} style={StyleSheet.flatten([styles.scrim, { backgroundColor: `${palette.bg}CC` }])} />
-      <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.sheet, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
+      <NativePressable accessibilityLabel={t('common.cancel')} onPress={onClose} style={StyleSheet.flatten([styles.scrim, { backgroundColor: `${colors.surface.canvas}CC` }])} />
+      <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.sheet, { backgroundColor: colors.surface.raised, borderColor: colors.border.subtle }])}>
         <View style={styles.handleWrap}>
-          <View style={StyleSheet.flatten([styles.handle, { backgroundColor: palette.line }])} />
+          <View style={StyleSheet.flatten([styles.handle, { backgroundColor: colors.border.default }])} />
         </View>
-        <View style={StyleSheet.flatten([styles.sheetHead, { borderBottomColor: palette.lineSoft }])}>
+        <View style={StyleSheet.flatten([styles.sheetHead, { borderBottomColor: colors.border.subtle }])}>
           <View>
             <AppText tone="dim" variant="eyebrow">
               {t('tabs.quick')}
@@ -175,7 +175,7 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
               key={action.label}
               minTouch={64}
               onPress={action.onPress}
-              style={StyleSheet.flatten([styles.actionItem, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+              style={StyleSheet.flatten([styles.actionItem, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
               <View style={styles.actionIcon}>
                 <AppIcon name={action.icon} size={17} tone={action.tone} />
               </View>

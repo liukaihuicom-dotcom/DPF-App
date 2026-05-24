@@ -1,4 +1,4 @@
-import type { ThemePalette } from '@/src/theme/colors';
+import { resolveThemeTone, type ThemeColors } from '@/src/theme/colors';
 
 export type IconCategory =
   | 'account'
@@ -3426,10 +3426,6 @@ export function resolveIconName(name: AppIconName | LegacyAppIconName): AppIconN
   return (name in iconRegistry ? name : legacyIconNameMap[name as LegacyAppIconName]) as AppIconName;
 }
 
-export function resolveIconTone(palette: ThemePalette, tone: IconTone | string): string {
-  if (tone === 'disabled') {
-    return palette.disabledText;
-  }
-
-  return palette[tone as keyof ThemePalette] ?? tone;
+export function resolveIconTone(colors: ThemeColors, tone: IconTone | string): string {
+  return resolveThemeTone(colors, tone);
 }

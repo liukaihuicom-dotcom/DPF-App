@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth, radius, size, spacing } from '@/src/theme/tokens';
 
 import { AppIcon, type AppIconName } from './AppIcon';
@@ -25,9 +25,9 @@ type GlobalMenuListProps = {
 };
 
 export function GlobalMenuList({ contained, items, showChevron = true, variant = 'navigation' }: GlobalMenuListProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const content = (
-    <View style={StyleSheet.flatten([styles.list, contained && { borderColor: palette.lineSoft }])}>
+    <View style={StyleSheet.flatten([styles.list, contained && { borderColor: colors.border.subtle }])}>
       {items.map((item, index) => {
         const isDanger = item.tone === 'danger';
         const iconTone = isDanger ? 'danger' : variant === 'descriptive' ? 'textDim' : 'text';
@@ -42,14 +42,14 @@ export function GlobalMenuList({ contained, items, showChevron = true, variant =
             style={StyleSheet.flatten([
               styles.row,
               variant === 'descriptive' && styles.descriptiveRow,
-              index < items.length - 1 && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline },
+              index < items.length - 1 && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline },
             ])}>
             <View style={styles.rowLeft}>
               <View
                 style={StyleSheet.flatten([
                   styles.iconWrap,
                   variant === 'descriptive' && styles.descriptiveIconWrap,
-                  variant === 'descriptive' && { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft },
+                  variant === 'descriptive' && { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle },
                 ])}>
                 <AppIcon name={item.icon} size={variant === 'descriptive' ? size.icon.md : size.icon.lg} tone={iconTone} />
               </View>

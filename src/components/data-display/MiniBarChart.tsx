@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
+import { resolveThemeTone } from '@/src/theme/colors';
 import { lineWidth, radius, size, spacing } from '@/src/theme/tokens';
 import type { IconTone } from '../AppIcon';
 
@@ -14,9 +15,9 @@ type MiniBarChartProps = {
 };
 
 export function MiniBarChart({ maxValue, ticks = [10000, 2000, 1000, 200, 0], tone, values }: MiniBarChartProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const max = maxValue ?? Math.max(...values, 1);
-  const color = palette[tone];
+  const color = resolveThemeTone(colors, tone);
 
   return (
     <View style={styles.wrap}>
@@ -25,7 +26,7 @@ export function MiniBarChart({ maxValue, ticks = [10000, 2000, 1000, 200, 0], to
           <AppText tone="dim" variant="caption">
             {tick >= 1000 ? `${tick / 1000}k` : `${tick}`}
           </AppText>
-          <View style={StyleSheet.flatten([styles.gridLine, { backgroundColor: palette.lineSoft }])} />
+          <View style={StyleSheet.flatten([styles.gridLine, { backgroundColor: colors.border.subtle }])} />
         </View>
       ))}
       <View style={styles.barRow}>

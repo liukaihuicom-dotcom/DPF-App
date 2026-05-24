@@ -155,13 +155,13 @@ export function GlobalBottomSheetHost() {
   const { back, hide } = useBottomSheet();
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const { locale, palette, resolvedThemeMode } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const modalRef = useRef<BottomSheetModal>(null);
   const [backdropInteractive, setBackdropInteractive] = useState(false);
   const maxHeight = Math.max(1, height - insets.top - TOP_RESERVED_SPACE);
   const sheetWidth = Math.min(width, MAX_PAGE_SHEET_WIDTH);
   const horizontalInset = Math.max(0, (width - sheetWidth) / 2);
-  const backdropColor = `${resolvedThemeMode === 'darkTerminal' || resolvedThemeMode === 'midnightBlue' ? palette.bg : palette.text}99`;
+  const backdropColor = colors.overlay.backdrop;
   const hasFooter = Boolean(options?.footer);
   const snapPoints = useMemo(() => {
     if (options?.snapPoints?.length) {
@@ -212,14 +212,14 @@ export function GlobalBottomSheetHost() {
       />
       <BottomSheetModal
         backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: palette.bg }}
+        backgroundStyle={{ backgroundColor: colors.surface.canvas }}
         containerStyle={styles.modalContainer}
         detached={false}
         enableContentPanningGesture
         enableDynamicSizing={!hasExplicitSnapPoints}
         enablePanDownToClose
         footerComponent={options.footer ? footerComponent : undefined}
-        handleIndicatorStyle={{ backgroundColor: palette.line, width: 40 }}
+        handleIndicatorStyle={{ backgroundColor: colors.border.default, width: 40 }}
         handleStyle={styles.handle}
         index={0}
         keyboardBlurBehavior="restore"
@@ -227,7 +227,7 @@ export function GlobalBottomSheetHost() {
         onDismiss={hide}
         ref={modalRef}
         snapPoints={snapPoints}
-        style={StyleSheet.flatten([styles.modal, { borderColor: palette.lineSoft, marginLeft: horizontalInset, width: sheetWidth }])}
+        style={StyleSheet.flatten([styles.modal, { borderColor: colors.border.subtle, marginLeft: horizontalInset, width: sheetWidth }])}
         topInset={insets.top + TOP_RESERVED_SPACE}>
         {headerOptions ? <BottomSheetHeader back={back} header={headerOptions} isNested={stackDepth > 1} locale={locale} /> : null}
         <BottomSheetContent hasFooter={Boolean(options.footer)}>{options.content}</BottomSheetContent>
@@ -262,7 +262,7 @@ function BottomSheetHeader({
   isNested: boolean;
   locale: string;
 }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
   const nestedBackAction: BottomSheetHeaderAction = useMemo(
     () => ({
       accessibilityLabel: locale !== 'zh-CN' ? 'Back' : '返回',
@@ -275,7 +275,7 @@ function BottomSheetHeader({
   const rightAction = resolveHeaderRightAction(header);
 
   return (
-    <BottomSheetView style={StyleSheet.flatten([styles.header, { backgroundColor: palette.bg }])}>
+    <BottomSheetView style={StyleSheet.flatten([styles.header, { backgroundColor: colors.surface.canvas }])}>
       <HeaderIconSlot>
         {leftAction ? (
           <HeaderIconButton
@@ -371,8 +371,8 @@ function AppBottomSheetFooter({
   hide: () => void;
 }) {
   const insets = useSafeAreaInsets();
-  const { palette } = useProductSettings();
-  const footerStyle = StyleSheet.flatten([styles.footer, { backgroundColor: palette.bg, borderTopColor: palette.lineSoft, paddingBottom: Math.max(insets.bottom, 14) }]);
+  const { colors } = useProductSettings();
+  const footerStyle = StyleSheet.flatten([styles.footer, { backgroundColor: colors.surface.canvas, borderTopColor: colors.border.subtle, paddingBottom: Math.max(insets.bottom, 14) }]);
 
   if (!Array.isArray(footer)) {
     return (

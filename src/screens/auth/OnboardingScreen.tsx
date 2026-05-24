@@ -13,7 +13,7 @@ import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 export default function OnboardingScreen() {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const steps = [
     ['icon.account.add_user', t('onboarding.step.account'), t('onboarding.step.accountHint')],
     ['icon.security.risk_shield', t('onboarding.step.risk'), t('onboarding.step.riskHint')],
@@ -36,9 +36,9 @@ export default function OnboardingScreen() {
       step={t('onboarding.stepLabel')}
       subtitle={t('onboarding.subtitle')}
       title={t('onboarding.title')}>
-      <View style={StyleSheet.flatten([styles.heroPanel, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.heroPanel, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <View style={styles.heroRow}>
-          <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: palette.text, borderColor: palette.text }])}>
+          <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: colors.text.primary, borderColor: colors.text.primary }])}>
             <AppIcon tone="panel" name="icon.market.global" size={19} />
           </View>
           <View style={styles.flex}>
@@ -51,7 +51,7 @@ export default function OnboardingScreen() {
         <View style={styles.stepRail}>
           {steps.map(([icon, title, hint], index) => (
             <View key={title} style={styles.stepRow}>
-              <View style={StyleSheet.flatten([styles.stepIndex, { backgroundColor: index === 0 ? palette.brand : palette.panelSoft }])}>
+              <View style={StyleSheet.flatten([styles.stepIndex, { backgroundColor: index === 0 ? colors.brand.fg : colors.surface.subtle }])}>
                 <AppIcon name={icon as AppIconName} size={13} tone={index === 0 ? 'white' : 'textDim'} />
               </View>
               <View style={styles.flex}>
@@ -65,7 +65,7 @@ export default function OnboardingScreen() {
         </View>
       </View>
 
-      <View style={StyleSheet.flatten([styles.activationPanel, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.activationPanel, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <View style={styles.activationHeader}>
           <View style={styles.flex}>
             <AppText variant="subtitle">{t('onboarding.activation.title')}</AppText>
@@ -83,7 +83,7 @@ export default function OnboardingScreen() {
         <View style={styles.activationSteps}>
           {dupoinOnboardingSteps.map((step, index) => (
             <View key={step.id} style={styles.activationStepRow}>
-              <View style={StyleSheet.flatten([styles.activationStepMark, { backgroundColor: index < 2 ? palette.down : palette.brand }])}>
+              <View style={StyleSheet.flatten([styles.activationStepMark, { backgroundColor: index < 2 ? colors.market.down.fg : colors.brand.fg }])}>
                 <AppText tone="white" variant="eyebrow">
                   {index + 1}
                 </AppText>
@@ -109,8 +109,8 @@ export default function OnboardingScreen() {
               void impactLight();
               router.push('/auth/register');
             }}
-            style={StyleSheet.flatten([styles.choiceCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-            <View style={StyleSheet.flatten([styles.choiceIcon, { backgroundColor: `${palette.brand}12`, borderColor: `${palette.brand}55` }])}>
+            style={StyleSheet.flatten([styles.choiceCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
+            <View style={StyleSheet.flatten([styles.choiceIcon, { backgroundColor: `${colors.brand.fg}12`, borderColor: `${colors.brand.fg}55` }])}>
               <AppIcon tone="brand" name={icon as AppIconName} size={15} />
             </View>
             <AppText variant="body">{title}</AppText>
@@ -121,7 +121,7 @@ export default function OnboardingScreen() {
         ))}
       </View>
 
-      <View style={StyleSheet.flatten([styles.notice, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.notice, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
         <AppIcon tone="textMuted" name="icon.risk.info" size={15} />
         <AppText numberOfLines={3} tone="muted" variant="caption">
           {t('onboarding.notice')}

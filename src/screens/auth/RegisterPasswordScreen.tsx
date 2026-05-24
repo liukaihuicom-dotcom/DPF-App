@@ -12,7 +12,7 @@ import { REMEMBERED_WEB_DEMO_DEVICE_LABEL, useProductSettings } from '@/src/sett
 
 export default function RegisterPasswordScreen() {
   const params = useLocalSearchParams<{ email?: string; phone?: string; redirect?: string }>();
-  const { palette, profileAvatarId, setLocalPinCode, setPinStatus, setProfileNickname, setRememberedLoginSnapshot, t } = useProductSettings();
+  const { colors, profileAvatarId, setLocalPinCode, setPinStatus, setProfileNickname, setRememberedLoginSnapshot, t } = useProductSettings();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [visible, setVisible] = useState(false);

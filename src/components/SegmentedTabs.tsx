@@ -1,6 +1,6 @@
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth, radius, size, spacing } from '@/src/theme/tokens';
 
 import { NativePressable } from './NativePressable';
@@ -20,10 +20,10 @@ type SegmentedTabsProps<T extends string> = {
 };
 
 export function SegmentedTabs<T extends string>({ items, onValueChange, style, value }: SegmentedTabsProps<T>) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
 
   return (
-    <View style={StyleSheet.flatten([styles.rail, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }, style])}>
+    <View style={StyleSheet.flatten([styles.rail, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }, style])}>
       {items.map((item) => {
         const selected = value === item.value;
 
@@ -35,7 +35,7 @@ export function SegmentedTabs<T extends string>({ items, onValueChange, style, v
             key={item.value}
             minTouch={size.tab.itemMinHeight}
             onPress={() => onValueChange(item.value)}
-            style={StyleSheet.flatten([styles.item, selected && { backgroundColor: palette.panel, borderColor: palette.line }])}>
+            style={StyleSheet.flatten([styles.item, selected && { backgroundColor: colors.surface.panel, borderColor: colors.border.default }])}>
             <AppText adjustsFontSizeToFit numberOfLines={1} tone={selected ? 'default' : 'muted'} variant="caption">
               {item.label}
             </AppText>

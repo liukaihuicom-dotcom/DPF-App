@@ -2,7 +2,7 @@ import { createContext, PropsWithChildren, useCallback, useContext, useMemo, use
 import { View } from 'react-native';
 
 import { lineWidth } from '@/src/theme/tokens';
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { shadows } from '@/src/theme/colors';
 
 import { AppText, type AppTextTone } from '../components/Typography';
@@ -22,7 +22,7 @@ type ToastContextValue = {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function ToastProvider({ children }: PropsWithChildren) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const [toast, setToast] = useState<ToastPayload | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -48,7 +48,7 @@ export function ToastProvider({ children }: PropsWithChildren) {
   const tone = toast?.tone ?? 'default';
   const toneText: AppTextTone = tone === 'success' ? 'down' : tone === 'warning' ? 'amber' : tone === 'danger' ? 'danger' : 'brand';
   const toneColor =
-    tone === 'success' ? palette.down : tone === 'warning' ? palette.amber : tone === 'danger' ? palette.danger : palette.brand;
+    tone === 'success' ? colors.market.down.fg : tone === 'warning' ? colors.status.warning.fg : tone === 'danger' ? colors.status.danger.fg : colors.brand.fg;
 
   return (
     <ToastContext.Provider value={value}>
@@ -69,8 +69,8 @@ export function ToastProvider({ children }: PropsWithChildren) {
           <View
             style={{
               alignItems: 'center',
-              backgroundColor: palette.panelHigh,
-              borderColor: palette.line,
+              backgroundColor: colors.surface.raised,
+              borderColor: colors.border.default,
               borderRadius: 16,
               borderWidth: lineWidth.hairline,
               flexDirection: 'row',

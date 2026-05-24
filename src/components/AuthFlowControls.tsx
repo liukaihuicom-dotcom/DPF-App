@@ -30,7 +30,7 @@ export function CountryPhoneField({
   onChangePhone: (phone: string) => void;
   phone: string;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const [pickerOpen, setPickerOpen] = useState(false);
   const openCountryPicker = () => {
     Keyboard.dismiss();
@@ -45,7 +45,7 @@ export function CountryPhoneField({
           accessibilityRole="button"
           minTouch={56}
           onPress={openCountryPicker}
-          style={StyleSheet.flatten([styles.countryChip, { backgroundColor: palette.panel, borderColor: palette.line }])}>
+          style={StyleSheet.flatten([styles.countryChip, { backgroundColor: colors.surface.panel, borderColor: colors.border.default }])}>
           <FlagBadge code={country.flag} />
           <AppText numberOfLines={1} style={styles.countryChipDial} tone="default" variant="titleMd">
             {country.dialCode}
@@ -89,7 +89,7 @@ export function CountryPickerModal({
   open: boolean;
   selected: CountryOption;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const bottomSheet = useBottomSheet();
 
   useEffect(() => {
@@ -124,7 +124,7 @@ function CountryPickerSheetContent({
   onSelect: (country: CountryOption) => void;
   selected: CountryOption;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const [query, setQuery] = useState('');
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -189,7 +189,7 @@ export function OtpInput({
   onChange: (value: string) => void;
   value: string;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const inputRef = useRef<TextInput>(null);
   const [focused, setFocused] = useState(false);
   const digits = Array.from({ length: 6 }, (_, index) => value[index] ?? '');
@@ -235,8 +235,8 @@ export function OtpInput({
               style={StyleSheet.flatten([
                 styles.otpCell,
                 {
-                  backgroundColor: palette.panel,
-                  borderColor: error ? palette.danger : active || completed ? palette.text : palette.lineSoft,
+                  backgroundColor: colors.surface.panel,
+                  borderColor: error ? colors.status.danger.fg : active || completed ? colors.text.primary : colors.border.subtle,
                   borderWidth: error || active || completed ? lineWidth.selected : lineWidth.strong,
                 },
               ])}>
@@ -343,11 +343,11 @@ export function AuthContactConfirmDialog({
   open: boolean;
   target: string;
 }) {
-  const { palette, resolvedThemeMode, t } = useProductSettings();
+  const { colors, resolvedThemeMode, t } = useProductSettings();
   const accessibilityLabel = channel === 'phone'
     ? t('auth.confirmContact.phoneAccessibility', { target })
     : t('auth.confirmContact.emailAccessibility', { target });
-  const scrimColor = `${resolvedThemeMode === 'darkTerminal' || resolvedThemeMode === 'midnightBlue' ? palette.bg : palette.text}99`;
+  const scrimColor = `${resolvedThemeMode === 'darkTerminal' || resolvedThemeMode === 'midnightBlue' ? colors.surface.canvas : colors.text.primary}99`;
 
   if (!open) {
     return null;
@@ -360,7 +360,7 @@ export function AuthContactConfirmDialog({
           <View
             accessibilityLabel={accessibilityLabel}
             accessibilityRole="alert"
-            style={StyleSheet.flatten([styles.confirmDialog, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
+            style={StyleSheet.flatten([styles.confirmDialog, { backgroundColor: colors.surface.raised, borderColor: colors.border.subtle }])}>
             <View style={styles.confirmCopyStack}>
               <View style={styles.confirmTargetRow}>
                 {channel === 'phone' && countryFlag ? <FlagBadge code={countryFlag} /> : null}
@@ -396,8 +396,8 @@ export function AuthLeaveVerifiedStepDialog({
   open: boolean;
   title: string;
 }) {
-  const { palette, resolvedThemeMode, t } = useProductSettings();
-  const scrimColor = `${resolvedThemeMode === 'darkTerminal' || resolvedThemeMode === 'midnightBlue' ? palette.bg : palette.text}99`;
+  const { colors, resolvedThemeMode, t } = useProductSettings();
+  const scrimColor = `${resolvedThemeMode === 'darkTerminal' || resolvedThemeMode === 'midnightBlue' ? colors.surface.canvas : colors.text.primary}99`;
 
   if (!open) {
     return null;
@@ -410,7 +410,7 @@ export function AuthLeaveVerifiedStepDialog({
           <View
             accessibilityLabel={`${title} ${body}`}
             accessibilityRole="alert"
-            style={StyleSheet.flatten([styles.confirmDialog, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
+            style={StyleSheet.flatten([styles.confirmDialog, { backgroundColor: colors.surface.raised, borderColor: colors.border.subtle }])}>
             <View style={styles.errorCopy}>
               <AppText style={styles.centerText} variant="subtitle">
                 {title}
@@ -431,7 +431,7 @@ export function AuthLeaveVerifiedStepDialog({
 }
 
 export function PasswordRuleList({ password }: { password: string }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const checks = getPasswordChecks(password);
   const rules = [
     ['length', t('auth.password.rule.length')],
@@ -447,7 +447,7 @@ export function PasswordRuleList({ password }: { password: string }) {
 
         return (
           <View key={key} style={styles.ruleRow}>
-            <View style={StyleSheet.flatten([styles.ruleIcon, { backgroundColor: passed ? palette.down : palette.textMuted }])}>
+            <View style={StyleSheet.flatten([styles.ruleIcon, { backgroundColor: passed ? colors.market.down.fg : colors.text.secondary }])}>
               <AppIcon tone="white" name="icon.status.check" size={10} />
             </View>
             <AppText tone={passed ? 'default' : 'muted'} variant="caption">
@@ -471,7 +471,7 @@ export function AuthErrorSheet({
   open: boolean;
   title: string;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const bottomSheet = useBottomSheet();
 
   useEffect(() => {
@@ -482,7 +482,7 @@ export function AuthErrorSheet({
     bottomSheet.show(bottomSheetPresets.actionMenu({
       content: (
         <View style={styles.errorFeedbackContent}>
-          <View style={StyleSheet.flatten([styles.errorIcon, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+          <View style={StyleSheet.flatten([styles.errorIcon, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
             <AppIcon tone="danger" name="icon.system.close" size={22} />
           </View>
           <View style={styles.errorCopy}>
@@ -507,7 +507,7 @@ export function AuthErrorSheet({
     }));
 
     return undefined;
-  }, [body, bottomSheet, onClose, open, palette.danger, palette.lineSoft, palette.panelSoft, t, title]);
+  }, [body, bottomSheet, onClose, open, colors.status.danger.fg, colors.border.subtle, colors.surface.subtle, t, title]);
 
   return null;
 }
@@ -523,8 +523,8 @@ export function AuthErrorDialog({
   open: boolean;
   title: string;
 }) {
-  const { palette, resolvedThemeMode, t } = useProductSettings();
-  const scrimColor = `${resolvedThemeMode === 'darkTerminal' || resolvedThemeMode === 'midnightBlue' ? palette.bg : palette.text}99`;
+  const { colors, resolvedThemeMode, t } = useProductSettings();
+  const scrimColor = `${resolvedThemeMode === 'darkTerminal' || resolvedThemeMode === 'midnightBlue' ? colors.surface.canvas : colors.text.primary}99`;
 
   if (!open) {
     return null;
@@ -537,9 +537,9 @@ export function AuthErrorDialog({
           <View
             accessibilityLabel={`${title} ${body}`}
             accessibilityRole="alert"
-            style={StyleSheet.flatten([styles.confirmDialog, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
+            style={StyleSheet.flatten([styles.confirmDialog, { backgroundColor: colors.surface.raised, borderColor: colors.border.subtle }])}>
             <View style={styles.errorFeedbackContent}>
-              <View style={StyleSheet.flatten([styles.errorIcon, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+              <View style={StyleSheet.flatten([styles.errorIcon, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
                 <AppIcon tone="danger" name="icon.system.close" size={22} />
               </View>
               <View style={styles.errorCopy}>

@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 
 import { AppText } from './Typography';
 import { HeaderIconButton } from './HeaderIconButton';
@@ -11,7 +11,7 @@ type BackBarProps = {
 };
 
 export function BackBar({ label }: BackBarProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
 
   return (
     <View style={styles.bar}>

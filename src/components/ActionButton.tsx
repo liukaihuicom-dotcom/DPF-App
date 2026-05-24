@@ -1,6 +1,6 @@
 import { ActivityIndicator, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth, radius, size, spacing } from '@/src/theme/tokens';
 
 import { AppIcon, type AppIconName, type IconTone } from './AppIcon';
@@ -40,96 +40,96 @@ export function ActionButton({
   style,
   variant,
 }: ActionButtonProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const legacySoftToneStyles = {
     amber: {
-      backgroundColor: `${palette.amber}12`,
-      borderColor: palette.amber,
+      backgroundColor: `${colors.status.warning.fg}12`,
+      borderColor: colors.status.warning.fg,
     },
     blue: {
-      backgroundColor: `${palette.blue}12`,
-      borderColor: palette.blue,
+      backgroundColor: `${colors.status.info.fg}12`,
+      borderColor: colors.status.info.fg,
     },
     brand: {
-      backgroundColor: palette.text,
-      borderColor: palette.text,
+      backgroundColor: colors.text.primary,
+      borderColor: colors.text.primary,
     },
     danger: {
-      backgroundColor: `${palette.danger}12`,
-      borderColor: palette.danger,
+      backgroundColor: `${colors.status.danger.fg}12`,
+      borderColor: colors.status.danger.fg,
     },
     down: {
-      backgroundColor: `${palette.down}12`,
-      borderColor: palette.down,
+      backgroundColor: `${colors.market.down.fg}12`,
+      borderColor: colors.market.down.fg,
     },
     neutral: {
-      backgroundColor: palette.panelSoft,
-      borderColor: palette.lineSoft,
+      backgroundColor: colors.surface.subtle,
+      borderColor: colors.border.subtle,
     },
     up: {
-      backgroundColor: `${palette.up}12`,
-      borderColor: palette.up,
+      backgroundColor: `${colors.market.up.fg}12`,
+      borderColor: colors.market.up.fg,
     },
   };
   const filledToneStyles = {
     amber: {
-      backgroundColor: palette.amber,
-      borderColor: palette.amber,
+      backgroundColor: colors.status.warning.fg,
+      borderColor: colors.status.warning.fg,
     },
     blue: {
-      backgroundColor: palette.blue,
-      borderColor: palette.blue,
+      backgroundColor: colors.status.info.fg,
+      borderColor: colors.status.info.fg,
     },
     brand: {
-      backgroundColor: palette.text,
-      borderColor: palette.text,
+      backgroundColor: colors.text.primary,
+      borderColor: colors.text.primary,
     },
     danger: {
-      backgroundColor: palette.danger,
-      borderColor: palette.danger,
+      backgroundColor: colors.status.danger.fg,
+      borderColor: colors.status.danger.fg,
     },
     down: {
-      backgroundColor: palette.down,
-      borderColor: palette.down,
+      backgroundColor: colors.market.down.fg,
+      borderColor: colors.market.down.fg,
     },
     neutral: {
-      backgroundColor: palette.panelSoft,
-      borderColor: palette.lineSoft,
+      backgroundColor: colors.surface.subtle,
+      borderColor: colors.border.subtle,
     },
     up: {
-      backgroundColor: palette.up,
-      borderColor: palette.up,
+      backgroundColor: colors.market.up.fg,
+      borderColor: colors.market.up.fg,
     },
   };
 
   const outlineToneStyles = {
     amber: {
       backgroundColor: 'transparent',
-      borderColor: palette.amber,
+      borderColor: colors.status.warning.fg,
     },
     blue: {
       backgroundColor: 'transparent',
-      borderColor: palette.blue,
+      borderColor: colors.status.info.fg,
     },
     brand: {
       backgroundColor: 'transparent',
-      borderColor: palette.text,
+      borderColor: colors.text.primary,
     },
     danger: {
       backgroundColor: 'transparent',
-      borderColor: palette.danger,
+      borderColor: colors.status.danger.fg,
     },
     down: {
       backgroundColor: 'transparent',
-      borderColor: palette.down,
+      borderColor: colors.market.down.fg,
     },
     neutral: {
       backgroundColor: 'transparent',
-      borderColor: palette.line,
+      borderColor: colors.border.default,
     },
     up: {
       backgroundColor: 'transparent',
-      borderColor: palette.up,
+      borderColor: colors.market.up.fg,
     },
   };
   const textToneStyles = {
@@ -202,22 +202,22 @@ export function ActionButton({
     resolvedVariant === 'filled' ? filledTextTones : resolvedVariant === 'legacySoft' ? legacySoftTextTones : outlineAndTextTones;
   const foregroundTone = disabled ? 'disabled' : toneForeground[tone];
   const textToneColors = {
-    amber: palette.amber,
-    bg: palette.bg,
-    blue: palette.blue,
-    brand: palette.brand,
-    cyan: palette.cyan,
-    danger: palette.danger,
-    default: palette.text,
-    dim: palette.textDim,
-    disabled: palette.disabledText,
-    down: palette.down,
-    link: palette.link,
-    muted: palette.textMuted,
-    panel: palette.panel,
-    panelMuted: `${palette.panel}CC`,
-    up: palette.up,
-    white: palette.white,
+    amber: colors.status.warning.fg,
+    bg: colors.surface.canvas,
+    blue: colors.status.info.fg,
+    brand: colors.brand.fg,
+    cyan: colors.accent.cyan.fg,
+    danger: colors.status.danger.fg,
+    default: colors.text.primary,
+    dim: colors.text.tertiary,
+    disabled: colors.text.disabled,
+    down: colors.market.down.fg,
+    link: colors.text.link,
+    muted: colors.text.secondary,
+    panel: colors.surface.panel,
+    panelMuted: `${colors.surface.panel}CC`,
+    up: colors.market.up.fg,
+    white: colors.text.inverse,
   } satisfies Record<AppTextTone, string>;
   const foregroundColor = textToneColors[foregroundTone];
   const iconTone: IconTone = disabled
@@ -236,18 +236,18 @@ export function ActionButton({
           ? 'text'
           : tone;
   const spinnerColor = disabled
-    ? palette.disabledText
+    ? colors.text.disabled
     : resolvedVariant === 'filled'
       ? tone === 'neutral'
-        ? palette.textMuted
+        ? colors.text.secondary
         : foregroundColor
       : foregroundColor;
   const disabledButtonStyle =
     resolvedVariant === 'text'
       ? styles.disabledTextButton
       : resolvedVariant === 'outline'
-        ? { backgroundColor: 'transparent', borderColor: palette.disabledBorder }
-        : { backgroundColor: palette.disabledSurface, borderColor: palette.disabledBorder };
+        ? { backgroundColor: 'transparent', borderColor: colors.border.disabled }
+        : { backgroundColor: colors.surface.disabled, borderColor: colors.border.disabled };
 
   return (
     <NativePressable

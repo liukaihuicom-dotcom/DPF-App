@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth, spacing } from '@/src/theme/tokens';
 
 import { AppIcon, type AppIconName } from '../AppIcon';
@@ -19,11 +19,11 @@ type DetailRowProps = {
 };
 
 export function DetailRow({ row, showDivider }: DetailRowProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const trailingIcon = row.trailingIcon === true ? 'icon.system.chevron_right' : row.trailingIcon;
 
   return (
-    <View style={StyleSheet.flatten([styles.row, showDivider && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
+    <View style={StyleSheet.flatten([styles.row, showDivider && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
       <AppText numberOfLines={1} style={styles.label} tone="muted" variant="caption">
         {row.label}
       </AppText>

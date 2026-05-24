@@ -83,7 +83,7 @@ export function TraderPortfolioScreen() {
   } = useBroker();
   const {
     locale,
-    palette,
+    colors,
     selectedTradingAccountId,
     setSelectedTradingAccountId,
     t,
@@ -500,7 +500,7 @@ export function TraderPortfolioScreen() {
             onPress={openAccountMenu}
             style={StyleSheet.flatten([
               styles.accountMenuButton,
-              { backgroundColor: palette.panelSoft },
+              { backgroundColor: colors.surface.subtle },
             ])}
           >
             <AppIcon tone="text" name="icon.market.watchlist" size={20} />
@@ -545,7 +545,7 @@ export function TraderPortfolioScreen() {
                     style={StyleSheet.flatten([
                       styles.tradeRow,
                       index < positionRows.length - 1 && {
-                        borderBottomColor: palette.lineSoft,
+                        borderBottomColor: colors.border.subtle,
                         borderBottomWidth: lineWidth.hairline,
                       },
                     ])}
@@ -633,7 +633,7 @@ export function TraderPortfolioScreen() {
                     style={StyleSheet.flatten([
                       styles.tradeRow,
                       index < pendingOrderRows.length - 1 && {
-                        borderBottomColor: palette.lineSoft,
+                        borderBottomColor: colors.border.subtle,
                         borderBottomWidth: lineWidth.hairline,
                       },
                     ])}
@@ -733,7 +733,7 @@ function OrderViewTabs({
   current: "history" | "pending" | "positions";
   onChange: (view: "history" | "pending" | "positions") => void;
 }) {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const items: { id: "history" | "pending" | "positions"; label: string }[] = [
     { id: "positions", label: locale !== "zh-CN" ? "Position" : "持仓" },
     { id: "pending", label: locale !== "zh-CN" ? "Pending" : "挂单" },
@@ -744,7 +744,7 @@ function OrderViewTabs({
     <View
       style={StyleSheet.flatten([
         styles.orderTabs,
-        { borderBottomColor: palette.lineSoft },
+        { borderBottomColor: colors.border.subtle },
       ])}
     >
       {items.map((item) => {
@@ -763,7 +763,7 @@ function OrderViewTabs({
             <View
               style={StyleSheet.flatten([
                 styles.orderTabIndicator,
-                { backgroundColor: selected ? palette.text : "transparent" },
+                { backgroundColor: selected ? colors.text.primary : "transparent" },
               ])}
             />
           </NativePressable>
@@ -784,7 +784,7 @@ function AccountMenuSheet({
   onViewBalance: () => void;
   onViewDetails: () => void;
 }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const status = getAccountStatusLabel(account.group, locale);
   const statusTone: StatusPillTone =
     account.group === "demo"
@@ -823,7 +823,7 @@ function AccountMenuSheet({
 
       <FundActionGrid items={getFundingOperationActions(t, account.id)} />
 
-      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <GlobalMenuList contained items={menuItems} />
       </View>
 
@@ -833,7 +833,7 @@ function AccountMenuSheet({
         onPress={onViewDetails}
         style={StyleSheet.flatten([
           styles.viewDetailsButton,
-          { backgroundColor: palette.panel, borderColor: palette.lineSoft },
+          { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle },
         ])}
       >
         <AppText tone="blue" variant="subtitle">
@@ -849,7 +849,7 @@ function PositionOptionsSheet({
 }: {
   onAction: (title: string) => void;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const viewModes = [
     {
       description: t("portfolio.optionByOrderDesc"),
@@ -878,7 +878,7 @@ function PositionOptionsSheet({
   return (
     <View style={styles.positionOptionsSheet}>
       <SheetGroupTitle title={t("portfolio.optionGroupViewMode")} />
-      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <GlobalMenuList
           contained
           items={viewModes.map((item) => ({
@@ -892,7 +892,7 @@ function PositionOptionsSheet({
       </View>
 
       <SheetGroupTitle title={t("portfolio.optionGroupBulkActions")} />
-      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <GlobalMenuList
           contained
           items={bulkActions.map((item) => ({
@@ -913,7 +913,7 @@ function PendingOrderOptionsSheet({
 }: {
   onAction: (title: string) => void;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const listActions = [
     {
       description: t("portfolio.pendingOptionSortDesc"),
@@ -942,7 +942,7 @@ function PendingOrderOptionsSheet({
   return (
     <View style={styles.positionOptionsSheet}>
       <SheetGroupTitle title={t("portfolio.pendingOptionGroupList")} />
-      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <GlobalMenuList
           contained
           items={listActions.map((item) => ({
@@ -956,7 +956,7 @@ function PendingOrderOptionsSheet({
       </View>
 
       <SheetGroupTitle title={t("portfolio.optionGroupBulkActions")} />
-      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.menuListInset, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <GlobalMenuList
           contained
           items={batchActions.map((item) => ({
@@ -998,7 +998,7 @@ type PendingOrderRow = {
 };
 
 function PendingOrderDetailSheet({ order }: { order: PendingOrderRow }) {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const direction = directionLabel(order.direction, locale).toLowerCase();
   const details = [
     { label: locale !== "zh-CN" ? "Symbol" : "品种", value: order.symbol },
@@ -1038,7 +1038,7 @@ function PendingOrderDetailSheet({ order }: { order: PendingOrderRow }) {
       <View
         style={StyleSheet.flatten([
           styles.positionDetailCard,
-          { backgroundColor: palette.panel, borderColor: palette.lineSoft },
+          { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle },
         ])}
       >
         <KeyValueList divided items={details} variant="detail" />
@@ -1048,7 +1048,7 @@ function PendingOrderDetailSheet({ order }: { order: PendingOrderRow }) {
 }
 
 function PositionDetailSheet({ position }: { position: PositionDetailRow }) {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const direction = directionLabel(position.direction, locale).toLowerCase();
   const details = [
     { label: locale !== "zh-CN" ? "Symbol" : "品种", value: position.symbol },
@@ -1077,7 +1077,7 @@ function PositionDetailSheet({ position }: { position: PositionDetailRow }) {
       <View
         style={StyleSheet.flatten([
           styles.positionDetailCard,
-          { backgroundColor: palette.panel, borderColor: palette.lineSoft },
+          { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle },
         ])}
       >
         <KeyValueList divided items={details} variant="detail" />
@@ -1151,7 +1151,7 @@ function HistoryOrdersView({
   onOpenOrder: (order: HistoryOrderRow) => void;
   orders: HistoryOrderRow[];
 }) {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const realized = orders.reduce((total, order) => total + order.pnl, 0);
   const volume = orders.reduce((total, order) => total + Number(order.lots), 0);
   const profitableOrders = orders.filter((order) => order.pnl >= 0).length;
@@ -1200,7 +1200,7 @@ function HistoryOrdersView({
               style={StyleSheet.flatten([
                 styles.historySummaryItem,
                 index > 0 && {
-                  borderLeftColor: palette.lineSoft,
+                  borderLeftColor: colors.border.subtle,
                   borderLeftWidth: lineWidth.hairline,
                 },
               ])}
@@ -1224,7 +1224,7 @@ function HistoryOrdersView({
             <View
               style={StyleSheet.flatten([
                 styles.legendDot,
-                { backgroundColor: palette.down },
+                { backgroundColor: colors.market.down.fg },
               ])}
             />
             <AppText tone="muted" variant="caption">
@@ -1237,7 +1237,7 @@ function HistoryOrdersView({
             <View
               style={StyleSheet.flatten([
                 styles.legendDot,
-                { backgroundColor: palette.up },
+                { backgroundColor: colors.market.up.fg },
               ])}
             />
             <AppText tone="muted" variant="caption">
@@ -1274,7 +1274,7 @@ function HistoryOrdersView({
           <View
             style={StyleSheet.flatten([
               styles.legendDot,
-              { backgroundColor: palette.down },
+              { backgroundColor: colors.market.down.fg },
             ])}
           />
           <AppText tone="muted" variant="caption">
@@ -1283,7 +1283,7 @@ function HistoryOrdersView({
           <View
             style={StyleSheet.flatten([
               styles.legendDot,
-              { backgroundColor: palette.up, marginLeft: 14 },
+              { backgroundColor: colors.market.up.fg, marginLeft: 14 },
             ])}
           />
           <AppText tone="muted" variant="caption">
@@ -1324,7 +1324,7 @@ function HistoryOrdersView({
           <View
             style={StyleSheet.flatten([
               styles.legendDot,
-              { backgroundColor: palette.amber },
+              { backgroundColor: colors.status.warning.fg },
             ])}
           />
           <AppText tone="muted" variant="caption">
@@ -1358,7 +1358,7 @@ function HistoryOrdersView({
             style={StyleSheet.flatten([
               styles.tradeRow,
               index < orders.length - 1 && {
-                borderBottomColor: palette.lineSoft,
+                borderBottomColor: colors.border.subtle,
                 borderBottomWidth: lineWidth.hairline,
               },
             ])}
@@ -1404,7 +1404,7 @@ function FilterPill({
 }
 
 function ClosedOrderDetailSheet({ order }: { order: HistoryOrderRow }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const details = [
     [t("portfolio.openTime"), order.openTime],
     [t("portfolio.closeTime"), order.closeTime],
@@ -1422,7 +1422,7 @@ function ClosedOrderDetailSheet({ order }: { order: HistoryOrderRow }) {
       <View
         style={StyleSheet.flatten([
           styles.closedOrderCard,
-          { backgroundColor: palette.panel, borderColor: palette.lineSoft },
+          { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle },
         ])}
       >
         <View style={styles.closedOrderTop}>
@@ -1465,7 +1465,7 @@ function ClosedOrderDetailSheet({ order }: { order: HistoryOrderRow }) {
       <View
         style={StyleSheet.flatten([
           styles.closedOrderCard,
-          { backgroundColor: palette.panel, borderColor: palette.lineSoft },
+          { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle },
         ])}
       >
         <AppText style={styles.dealsTitle} variant="subtitle">
@@ -1477,7 +1477,7 @@ function ClosedOrderDetailSheet({ order }: { order: HistoryOrderRow }) {
             style={StyleSheet.flatten([
               styles.dealRow,
               index < deals.length - 1 && {
-                borderBottomColor: palette.lineSoft,
+                borderBottomColor: colors.border.subtle,
                 borderBottomWidth: lineWidth.hairline,
               },
             ])}
@@ -1525,7 +1525,7 @@ function OrderSectionToolbar({
   onPress: () => void;
   subtitle: string;
 }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
   return (
     <View style={styles.orderToolbar}>
       <AppText
@@ -1542,7 +1542,7 @@ function OrderSectionToolbar({
         onPress={onPress}
         style={StyleSheet.flatten([
           styles.orderToolbarAction,
-          { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft },
+          { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle },
         ])}
       >
         <AppText numberOfLines={1} variant="caption">

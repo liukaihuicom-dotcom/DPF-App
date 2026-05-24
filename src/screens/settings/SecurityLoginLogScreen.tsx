@@ -31,7 +31,7 @@ type SummaryMetric = {
 };
 
 export default function SecurityLoginLogScreen() {
-  const { locale, palette, rememberedLoginSnapshot, t } = useProductSettings();
+  const { locale, colors, rememberedLoginSnapshot, t } = useProductSettings();
   const bottomSheet = useBottomSheet();
   const toast = useToast();
   const [devices, setDevices] = useState(() => buildSecurityLoginDevices(rememberedLoginSnapshot));
@@ -168,7 +168,7 @@ export default function SecurityLoginLogScreen() {
     <Screen align="center" back rightActions={[]} subtitle={t('securityLog.subtitle')} title={t('securityLog.title')}>
       <Card highlight>
         <View style={styles.summaryHeader}>
-          <View style={StyleSheet.flatten([styles.summaryIcon, { backgroundColor: `${palette.blue}14`, borderColor: `${palette.blue}44` }])}>
+          <View style={StyleSheet.flatten([styles.summaryIcon, { backgroundColor: `${colors.status.info.fg}14`, borderColor: `${colors.status.info.fg}44` }])}>
             <AppIcon name="icon.security.risk_shield" size={24} tone="blue" />
           </View>
           <View style={styles.flex}>
@@ -180,7 +180,7 @@ export default function SecurityLoginLogScreen() {
         </View>
         <View style={styles.summaryGrid}>
           {metrics.map((metric) => (
-            <View key={metric.label} style={StyleSheet.flatten([styles.summaryMetric, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+            <View key={metric.label} style={StyleSheet.flatten([styles.summaryMetric, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
               <AppText adjustsFontSizeToFit numberOfLines={1} tone={metric.tone ?? 'default'} variant="subtitle">
                 {metric.value}
               </AppText>
@@ -215,7 +215,7 @@ export default function SecurityLoginLogScreen() {
 }
 
 function SecurityDeviceCard({ device, formatDate, onPress }: { device: SecurityDevice; formatDate: (value: string) => string; onPress: () => void }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const activeSessions = device.sessions.filter((session) => session.status === 'active').length;
 
   return (
@@ -224,8 +224,8 @@ function SecurityDeviceCard({ device, formatDate, onPress }: { device: SecurityD
       accessibilityRole="button"
       minTouch={96}
       onPress={onPress}
-      style={StyleSheet.flatten([styles.deviceCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-      <View style={StyleSheet.flatten([styles.deviceIcon, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+      style={StyleSheet.flatten([styles.deviceCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
+      <View style={StyleSheet.flatten([styles.deviceIcon, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
         <AppIcon name={deviceIcon(device.deviceType)} size={22} tone={device.riskLevel === 'high' ? 'danger' : device.riskLevel === 'medium' ? 'amber' : 'text'} />
       </View>
       <View style={styles.deviceBody}>
@@ -243,7 +243,7 @@ function SecurityDeviceCard({ device, formatDate, onPress }: { device: SecurityD
           </View>
           <StatusPill compact label={t(`securityLog.risk.${device.riskLevel}`)} tone={riskTone(device.riskLevel)} />
         </View>
-        <View style={StyleSheet.flatten([styles.divider, { backgroundColor: palette.lineSoft }])} />
+        <View style={StyleSheet.flatten([styles.divider, { backgroundColor: colors.border.subtle }])} />
         <View style={styles.deviceMetaRow}>
           <AppText tone="muted" variant="caption">
             {t('securityLog.device.lastActive')}: {formatDate(device.lastActiveAt)}
@@ -269,7 +269,7 @@ function DeviceDetailSheet({
   onOpenConfirmReport: (event: SecurityLoginEvent) => void;
   onOpenConfirmRevoke: (session: SecuritySession) => void;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const toast = useToast();
   const riskyEvents = device.events.filter((event) => event.riskLevel !== 'low' && event.status !== 'resolved');
   const showPlaceholder = (title: string) => {
@@ -282,7 +282,7 @@ function DeviceDetailSheet({
 
   return (
     <View style={styles.sheetContent}>
-      <View style={StyleSheet.flatten([styles.detailHeaderCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.detailHeaderCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         <View style={styles.inlineRow}>
           <StatusPill compact label={t(`securityLog.risk.${device.riskLevel}`)} tone={riskTone(device.riskLevel)} />
           {device.isCurrentDevice ? <StatusPill compact label={t('securityLog.status.current')} tone="info" /> : null}
@@ -298,7 +298,7 @@ function DeviceDetailSheet({
       <View style={styles.sheetSection}>
         <AppText variant="subtitle">{t('securityLog.sessions.title')}</AppText>
         {device.sessions.map((session) => (
-          <View key={session.sessionId} style={StyleSheet.flatten([styles.recordRow, { borderColor: palette.lineSoft }])}>
+          <View key={session.sessionId} style={StyleSheet.flatten([styles.recordRow, { borderColor: colors.border.subtle }])}>
             <View style={styles.recordIcon}>
               <AppIcon name={session.status === 'revoked' ? 'icon.system.logout' : 'icon.security.lock'} size={18} tone={session.status === 'revoked' ? 'textDim' : 'blue'} />
             </View>
@@ -334,7 +334,7 @@ function DeviceDetailSheet({
       <View style={styles.sheetSection}>
         <AppText variant="subtitle">{t('securityLog.events.title')}</AppText>
         {device.events.map((event) => (
-          <View key={event.eventId} style={StyleSheet.flatten([styles.recordRow, { borderColor: palette.lineSoft }])}>
+          <View key={event.eventId} style={StyleSheet.flatten([styles.recordRow, { borderColor: colors.border.subtle }])}>
             <View style={styles.recordIcon}>
               <AppIcon name={event.riskLevel === 'low' ? 'icon.trading.history' : 'icon.security.risk_shield'} size={18} tone={event.riskLevel === 'high' ? 'danger' : event.riskLevel === 'medium' ? 'amber' : 'textDim'} />
             </View>
@@ -394,11 +394,11 @@ function ConfirmActionSheet({
   onConfirm: () => void;
   title: string;
 }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
 
   return (
     <View style={styles.confirmContent}>
-      <View style={StyleSheet.flatten([styles.confirmIcon, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.confirmIcon, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
         <AppIcon name={icon} size={24} tone={confirmTone === 'danger' ? 'danger' : 'brand'} />
       </View>
       <AppText style={styles.centerText} variant="subtitle">

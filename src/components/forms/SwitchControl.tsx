@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth, radius, size, spacing } from '@/src/theme/tokens';
 
 import { NativePressable } from '../NativePressable';
@@ -12,7 +12,7 @@ type SwitchControlProps = {
 };
 
 export function SwitchControl({ accessibilityLabel, onValueChange, value }: SwitchControlProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
 
   return (
     <NativePressable
@@ -24,11 +24,11 @@ export function SwitchControl({ accessibilityLabel, onValueChange, value }: Swit
       style={StyleSheet.flatten([
         styles.track,
         {
-          backgroundColor: value ? palette.brand : palette.panelSoft,
-          borderColor: value ? palette.brand : palette.lineSoft,
+          backgroundColor: value ? colors.brand.fg : colors.surface.subtle,
+          borderColor: value ? colors.brand.fg : colors.border.subtle,
         },
       ])}>
-      <View style={StyleSheet.flatten([styles.thumb, { backgroundColor: value ? palette.white : palette.textDim, transform: [{ translateX: value ? 18 : 0 }] }])} />
+      <View style={StyleSheet.flatten([styles.thumb, { backgroundColor: value ? colors.text.inverse : colors.text.tertiary, transform: [{ translateX: value ? 18 : 0 }] }])} />
     </NativePressable>
   );
 }

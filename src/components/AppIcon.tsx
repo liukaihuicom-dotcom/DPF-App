@@ -2,7 +2,7 @@ import { StyleProp, ViewStyle } from 'react-native';
 
 import { localIconComponents } from '@/src/icons/local/iconComponentMap';
 import { iconRegistry, resolveIconName, resolveIconTone, type AppIconName, type IconTone, type LegacyAppIconName } from '@/src/icons/iconRegistry';
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 
 type AppIconProps = {
   name: AppIconName | LegacyAppIconName;
@@ -12,10 +12,10 @@ type AppIconProps = {
 };
 
 export function AppIcon({ name, size, style, tone }: AppIconProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const resolvedName = resolveIconName(name);
   const icon = iconRegistry[resolvedName];
-  const resolvedColor = resolveIconTone(palette, tone ?? 'text');
+  const resolvedColor = resolveIconTone(colors, tone ?? 'text');
   const resolvedSize = size ?? icon.defaultSize;
   const componentKey = `${icon.sourceLibrary}:${icon.sourceIconName}` as keyof typeof localIconComponents;
   const Icon = localIconComponents[componentKey];

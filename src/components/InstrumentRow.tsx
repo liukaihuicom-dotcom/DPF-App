@@ -19,13 +19,13 @@ type InstrumentRowProps = {
 };
 
 export function InstrumentRow({ instrument, showDivider = true }: InstrumentRowProps) {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const { changePercent } = getDisplayChange(instrument);
-  const quoteVisual = getQuoteChangeVisual(changePercent, palette);
+  const quoteVisual = getQuoteChangeVisual(changePercent, colors);
 
   return (
     <Link asChild href={`/instrument/${instrument.id}`}>
-      <NativePressable style={StyleSheet.flatten([styles.row, showDivider && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
+      <NativePressable style={StyleSheet.flatten([styles.row, showDivider && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
         <InstrumentIcon instrument={instrument} size={36} />
         <View style={styles.identity}>
           <AppText variant="subtitle">{instrument.symbol}</AppText>

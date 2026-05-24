@@ -26,7 +26,7 @@ type TransactionRowProps<T extends TransactionListRow> = {
   getStatusLabel: (transaction: T) => string;
   getTone: (transaction: T) => StatusPillTone;
   onPress: () => void;
-  resolveColor: (transaction: T, palette: ReturnType<typeof useProductSettings>['palette']) => string;
+  resolveColor: (transaction: T, colors: ReturnType<typeof useProductSettings>['colors']) => string;
   resolveIconTone: (transaction: T) => IconTone;
   showDivider?: boolean;
   transaction: T;
@@ -44,9 +44,9 @@ export function TransactionRow<T extends TransactionListRow>({
   showDivider,
   transaction,
 }: TransactionRowProps<T>) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const icon = getIcon(transaction);
-  const color = resolveColor(transaction, palette);
+  const color = resolveColor(transaction, colors);
 
   return (
     <NativePressable
@@ -54,7 +54,7 @@ export function TransactionRow<T extends TransactionListRow>({
       accessibilityRole="button"
       minTouch={58}
       onPress={onPress}
-      style={StyleSheet.flatten([styles.row, showDivider && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
+      style={StyleSheet.flatten([styles.row, showDivider && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
       <View style={StyleSheet.flatten([styles.icon, { backgroundColor: `${color}14` }])}>
         <AppIcon name={icon} size={18} tone={resolveIconTone(transaction)} />
       </View>

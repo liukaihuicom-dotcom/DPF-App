@@ -14,7 +14,7 @@ import { normalizeDiscoverLayoutItems, type DiscoverLayoutItem } from '@/src/dom
 import type { Locale, TranslationKey } from '@/src/i18n/translations';
 import { translations } from '@/src/i18n/translations';
 import type { ProfileAvatarId } from '@/src/components/ProfileAvatar';
-import { themePalettes, type ResolvedThemeMode, type ThemeMode, type ThemePalette } from '@/src/theme/colors';
+import { themeColors, type ResolvedThemeMode, type ThemeColors, type ThemeMode } from '@/src/theme/colors';
 import type { AuthChannel, AuthStatus, DiscoverModuleId, KycStatus, PinStatus, Role, TradeWorkspaceDataPreset, TradingAccountUsageOverride } from '@/src/domain/types';
 
 const STORAGE_KEY = 'dupoin-mvp-product-settings';
@@ -71,7 +71,9 @@ type ProductSettings = {
   locale: Locale;
   localPinCode: string;
   kycStatus: KycStatus;
-  palette: ThemePalette;
+  colors: ThemeColors;
+  /** @deprecated Use colors. */
+  palette: ThemeColors;
   pinGateStatus: 'locked' | 'unlocked';
   pinStatus: PinStatus;
   resolvedThemeMode: ResolvedThemeMode;
@@ -182,7 +184,7 @@ function isKycStatus(value: unknown): value is KycStatus {
 }
 
 function isThemeMode(value: unknown): value is ThemeMode {
-  return typeof value === 'string' && (value === 'system' || value in themePalettes);
+  return typeof value === 'string' && (value === 'system' || value in themeColors);
 }
 
 function readStoredDiscoverModules(stored: Record<string, unknown>): Record<Role, DiscoverModuleId> {
@@ -528,7 +530,8 @@ export function ProductSettingsProvider({ children }: PropsWithChildren) {
       kycStatus,
       locale,
       localPinCode,
-      palette: themePalettes[resolvedThemeMode],
+      colors: themeColors[resolvedThemeMode],
+      palette: themeColors[resolvedThemeMode],
       pinGateStatus,
       pinStatus,
       pendingOrderDataPreset,
@@ -630,6 +633,11 @@ export function useI18n() {
   return { locale, t };
 }
 
+export function useThemeColors() {
+  return useProductSettings().colors;
+}
+
+/** @deprecated Use useThemeColors(). */
 export function useThemePalette() {
-  return useProductSettings().palette;
+  return useThemeColors();
 }

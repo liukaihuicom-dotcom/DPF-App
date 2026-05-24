@@ -1,8 +1,8 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Modal, Platform, StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
-import type { ThemePalette } from '@/src/theme/colors';
+import { useThemeColors } from '@/src/settings/ProductSettings';
+import type { ThemeColors } from '@/src/theme/colors';
 import { lineWidth, radius, size, spacing, typography } from '@/src/theme/tokens';
 
 import { AppIcon, type AppIconName, type IconTone } from './AppIcon';
@@ -102,7 +102,7 @@ export function TextField({
   variant = 'neutral',
   ...props
 }: TextFieldProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const inputRef = useRef<TextInput>(null);
   const [focused, setFocused] = useState(false);
   const fieldEditable = editable !== false && !disabled && !readonly;
@@ -115,7 +115,7 @@ export function TextField({
     value,
   });
   const active = labelHidden || focused || hasTextValue(value) || hasTextValue(props.defaultValue);
-  const stateColors = getFieldStateColors(palette, resolvedState);
+  const stateColors = getFieldStateColors(colors, resolvedState);
   const stateTones = getFieldStateTextTones(resolvedState);
   const stateBorderWidth = getFieldBorderWidth(resolvedState);
   const statePaddingOffset = stateBorderWidth - fieldBaseBorderWidth;
@@ -192,8 +192,8 @@ export function TextField({
               onFocus?.(event);
             }}
             placeholder={inputPlaceholder}
-            placeholderTextColor={placeholderTextColor ?? palette.textDim}
-            selectionColor={palette.brand}
+            placeholderTextColor={placeholderTextColor ?? colors.text.tertiary}
+            selectionColor={colors.brand.fg}
             style={StyleSheet.flatten([
               styles.input,
               !labelHidden && styles.inputFloating,
@@ -234,14 +234,14 @@ export function SelectField({
   value,
   variant: _variant = 'neutral',
 }: SelectFieldProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const shellRef = useRef<View>(null);
   const [focused, setFocused] = useState(false);
   const [open, setOpen] = useState(false);
   const [menuFrame, setMenuFrame] = useState<SelectMenuFrame | null>(null);
   const selected = options.find((item) => item.value === value);
   const resolvedState = resolveFieldState({ disabled, error, fieldState, focused: focused || open, readonly, value });
-  const stateColors = getFieldStateColors(palette, resolvedState);
+  const stateColors = getFieldStateColors(colors, resolvedState);
   const stateTones = getFieldStateTextTones(resolvedState);
   const stateBorderWidth = getFieldBorderWidth(resolvedState);
   const statePaddingOffset = stateBorderWidth - fieldBaseBorderWidth;
@@ -362,7 +362,7 @@ export function SelectField({
               style={StyleSheet.flatten([
                 styles.webSelectMenu,
                 menuFrame ? getWebSelectMenuFrameStyle(menuFrame) : null,
-                { backgroundColor: palette.panelHigh, borderColor: palette.line },
+                { backgroundColor: colors.surface.raised, borderColor: colors.border.default },
               ])}>
               {placeholder ? (
                 <SelectOptionRow
@@ -448,7 +448,7 @@ function SelectOptionRow({
   onPress: () => void;
   selected: boolean;
 }) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
 
   return (
     <NativePressable
@@ -461,8 +461,8 @@ function SelectOptionRow({
       style={StyleSheet.flatten([
         styles.webSelectOption,
         {
-          backgroundColor: selected ? `${palette.brand}14` : 'transparent',
-          borderColor: selected ? palette.brand : 'transparent',
+          backgroundColor: selected ? `${colors.brand.fg}14` : 'transparent',
+          borderColor: selected ? colors.brand.fg : 'transparent',
         },
       ])}>
       <AppText numberOfLines={1} tone={selected ? 'brand' : disabled ? 'dim' : 'default'} variant="caption">
@@ -564,58 +564,58 @@ function resolveFieldState({
   return 'default';
 }
 
-function getFieldStateColors(palette: ThemePalette, state: FormFieldState) {
+function getFieldStateColors(colors: ThemeColors, state: FormFieldState) {
   const base = {
-    background: palette.panel,
-    border: palette.line,
-    icon: palette.textDim,
-    input: palette.text,
-    label: palette.textDim,
+    background: colors.surface.panel,
+    border: colors.border.default,
+    icon: colors.text.tertiary,
+    input: colors.text.primary,
+    label: colors.text.tertiary,
   };
 
   if (state === 'disabled') {
     return {
       ...base,
-      background: palette.panelSoft,
-      border: palette.lineSoft,
-      icon: palette.textDim,
-      input: palette.textDim,
-      label: palette.textDim,
+      background: colors.surface.subtle,
+      border: colors.border.subtle,
+      icon: colors.text.tertiary,
+      input: colors.text.tertiary,
+      label: colors.text.tertiary,
     };
   }
 
   if (state === 'error') {
     return {
       ...base,
-      border: palette.danger,
-      icon: palette.danger,
-      label: palette.danger,
+      border: colors.status.danger.fg,
+      icon: colors.status.danger.fg,
+      label: colors.status.danger.fg,
     };
   }
 
   if (state === 'validating') {
     return {
       ...base,
-      border: palette.amber,
-      icon: palette.textDim,
-      label: palette.textMuted,
+      border: colors.status.warning.fg,
+      icon: colors.text.tertiary,
+      label: colors.text.secondary,
     };
   }
 
   if (state === 'success') {
     return {
       ...base,
-      border: palette.down,
-      icon: palette.textDim,
-      label: palette.textMuted,
+      border: colors.market.down.fg,
+      icon: colors.text.tertiary,
+      label: colors.text.secondary,
     };
   }
 
   if (state === 'focused' || state === 'readonly') {
     return {
       ...base,
-      border: state === 'readonly' ? palette.line : palette.text,
-      label: palette.textMuted,
+      border: state === 'readonly' ? colors.border.default : colors.text.primary,
+      label: colors.text.secondary,
     };
   }
 

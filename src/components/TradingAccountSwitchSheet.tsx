@@ -74,7 +74,7 @@ function SwitchAccountCard({
   profile: TradingAccountProfile;
   selected: boolean;
 }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const status = getAccountStatusLabel(profile.group, locale);
   const statusTone = getAccountStatusTone(profile);
   const title = `${t('accountDetails.accountNo')} ${profile.accountNo}`;
@@ -93,13 +93,13 @@ function SwitchAccountCard({
         styles.card,
         mode === 'compact' && styles.compactCard,
         {
-          backgroundColor: disabled ? palette.disabledSurface : palette.panel,
-          borderColor: selected ? palette.textDim : disabled ? palette.disabledBorder : palette.lineSoft,
+          backgroundColor: disabled ? colors.surface.disabled : colors.surface.panel,
+          borderColor: selected ? colors.text.tertiary : disabled ? colors.border.disabled : colors.border.subtle,
           borderWidth,
           padding: spacing.lg - paddingOffset,
         },
       ])}>
-      <View style={StyleSheet.flatten([styles.iconWrap, { backgroundColor: disabled ? palette.panel : palette.panelSoft }])}>
+      <View style={StyleSheet.flatten([styles.iconWrap, { backgroundColor: disabled ? colors.surface.panel : colors.surface.subtle }])}>
         <AppIcon tone={disabled ? 'disabled' : 'text'} name="icon.account.trading" size={18} />
       </View>
       <View style={styles.cardBody}>
@@ -119,8 +119,8 @@ function SwitchAccountCard({
             </View>
           </View>
           {mode === 'detailed' ? (
-            <View style={StyleSheet.flatten([styles.radio, { borderColor: selected ? palette.text : palette.textDim }])}>
-              {selected ? <View style={StyleSheet.flatten([styles.radioDot, { backgroundColor: palette.text }])} /> : null}
+            <View style={StyleSheet.flatten([styles.radio, { borderColor: selected ? colors.text.primary : colors.text.tertiary }])}>
+              {selected ? <View style={StyleSheet.flatten([styles.radioDot, { backgroundColor: colors.text.primary }])} /> : null}
             </View>
           ) : (
             <AppText numberOfLines={1} tone="muted" variant="caption">
@@ -165,16 +165,16 @@ function CompactAccountMeta({ disabledReason, profile, status }: { disabledReaso
 }
 
 function DetailedAccountStats({ profile }: { profile: TradingAccountProfile }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
 
   return (
     <>
-      <View style={StyleSheet.flatten([styles.divider, { backgroundColor: palette.lineSoft }])} />
+      <View style={StyleSheet.flatten([styles.divider, { backgroundColor: colors.border.subtle }])} />
       <View style={styles.values}>
         <ValueCell label={t('account.equity')} value={formatMoney(profile.equity, profile.currency, 2, locale)} />
         <ValueCell label={t('portfolio.unrealizedPnl')} tone={profile.unrealizedPnl >= 0 ? 'down' : 'up'} value={formatMoney(profile.unrealizedPnl, profile.currency, 2, locale)} />
       </View>
-      <View style={StyleSheet.flatten([styles.divider, { backgroundColor: palette.lineSoft }])} />
+      <View style={StyleSheet.flatten([styles.divider, { backgroundColor: colors.border.subtle }])} />
       <AppText tone="muted" variant="caption">
         {t('accountDetails.lastTrade')} {profile.lastTrade}
       </AppText>

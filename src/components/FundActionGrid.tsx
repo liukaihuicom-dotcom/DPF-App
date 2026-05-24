@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { getFundingOperationActions, type FundingOperation, type FundingOperationTone } from '@/src/domain/funding';
 import type { TranslationKey } from '@/src/i18n/translations';
 import { useProductSettings } from '@/src/settings/ProductSettings';
-import type { ThemePalette } from '@/src/theme/colors';
+import type { ThemeColors } from '@/src/theme/colors';
 import { lineWidth, layout, spacing } from '@/src/theme/tokens';
 
 import { AppIcon, type AppIconName, type IconTone } from './AppIcon';
@@ -29,9 +29,9 @@ type FundActionGridProps = {
 };
 
 export function FundActionGrid({ accountId, items }: FundActionGridProps) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const actionItems = items ?? getDefaultFundActions(t, accountId);
-  const businessToneMap = getFundActionToneMap(palette);
+  const businessToneMap = getFundActionToneMap(colors);
   const iconToneByTone: Record<FundActionTone, IconTone | string> = {
     blue: 'blue',
     brand: 'brand',
@@ -52,7 +52,7 @@ export function FundActionGrid({ accountId, items }: FundActionGridProps) {
             key={item.label}
             minTouch={72}
             onPress={onPress}
-            style={StyleSheet.flatten([styles.tile, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+            style={StyleSheet.flatten([styles.tile, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
             <View style={styles.icon}>
               <AppIcon name={item.icon} size={layout.fundActionIconSize} tone={iconToneByTone[item.tone]} />
             </View>
@@ -70,11 +70,11 @@ export function getDefaultFundActions(t: (key: TranslationKey) => string, accoun
   return getFundingOperationActions(t, accountId);
 }
 
-function getFundActionToneMap(palette: ThemePalette): Record<FundingOperationTone, string> {
+function getFundActionToneMap(colors: ThemeColors): Record<FundingOperationTone, string> {
   return {
-    deposit: palette.down,
-    transfer: palette.blue,
-    withdraw: palette.amber,
+    deposit: colors.market.down.fg,
+    transfer: colors.status.info.fg,
+    withdraw: colors.status.warning.fg,
   };
 }
 

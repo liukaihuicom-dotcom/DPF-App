@@ -18,7 +18,7 @@ const keypadItems = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'empty', '0', 
 
 export default function PinSetupScreen() {
   const params = useLocalSearchParams<{ mode?: string; redirect?: string }>();
-  const { localPinCode, palette, resolvedThemeMode, setAuthStatus, setLocalPinCode, setPinGateStatus, setPinStatus, t } = useProductSettings();
+  const { localPinCode, colors, resolvedThemeMode, setAuthStatus, setLocalPinCode, setPinGateStatus, setPinStatus, t } = useProductSettings();
   const flowMode = params.mode === 'unlock' && localPinCode.length === pinLength ? 'unlock' : 'setup';
   const [phase, setPhase] = useState<'create' | 'confirm' | 'unlock'>(flowMode === 'unlock' ? 'unlock' : 'create');
   const [pin, setPin] = useState('');
@@ -27,7 +27,7 @@ export default function PinSetupScreen() {
   const [errorOpen, setErrorOpen] = useState(false);
   const redirect = safeRedirect(typeof params.redirect === 'string' ? params.redirect : undefined);
   const currentValue = phase === 'create' ? pin : phase === 'confirm' ? confirmPin : unlockPin;
-  const backgroundColor = resolvedThemeMode === 'lightBroker' ? palette.panel : palette.bg;
+  const backgroundColor = resolvedThemeMode === 'lightBroker' ? colors.surface.panel : colors.surface.canvas;
 
   const prompt = useMemo(
     () => ({
@@ -151,7 +151,7 @@ export default function PinSetupScreen() {
             {Array.from({ length: pinLength }, (_, index) => {
               const filled = index < currentValue.length;
 
-              return <View key={index} style={StyleSheet.flatten([styles.pinDot, { backgroundColor: filled ? palette.text : palette.line }])} />;
+              return <View key={index} style={StyleSheet.flatten([styles.pinDot, { backgroundColor: filled ? colors.text.primary : colors.border.default }])} />;
             })}
           </View>
 
@@ -175,7 +175,7 @@ export default function PinSetupScreen() {
                   minTouch={64}
                   onPress={deleteDigit}
                   pressedStyle={styles.keyPressed}
-                  style={StyleSheet.flatten([styles.key, styles.keyButton, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+                  style={StyleSheet.flatten([styles.key, styles.keyButton, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
                   <AppIcon tone="textDim" name="icon.system.back" size={22} />
                 </NativePressable>
               );
@@ -188,7 +188,7 @@ export default function PinSetupScreen() {
                 minTouch={64}
                 onPress={() => pressDigit(item)}
                 pressedStyle={styles.keyPressed}
-                style={StyleSheet.flatten([styles.key, styles.keyButton, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+                style={StyleSheet.flatten([styles.key, styles.keyButton, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
                 <AppText style={styles.keyText} variant="displayLg">
                   {item}
                 </AppText>

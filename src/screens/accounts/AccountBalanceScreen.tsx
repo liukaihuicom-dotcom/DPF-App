@@ -18,6 +18,7 @@ import { formatMoney } from '@/src/domain/format';
 import type { Locale } from '@/src/i18n/translations';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
+import { resolveThemeTone } from '@/src/theme/colors';
 import { lineWidth, radius, spacing } from '@/src/theme/tokens';
 import type { Transaction, TransactionStatus } from '@/src/domain/types';
 
@@ -40,7 +41,7 @@ export default function AccountBalanceScreen() {
   const { account, positions } = useBroker();
   const {
     locale,
-    palette,
+    colors,
     t,
     tradingAccountCountPreset,
     tradingAccountDataPreset,
@@ -95,12 +96,12 @@ export default function AccountBalanceScreen() {
           <NativePressable
             accessibilityLabel={t('balance.period.last7')}
             minTouch={36}
-            style={StyleSheet.flatten([styles.periodButton, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+            style={StyleSheet.flatten([styles.periodButton, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
             <AppText variant="caption">{t('balance.period.last7')}</AppText>
             <AppIcon tone="textDim" name="icon.system.chevron_down" size={13} />
           </NativePressable>
         </View>
-        <View style={StyleSheet.flatten([styles.snapshotGrid, { borderTopColor: palette.lineSoft }])}>
+        <View style={StyleSheet.flatten([styles.snapshotGrid, { borderTopColor: colors.border.subtle }])}>
           <MiniMetric label={t('balance.currentBalance')} value={formatMoney(profile.balance, profile.currency, 0, locale)} variant="snapshot" />
           <MiniMetric label={t('balance.available')} value={formatMoney(profile.freeMargin, profile.currency, 0, locale)} variant="snapshot" />
           <MiniMetric label={t('balance.netCashFlow')} tone={netCashFlow >= 0 ? 'down' : 'up'} value={formatSignedMoney(netCashFlow, profile.currency, locale, 0)} variant="snapshot" />
@@ -153,7 +154,7 @@ export default function AccountBalanceScreen() {
               <AppText tone="muted" variant="caption">
                 {group.label}
               </AppText>
-              <View style={StyleSheet.flatten([styles.transactionList, { borderColor: palette.lineSoft }])}>
+              <View style={StyleSheet.flatten([styles.transactionList, { borderColor: colors.border.subtle }])}>
                 {group.rows.map((transaction, index) => (
                   <TransactionRow
                     currency={profile.currency}
@@ -179,12 +180,12 @@ export default function AccountBalanceScreen() {
 }
 
 function FundingTotal({ label, tone, value }: { label: string; tone: Extract<IconTone, 'amber' | 'down'>; value: string }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
 
   return (
     <View style={styles.totalCell}>
       <View style={styles.totalLabelRow}>
-        <View style={StyleSheet.flatten([styles.legendDot, { backgroundColor: palette[tone] }])} />
+        <View style={StyleSheet.flatten([styles.legendDot, { backgroundColor: resolveThemeTone(colors, tone) }])} />
         <AppText numberOfLines={1} tone="muted" variant="caption">
           {label}
         </AppText>
@@ -197,14 +198,14 @@ function FundingTotal({ label, tone, value }: { label: string; tone: Extract<Ico
 }
 
 function FundingChart({ points }: { points: TrendPoint[] }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
   const maxValue = Math.max(...points.flatMap((point) => [point.deposit, point.withdrawal]), 1);
 
   return (
     <View style={styles.chartWrap}>
       <View style={styles.chartGrid}>
         {[0, 1, 2].map((line) => (
-          <View key={line} style={StyleSheet.flatten([styles.gridLine, { backgroundColor: palette.lineSoft }])} />
+          <View key={line} style={StyleSheet.flatten([styles.gridLine, { backgroundColor: colors.border.subtle }])} />
         ))}
       </View>
       <View style={styles.chartColumns}>
@@ -214,13 +215,13 @@ function FundingChart({ points }: { points: TrendPoint[] }) {
               <View
                 style={StyleSheet.flatten([
                   styles.chartBar,
-                  { backgroundColor: palette.down, height: resolveBarHeight(point.deposit, maxValue) },
+                  { backgroundColor: colors.market.down.fg, height: resolveBarHeight(point.deposit, maxValue) },
                 ])}
               />
               <View
                 style={StyleSheet.flatten([
                   styles.chartBar,
-                  { backgroundColor: palette.amber, height: resolveBarHeight(point.withdrawal, maxValue) },
+                  { backgroundColor: colors.status.warning.fg, height: resolveBarHeight(point.withdrawal, maxValue) },
                 ])}
               />
             </View>
@@ -235,7 +236,7 @@ function FundingChart({ points }: { points: TrendPoint[] }) {
 }
 
 function FilterButton({ current, item, onPress }: { current: BalanceFilter; item: BalanceFilter; onPress: () => void }) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const selected = current === item;
 
   return (
@@ -245,7 +246,7 @@ function FilterButton({ current, item, onPress }: { current: BalanceFilter; item
       onPress={onPress}
       style={StyleSheet.flatten([
         styles.filterButton,
-        { backgroundColor: selected ? palette.text : palette.panelSoft, borderColor: selected ? palette.text : palette.lineSoft },
+        { backgroundColor: selected ? colors.text.primary : colors.surface.subtle, borderColor: selected ? colors.text.primary : colors.border.subtle },
       ])}>
       <AppText tone={selected ? 'panel' : 'muted'} variant="caption">
         {t(`balance.filter.${item}`)}
@@ -265,9 +266,9 @@ function TransactionDetailSheet({
   profile: TradingAccountProfile;
   transaction: BalanceTransaction;
 }) {
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const statusTone = getTransactionTone(transaction);
-  const statusColor = resolveStatusColor(transaction.status, palette);
+  const statusOverlay = resolveStatusOverlay(transaction.status, colors);
   const completedValue = resolveCompletedAmount(transaction, currency, locale, t('balance.detail.pending'), t('balance.detail.notAvailable'));
   const reviewTimeLabel = transaction.status === 'completed' ? t('balance.detail.completeTime') : t('balance.detail.reviewTime');
   const reviewTimeValue =
@@ -288,8 +289,8 @@ function TransactionDetailSheet({
 
   return (
     <View style={styles.detailSheet}>
-      <View style={StyleSheet.flatten([styles.detailHero, { backgroundColor: `${statusColor}10`, borderColor: `${statusColor}44` }])}>
-        <View style={StyleSheet.flatten([styles.detailStatusIcon, { backgroundColor: `${statusColor}16`, borderColor: `${statusColor}44` }])}>
+      <View style={StyleSheet.flatten([styles.detailHero, { backgroundColor: statusOverlay.muted, borderColor: statusOverlay.strong }])}>
+        <View style={StyleSheet.flatten([styles.detailStatusIcon, { backgroundColor: statusOverlay.subtle, borderColor: statusOverlay.strong }])}>
           <AppIcon name={getDetailStatusIcon(transaction.status)} size={22} tone={resolveStatusIconTone(transaction.status)} />
         </View>
         <StatusPill icon={getDetailStatusIcon(transaction.status)} label={t(`balance.detail.status.${transaction.status}`)} tone={statusTone} />
@@ -301,7 +302,7 @@ function TransactionDetailSheet({
         </AppText>
       </View>
 
-      <View style={StyleSheet.flatten([styles.detailRows, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.detailRows, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
         {detailRows.map((row, index) => (
           <DetailRow key={`${row.label}-${row.value}`} row={row} showDivider={index < detailRows.length - 1} />
         ))}
@@ -409,16 +410,16 @@ function getDetailStatusIcon(status: TransactionStatus): AppIconName {
   return 'icon.trading.history';
 }
 
-function resolveStatusColor(status: TransactionStatus, palette: ReturnType<typeof useProductSettings>['palette']) {
+function resolveStatusOverlay(status: TransactionStatus, colors: ReturnType<typeof useProductSettings>['colors']) {
   if (status === 'completed') {
-    return palette.down;
+    return colors.overlay.down;
   }
 
   if (status === 'rejected') {
-    return palette.danger;
+    return colors.overlay.danger;
   }
 
-  return palette.amber;
+  return colors.overlay.warning;
 }
 
 function resolveStatusIconTone(status: TransactionStatus): IconTone {
@@ -433,16 +434,16 @@ function resolveStatusIconTone(status: TransactionStatus): IconTone {
   return 'amber';
 }
 
-function resolveTransactionColor(transaction: Transaction, palette: ReturnType<typeof useProductSettings>['palette']) {
+function resolveTransactionColor(transaction: Transaction, colors: ReturnType<typeof useProductSettings>['colors']) {
   if (transaction.type === 'withdrawal') {
-    return palette.amber;
+    return colors.status.warning.fg;
   }
 
   if (transaction.type === 'adjustment') {
-    return palette.blue;
+    return colors.status.info.fg;
   }
 
-  return palette.down;
+  return colors.market.down.fg;
 }
 
 function resolveTransactionIconTone(transaction: Transaction): IconTone {

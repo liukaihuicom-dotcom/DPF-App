@@ -57,8 +57,8 @@ export function AuthShell({
   subtitle,
   title,
 }: AuthShellProps) {
-  const { palette, resolvedThemeMode, t } = useProductSettings();
-  const backgroundColor = resolvedThemeMode === 'lightBroker' ? palette.panel : palette.bg;
+  const { colors, resolvedThemeMode, t } = useProductSettings();
+  const backgroundColor = resolvedThemeMode === 'lightBroker' ? colors.surface.panel : colors.surface.canvas;
 
   const body = (
     <SafeAreaView edges={['top']} style={StyleSheet.flatten([styles.safe, { backgroundColor }])}>
@@ -124,7 +124,7 @@ export function AuthShell({
 }
 
 function AuthProgressBar({ current, total }: { current: number; total: number }) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
   const normalizedCurrent = Math.max(1, Math.min(current, total));
 
   return (
@@ -135,7 +135,7 @@ function AuthProgressBar({ current, total }: { current: number; total: number })
           style={StyleSheet.flatten([
             styles.progressSegment,
             {
-              backgroundColor: index < normalizedCurrent ? palette.text : palette.lineSoft,
+              backgroundColor: index < normalizedCurrent ? colors.text.primary : colors.border.subtle,
             },
           ])}
         />

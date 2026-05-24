@@ -17,7 +17,7 @@ type InstrumentIconProps = {
 type InstrumentIconKind = InstrumentAssetClass | 'unknown';
 
 export function InstrumentIcon({ instrument, size = 36, style, symbol }: InstrumentIconProps) {
-  const { palette } = useProductSettings();
+  const { colors } = useProductSettings();
   const normalizedSymbol = normalizeSymbol(instrument?.symbol ?? symbol);
   const kind = resolveIconKind(instrument, normalizedSymbol);
 
@@ -28,8 +28,8 @@ export function InstrumentIcon({ instrument, size = 36, style, symbol }: Instrum
 
     return (
       <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={StyleSheet.flatten([styles.root, { height: size, width: size }, style])}>
-        <CurrencyMedallion currency={base} size={flagSize} style={[styles.baseFlag, { borderColor: palette.panel }]} />
-        <CurrencyMedallion currency={quote} size={flagSize} style={[styles.quoteFlag, { borderColor: palette.panel }]} />
+        <CurrencyMedallion currency={base} size={flagSize} style={[styles.baseFlag, { borderColor: colors.surface.panel }]} />
+        <CurrencyMedallion currency={quote} size={flagSize} style={[styles.quoteFlag, { borderColor: colors.surface.panel }]} />
       </View>
     );
   }
@@ -41,7 +41,7 @@ export function InstrumentIcon({ instrument, size = 36, style, symbol }: Instrum
     <View
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={StyleSheet.flatten([styles.assetShell, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft, borderRadius: size / 2, height: size, width: size }, style])}>
+      style={StyleSheet.flatten([styles.assetShell, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle, borderRadius: size / 2, height: size, width: size }, style])}>
       <AppIcon name={assetIcon} size={Math.max(20, Math.round(size * 0.55))} tone={assetTone} />
     </View>
   );

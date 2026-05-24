@@ -19,7 +19,7 @@ import type { Locale, TranslationKey } from '@/src/i18n/translations';
 import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
-import type { ThemePalette } from '@/src/theme/colors';
+import type { ThemeColors } from '@/src/theme/colors';
 import { lineWidth, typography } from '@/src/theme/tokens';
 
 type Timeframe = '1D' | '1W' | '1M' | '3M' | '1Y';
@@ -34,7 +34,7 @@ const detailTabs: { id: DetailTabKey; labelKey: 'instrument.tab.chart' | 'instru
 export default function InstrumentDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { findInstrument } = useBroker();
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const toast = useToast();
   const { width } = useWindowDimensions();
   const [selectedTab, setSelectedTab] = useState<DetailTabKey>('chart');
@@ -53,7 +53,7 @@ export default function InstrumentDetailScreen() {
   }
 
   const { change, changePercent } = getDisplayChange(instrument);
-  const quoteVisual = getQuoteChangeVisual(changePercent, palette);
+  const quoteVisual = getQuoteChangeVisual(changePercent, colors);
   const chartWidth = Math.min(Math.max(width - 48, 312), 382);
   const sampleLots = instrument.symbol === 'XAU/USD' ? 0.2 : 0.1;
   const weekHigh = Math.max(instrument.dayHigh, ...instrument.sparkline);
@@ -71,15 +71,15 @@ export default function InstrumentDetailScreen() {
   };
 
   return (
-    <View style={StyleSheet.flatten([styles.shell, { backgroundColor: palette.bg }])}>
+    <View style={StyleSheet.flatten([styles.shell, { backgroundColor: colors.surface.canvas }])}>
       <Stack.Screen options={{ title: instrument.symbol }} />
       <SafeAreaView edges={['top']} style={styles.safe}>
         <ScrollView
           contentContainerStyle={styles.content}
           contentInsetAdjustmentBehavior="never"
           showsVerticalScrollIndicator={false}
-          style={StyleSheet.flatten([styles.scroller, { backgroundColor: palette.bg }])}>
-          <View style={StyleSheet.flatten([styles.detailPage, { backgroundColor: palette.panel }])}>
+          style={StyleSheet.flatten([styles.scroller, { backgroundColor: colors.surface.canvas }])}>
+          <View style={StyleSheet.flatten([styles.detailPage, { backgroundColor: colors.surface.panel }])}>
             <View style={styles.pageActions}>
               <HeaderIconButton
                 accessibilityLabel={t('top.back')}
@@ -91,7 +91,7 @@ export default function InstrumentDetailScreen() {
                 tone="default"
               />
 
-              <View style={StyleSheet.flatten([styles.actionCapsule, { backgroundColor: palette.panelSoft, borderColor: palette.line }])}>
+              <View style={StyleSheet.flatten([styles.actionCapsule, { backgroundColor: colors.surface.subtle, borderColor: colors.border.default }])}>
                 <HeaderIconButton
                   accessibilityLabel={t('instrument.share')}
                   icon="icon.ib.network"
@@ -130,25 +130,25 @@ export default function InstrumentDetailScreen() {
                   {formatPrice(instrument, change)} ({formatPercent(changePercent)})
                 </AppText>
               </View>
-              <QuoteStat label={t('instrument.dayHigh')} palette={palette} tone="down" value={formatPrice(instrument, instrument.dayHigh)} />
+              <QuoteStat label={t('instrument.dayHigh')} colors={colors} tone="down" value={formatPrice(instrument, instrument.dayHigh)} />
             </View>
 
             <View style={styles.quoteInfoGrid}>
               <View style={styles.quoteInfoColumn}>
-                <QuoteStat label={t('instrument.open')} palette={palette} value={formatPrice(instrument, instrument.previousClose)} />
-                <QuoteStat label={t('instrument.prevClose')} palette={palette} value={formatPrice(instrument, instrument.previousClose)} />
+                <QuoteStat label={t('instrument.open')} colors={colors} value={formatPrice(instrument, instrument.previousClose)} />
+                <QuoteStat label={t('instrument.prevClose')} colors={colors} value={formatPrice(instrument, instrument.previousClose)} />
               </View>
               <View style={styles.quoteInfoColumn}>
-                <QuoteStat label={t('instrument.dayLow')} palette={palette} tone="up" value={formatPrice(instrument, instrument.dayLow)} />
-                <QuoteStat label={t('instrument.weekHigh')} palette={palette} value={formatPrice(instrument, weekHigh)} />
+                <QuoteStat label={t('instrument.dayLow')} colors={colors} tone="up" value={formatPrice(instrument, instrument.dayLow)} />
+                <QuoteStat label={t('instrument.weekHigh')} colors={colors} value={formatPrice(instrument, weekHigh)} />
               </View>
               <View style={styles.quoteInfoColumn}>
-                <QuoteStat label={t('instrument.weekLow')} palette={palette} value={formatPrice(instrument, weekLow)} />
-                <QuoteStat label={t('common.spread')} palette={palette} value={`${instrument.spread}`} />
+                <QuoteStat label={t('instrument.weekLow')} colors={colors} value={formatPrice(instrument, weekLow)} />
+                <QuoteStat label={t('common.spread')} colors={colors} value={`${instrument.spread}`} />
               </View>
             </View>
 
-            <View style={StyleSheet.flatten([styles.divider, { backgroundColor: palette.lineSoft }])} />
+            <View style={StyleSheet.flatten([styles.divider, { backgroundColor: colors.border.subtle }])} />
 
             <View style={styles.detailTabs}>
               {detailTabs.map((tab) => {
@@ -170,7 +170,7 @@ export default function InstrumentDetailScreen() {
                     <AppText style={styles.detailTabText} tone={selected ? 'default' : 'muted'}>
                       {label}
                     </AppText>
-                    <View style={StyleSheet.flatten([styles.detailTabIndicator, { backgroundColor: selected ? palette.brand : 'transparent' }])} />
+                    <View style={StyleSheet.flatten([styles.detailTabIndicator, { backgroundColor: selected ? colors.brand.fg : 'transparent' }])} />
                   </NativePressable>
                 );
               })}
@@ -181,37 +181,37 @@ export default function InstrumentDetailScreen() {
                 <DetailChart
                   color={quoteVisual.color}
                   instrument={instrument}
-                  palette={palette}
+                  colors={colors}
                   rangeEndLabel={t('instrument.now')}
                   rangeStartLabel={t('instrument.open')}
                   values={chartValues}
                   width={chartWidth}
                 />
-                <VolumeBars color={quoteVisual.color} palette={palette} values={chartValues} width={chartWidth} />
+                <VolumeBars color={quoteVisual.color} colors={colors} values={chartValues} width={chartWidth} />
               </>
             ) : null}
 
             <InstrumentTabPanel
               instrument={instrument}
               locale={locale}
-              palette={palette}
+              colors={colors}
               sampleLots={sampleLots}
               selectedTab={selectedTab}
               t={t}
             />
 
-            <View style={StyleSheet.flatten([styles.riskPanel, { borderColor: palette.lineSoft }])}>
+            <View style={StyleSheet.flatten([styles.riskPanel, { borderColor: colors.border.subtle }])}>
               <AppText style={styles.riskText} tone="amber">{t('risk.general')}</AppText>
             </View>
           </View>
         </ScrollView>
 
-        <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.footerSafe, { backgroundColor: palette.panelHigh, borderTopColor: palette.lineSoft }])}>
+        <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.footerSafe, { backgroundColor: colors.surface.raised, borderTopColor: colors.border.subtle }])}>
           <View style={styles.tradeRow}>
             <NativePressable
               accessibilityLabel={`${directionLabel('sell', locale)} ${formatPrice(instrument, instrument.bid)}`}
               onPress={() => openOrder('sell')}
-              style={StyleSheet.flatten([styles.tradeButton, { backgroundColor: palette.up }])}>
+              style={StyleSheet.flatten([styles.tradeButton, { backgroundColor: colors.market.up.fg }])}>
               <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.tradeText} tone="white">
                 {directionLabel('sell', locale)} {formatPrice(instrument, instrument.bid)}
               </AppText>
@@ -219,7 +219,7 @@ export default function InstrumentDetailScreen() {
             <NativePressable
               accessibilityLabel={`${directionLabel('buy', locale)} ${formatPrice(instrument, instrument.ask)}`}
               onPress={() => openOrder('buy')}
-              style={StyleSheet.flatten([styles.tradeButton, { backgroundColor: palette.down }])}>
+              style={StyleSheet.flatten([styles.tradeButton, { backgroundColor: colors.market.down.fg }])}>
               <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.tradeText} tone="white">
                 {directionLabel('buy', locale)} {formatPrice(instrument, instrument.ask)}
               </AppText>
@@ -234,14 +234,14 @@ export default function InstrumentDetailScreen() {
 function InstrumentTabPanel({
   instrument,
   locale,
-  palette,
+  colors,
   sampleLots,
   selectedTab,
   t,
 }: {
   instrument: Instrument;
   locale: Locale;
-  palette: ThemePalette;
+  colors: ThemeColors;
   sampleLots: number;
   selectedTab: DetailTabKey;
   t: (key: TranslationKey, params?: Record<string, string | number>) => string;
@@ -255,25 +255,25 @@ function InstrumentTabPanel({
             [t('common.spread'), `${instrument.spread}`],
             [t('instrument.dayLow'), formatPrice(instrument, instrument.dayLow)],
           ]}
-          palette={palette}
+          colors={colors}
         />
-        <View style={StyleSheet.flatten([styles.gridDivider, { backgroundColor: palette.line }])} />
+        <View style={StyleSheet.flatten([styles.gridDivider, { backgroundColor: colors.border.default }])} />
         <MetricColumn
           items={[
             [t('instrument.dayHigh'), formatPrice(instrument, instrument.dayHigh)],
             [t('common.leverage'), `${instrument.leverage}x`],
             [t('instrument.marginSample', { lots: sampleLots }), formatMoney(calculateMargin(instrument, sampleLots, instrument.ask), 'USD', 0, locale)],
           ]}
-          palette={palette}
+          colors={colors}
         />
-        <View style={StyleSheet.flatten([styles.gridDivider, { backgroundColor: palette.line }])} />
+        <View style={StyleSheet.flatten([styles.gridDivider, { backgroundColor: colors.border.default }])} />
         <MetricColumn
           items={[
             [t('instrument.baseCurrency'), instrument.baseCurrency],
             [t('instrument.quoteCurrency'), instrument.quoteCurrency],
             [t('common.contractSize'), formatNumber(instrument.contractSize, 0, locale)],
           ]}
-          palette={palette}
+          colors={colors}
         />
       </View>
     );
@@ -305,7 +305,7 @@ function InstrumentTabPanel({
           [t('instrument.signalBias'), changePercent >= 0 ? t('common.buy') : t('common.sell')],
           [t('instrument.signalRisk'), t('risk.general')],
         ].map(([label, value]) => (
-          <View key={label} style={StyleSheet.flatten([styles.signalRow, { borderTopColor: palette.lineSoft }])}>
+          <View key={label} style={StyleSheet.flatten([styles.signalRow, { borderTopColor: colors.border.subtle }])}>
             <AppText style={styles.metricLabel} tone="dim">{label}</AppText>
             <AppText style={styles.metricValue}>{value}</AppText>
           </View>
@@ -318,7 +318,7 @@ function InstrumentTabPanel({
 function DetailChart({
   color,
   instrument,
-  palette,
+  colors,
   rangeEndLabel,
   rangeStartLabel,
   values,
@@ -326,7 +326,7 @@ function DetailChart({
 }: {
   color: string;
   instrument: Instrument;
-  palette: ThemePalette;
+  colors: ThemeColors;
   rangeEndLabel: string;
   rangeStartLabel: string;
   values: number[];
@@ -357,7 +357,7 @@ function DetailChart({
   const gradientId = `detail-chart-${instrument.id}`;
 
   return (
-    <View style={StyleSheet.flatten([styles.chartFrame, { borderColor: palette.lineSoft, width }])}>
+    <View style={StyleSheet.flatten([styles.chartFrame, { borderColor: colors.border.subtle, width }])}>
       <Svg height={height} width={width}>
         <Defs>
           <LinearGradient id={gradientId} x1="0" x2="0" y1="0" y2="1">
@@ -366,9 +366,9 @@ function DetailChart({
           </LinearGradient>
         </Defs>
         {gridY.map((y) => (
-          <Line key={`grid-${y}`} stroke={palette.lineSoft} strokeOpacity={0.9} strokeWidth={1} x1={0} x2={chartWidth} y1={y} y2={y} />
+          <Line key={`grid-${y}`} stroke={colors.border.subtle} strokeOpacity={0.9} strokeWidth={1} x1={0} x2={chartWidth} y1={y} y2={y} />
         ))}
-        <Line stroke={palette.lineSoft} strokeOpacity={0.9} strokeWidth={1} x1={chartWidth * 0.66} x2={chartWidth * 0.66} y1={topPad} y2={height - bottomPad} />
+        <Line stroke={colors.border.subtle} strokeOpacity={0.9} strokeWidth={1} x1={chartWidth * 0.66} x2={chartWidth * 0.66} y1={topPad} y2={height - bottomPad} />
         <Path d={areaPath} fill={`url(#${gradientId})`} />
         <Path d={linePath} fill="none" stroke={color} strokeLinejoin="round" strokeWidth={3.4} />
       </Svg>
@@ -379,7 +379,7 @@ function DetailChart({
           </AppText>
         ))}
       </View>
-      <View style={StyleSheet.flatten([styles.chartBaseline, { backgroundColor: palette.textDim }])} />
+      <View style={StyleSheet.flatten([styles.chartBaseline, { backgroundColor: colors.text.tertiary }])} />
       <View style={styles.monthLabels}>
         <AppText style={styles.monthLabel} tone="muted">{rangeStartLabel}</AppText>
         <AppText style={styles.monthLabel} tone="muted">{rangeEndLabel}</AppText>
@@ -388,7 +388,7 @@ function DetailChart({
   );
 }
 
-function VolumeBars({ color, palette, values, width }: { color: string; palette: ThemePalette; values: number[]; width: number }) {
+function VolumeBars({ color, colors, values, width }: { color: string; colors: ThemeColors; values: number[]; width: number }) {
   const height = 44;
   const barGap = 5;
   const barCount = Math.min(values.length, 40);
@@ -406,14 +406,14 @@ function VolumeBars({ color, palette, values, width }: { color: string; palette:
           const barHeight = 4 + (delta / maxDelta) * 30;
           const x = index * (barWidth + barGap);
 
-          return <Rect fill={index % 7 === 0 ? color : palette.textDim} height={barHeight} key={`bar-${index}`} opacity={0.78} rx={barWidth / 2} width={barWidth} x={x} y={height - barHeight - 6} />;
+          return <Rect fill={index % 7 === 0 ? color : colors.text.tertiary} height={barHeight} key={`bar-${index}`} opacity={0.78} rx={barWidth / 2} width={barWidth} x={x} y={height - barHeight - 6} />;
         })}
       </Svg>
     </View>
   );
 }
 
-function QuoteStat({ label, tone = 'default', value }: { label: string; palette: ThemePalette; tone?: 'default' | 'down' | 'up'; value: string }) {
+function QuoteStat({ label, tone = 'default', value }: { label: string; colors: ThemeColors; tone?: 'default' | 'down' | 'up'; value: string }) {
   return (
     <View style={styles.quoteStat}>
       <AppText numberOfLines={1} style={styles.quoteStatLabel} tone="dim">
@@ -426,7 +426,7 @@ function QuoteStat({ label, tone = 'default', value }: { label: string; palette:
   );
 }
 
-function MetricColumn({ items, palette }: { items: [string, string][]; palette: ThemePalette }) {
+function MetricColumn({ items, colors }: { items: [string, string][]; colors: ThemeColors }) {
   return (
     <View style={styles.metricColumn}>
       {items.map(([label, value]) => (

@@ -27,7 +27,7 @@ type AppTopBarProps = {
 };
 
 export function AppTopBar({ actions, align = 'left', back, backHref, subtitle, title }: AppTopBarProps) {
-  const { palette, t } = useProductSettings();
+  const { colors, t } = useProductSettings();
   const toast = useToast();
   const showPlaceholder = (label: string) => {
     void impactLight();
@@ -50,7 +50,7 @@ export function AppTopBar({ actions, align = 'left', back, backHref, subtitle, t
     <View
       style={StyleSheet.flatten([
         styles.bar,
-        { backgroundColor: palette.bg, borderBottomColor: 'transparent' },
+        { backgroundColor: colors.surface.canvas, borderBottomColor: 'transparent' },
         back && styles.backBar,
         !back && styles.rootBar,
       ])}>

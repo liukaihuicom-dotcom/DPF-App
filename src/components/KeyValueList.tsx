@@ -1,6 +1,6 @@
 import { StyleSheet, StyleProp, View, ViewStyle } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth, spacing } from '@/src/theme/tokens';
 import { AppText, type AppTextTone } from './Typography';
 
@@ -28,7 +28,7 @@ export function KeyValueList({
   style,
   variant = 'compact',
 }: KeyValueListProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const isDetail = variant === 'detail';
 
   return (
@@ -49,7 +49,7 @@ export function KeyValueList({
             fill && styles.fillRow,
             divided &&
               index < items.length - 1 && {
-                borderBottomColor: palette.lineSoft,
+                borderBottomColor: colors.border.subtle,
                 borderBottomWidth: lineWidth.hairline,
               },
           ])}

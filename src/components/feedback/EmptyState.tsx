@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { radius, size, spacing } from '@/src/theme/tokens';
 
 import { ActionButton } from '../ActionButton';
@@ -29,14 +29,14 @@ export function EmptyState({
   title,
   variant = 'plain',
 }: EmptyStateProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
 
   if (variant === 'card') {
     return (
       <Card compact style={styles.card}>
         <View style={styles.row}>
           {icon ? (
-            <View style={StyleSheet.flatten([styles.icon, { backgroundColor: palette.panelSoft }])}>
+            <View style={StyleSheet.flatten([styles.icon, { backgroundColor: colors.surface.subtle }])}>
               <AppIcon tone="textDim" name={icon} size={24} />
             </View>
           ) : null}
@@ -64,7 +64,7 @@ export function EmptyState({
   }
 
   return (
-    <View style={StyleSheet.flatten([styles.plain, { backgroundColor: palette.panelSoft }])}>
+    <View style={StyleSheet.flatten([styles.plain, { backgroundColor: colors.surface.subtle }])}>
       <AppText tone="muted" variant="body">
         {body}
       </AppText>

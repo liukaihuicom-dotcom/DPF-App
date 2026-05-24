@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { useThemeColors } from '@/src/settings/ProductSettings';
 import { lineWidth, spacing } from '@/src/theme/tokens';
 
 import { NativePressable } from './NativePressable';
@@ -13,13 +13,13 @@ type DescribedLabelProps = {
 };
 
 export function DescribedLabel({ accessibilityLabel, label, onPress }: DescribedLabelProps) {
-  const palette = useThemePalette();
+  const colors = useThemeColors();
   const content = (
     <View style={styles.wrap} testID="described-label">
       <AppText tone="muted" variant="caption">
         {label}
       </AppText>
-      <View style={StyleSheet.flatten([styles.underline, { borderBottomColor: palette.textDim }])} testID="described-label-underline" />
+      <View style={StyleSheet.flatten([styles.underline, { borderBottomColor: colors.text.tertiary }])} testID="described-label-underline" />
     </View>
   );
 

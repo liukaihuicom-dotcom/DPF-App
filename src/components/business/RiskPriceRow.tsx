@@ -14,12 +14,12 @@ type RiskPriceRowProps = {
 };
 
 export function RiskPriceRow({ caption, label, pnl, price }: RiskPriceRowProps) {
-  const { locale, palette } = useProductSettings();
+  const { locale, colors } = useProductSettings();
   const pnlTone = pnl >= 0 ? 'down' : 'up';
-  const pnlColor = pnl >= 0 ? palette.down : palette.up;
+  const pnlColor = pnl >= 0 ? colors.market.down.fg : colors.market.up.fg;
 
   return (
-    <View style={StyleSheet.flatten([styles.row, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+    <View style={StyleSheet.flatten([styles.row, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
       <View style={styles.copy}>
         <AppText variant="caption">{label}</AppText>
         <AppText tone="muted" variant="caption">

@@ -29,7 +29,7 @@ const orderTypes: OrderType[] = ['market', 'limit', 'stop'];
 export default function OrderTicketScreen() {
   const { direction = 'buy', id, type = 'market' } = useLocalSearchParams<{ direction?: Direction; id: string; type?: OrderType }>();
   const { account, findInstrument, placeOrder } = useBroker();
-  const { locale, palette, t } = useProductSettings();
+  const { locale, colors, t } = useProductSettings();
   const toast = useToast();
   const [side, setSide] = useState<Direction>(direction === 'sell' ? 'sell' : 'buy');
   const [orderType, setOrderType] = useState<OrderType>(type === 'limit' || type === 'stop' ? type : 'market');
@@ -48,7 +48,7 @@ export default function OrderTicketScreen() {
   const stopLossPnl = instrument ? getRiskPnl(instrument, lots, price, stopLossPrice, side) : 0;
   const takeProfitPnl = instrument ? getRiskPnl(instrument, lots, price, takeProfitPrice, side) : 0;
   const tradeTone = side === 'buy' ? 'down' : 'up';
-  const tradeColor = side === 'buy' ? palette.down : palette.up;
+  const tradeColor = side === 'buy' ? colors.market.down.fg : colors.market.up.fg;
   const submitLabel = canSubmit
     ? t('order.submitCompact', { direction: directionLabel(side, locale), lots: formatLots(lots, locale) })
     : t('order.invalid');
@@ -107,13 +107,13 @@ export default function OrderTicketScreen() {
   };
 
   return (
-    <SafeAreaView edges={['top']} style={StyleSheet.flatten([styles.modalRoot, { backgroundColor: `${palette.text}66` }])}>
+    <SafeAreaView edges={['top']} style={StyleSheet.flatten([styles.modalRoot, { backgroundColor: `${colors.text.primary}66` }])}>
       <Stack.Screen options={{ title: `${instrument.symbol} ${t('order.titleSuffix')}` }} />
       <Pressable accessibilityLabel={t('common.cancel')} onPress={closeTicket} style={styles.modalBackdrop} />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.keyboardPanel}>
-        <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.ticketSheet, { backgroundColor: palette.bg, borderColor: palette.lineSoft }])}>
+        <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.ticketSheet, { backgroundColor: colors.surface.canvas, borderColor: colors.border.subtle }])}>
           <View style={styles.handleWrap}>
-            <View style={StyleSheet.flatten([styles.handle, { backgroundColor: palette.line }])} />
+            <View style={StyleSheet.flatten([styles.handle, { backgroundColor: colors.border.default }])} />
           </View>
           <View style={styles.sheetHeader}>
             <View style={styles.headerAccountBlock}>
@@ -172,10 +172,10 @@ export default function OrderTicketScreen() {
                 </View>
               </View>
 
-              <View style={StyleSheet.flatten([styles.sideSwitch, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+              <View style={StyleSheet.flatten([styles.sideSwitch, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
                 {(['buy', 'sell'] as Direction[]).map((item) => {
                   const selected = side === item;
-                  const color = item === 'buy' ? palette.down : palette.up;
+                  const color = item === 'buy' ? colors.market.down.fg : colors.market.up.fg;
                   const tone = item === 'buy' ? 'down' : 'up';
 
                   return (
@@ -199,7 +199,7 @@ export default function OrderTicketScreen() {
                 })}
               </View>
 
-              <View style={StyleSheet.flatten([styles.stepper, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+              <View style={StyleSheet.flatten([styles.stepper, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
                 <StepperButton
                   label={t('order.decreaseLots')}
                   onPress={() => {
@@ -241,7 +241,7 @@ export default function OrderTicketScreen() {
                     }}
                     style={StyleSheet.flatten([
                       styles.preset,
-                      { backgroundColor: lotsText === preset ? `${tradeColor}12` : palette.panelSoft, borderColor: lotsText === preset ? tradeColor : palette.lineSoft },
+                      { backgroundColor: lotsText === preset ? `${tradeColor}12` : colors.surface.subtle, borderColor: lotsText === preset ? tradeColor : colors.border.subtle },
                     ])}>
                     <AppText tone={lotsText === preset ? tradeTone : 'default'} variant="caption">
                       {preset}
@@ -250,7 +250,7 @@ export default function OrderTicketScreen() {
                 ))}
               </View>
 
-              <View style={StyleSheet.flatten([styles.valueRows, { borderTopColor: palette.lineSoft }])}>
+              <View style={StyleSheet.flatten([styles.valueRows, { borderTopColor: colors.border.subtle }])}>
                 <OrderInfoRow label={t('order.notionalValue')} value={formatMoney(notional, 'USD', 2, locale)} />
                 <OrderInfoRow label={t('order.estimatedMargin')} tone={margin > account.freeMargin ? 'danger' : 'default'} value={formatMoney(margin, 'USD', 2, locale)} />
               </View>
@@ -303,7 +303,7 @@ export default function OrderTicketScreen() {
             </Card>
           </ScrollView>
 
-          <View style={StyleSheet.flatten([styles.footerStack, { backgroundColor: palette.bg, borderTopColor: palette.lineSoft }])}>
+          <View style={StyleSheet.flatten([styles.footerStack, { backgroundColor: colors.surface.canvas, borderTopColor: colors.border.subtle }])}>
             {errorText ? (
               <AppText numberOfLines={2} tone="danger" variant="caption">
                 {errorText}

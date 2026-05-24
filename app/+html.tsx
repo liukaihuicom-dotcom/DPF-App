@@ -1,6 +1,6 @@
 import { ScrollViewStyleReset } from 'expo-router/html';
 
-import { themePalettes } from '@/src/theme/colors';
+import { themeColors } from '@/src/theme/colors';
 
 // This file is web-only and used to configure the root HTML for every
 // web page during static rendering.
@@ -31,10 +31,10 @@ export default function Root({ children }: { children: React.ReactNode }) {
 
 const responsiveBackground = `
 body {
-  background-color: ${themePalettes.midnightBlue.brand};
+  background-color: ${themeColors.midnightBlue.brand};
 }
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: ${themePalettes.midnightBlue.brand};
+    background-color: ${themeColors.midnightBlue.brand};
   }
 }`;
