@@ -1,0 +1,194 @@
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+
+import { DEMO_OTP, buildAccount, defaultCountry, isStrongPassword, isValidEmail, sanitizePhone } from '@/src/auth/authFlow';
+import { ActionButton } from '@/src/components/ActionButton';
+import { AuthDescriptionAction, AuthLink, AuthShell, AuthTextField } from '@/src/components/AuthShell';
+import { AuthErrorSheet, CountryPhoneField, OtpInput, PasswordRuleList, useCountdown } from '@/src/components/AuthFlowControls';
+import { AppText } from '@/src/components/Typography';
+import type { AuthChannel } from '@/src/domain/types';
+import { notifySuccess, notifyWarning } from '@/src/feedback/haptics';
+import { useProductSettings } from '@/src/settings/ProductSettings';
+import { spacing } from '@/src/theme/tokens';
+
+type ResetStep = 'account' | 'code' | 'password';
+
+export default function ForgotPasswordScreen() {
+  const { setLastLoginAccount, setLastLoginChannel, t } = useProductSettings();
+  const [step, setStep] = useState<ResetStep>('account');
+  const [channel, setChannel] = useState<AuthChannel>('email');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [country, setCountry] = useState(defaultCountry);
+  const [code, setCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
+  const { reset, secondsLeft } = useCountdown(15);
+  const account = buildAccount(channel, channel === 'email' ? email : phone, country.dialCode);
+  const accountValid = channel === 'email' ? isValidEmail(email) : phone.length >= 6;
+  const passwordValid = isStrongPassword(password);
+  const confirmValid = password === confirmPassword && confirmPassword.length > 0;
+  const accountError = submitted && !accountValid ? (channel === 'email' ? t('auth.error.email') : t('auth.error.phone')) : '';
+  const codeError = submitted && code !== DEMO_OTP ? t('auth.verify.errorCodeShort') : '';
+  const passwordError = submitted && !passwordValid ? t('auth.error.passwordStrong') : '';
+  const confirmError = submitted && !confirmValid ? t('auth.error.confirmPassword') : '';
+  const canContinue = step === 'account' ? accountValid : passwordValid && confirmValid;
+  const resetProgressStep = step === 'account' ? 1 : step === 'code' ? 2 : 3;
+
+  const submit = () => {
+    setSubmitted(true);
+
+    if (step === 'account') {
+      if (!accountValid) {
+        void notifyWarning();
+        setErrorOpen(true);
+        return;
+      }
+
+      setSubmitted(false);
+      setStep('code');
+      return;
+    }
+
+    if (!passwordValid || !confirmValid) {
+      void notifyWarning();
+      setErrorOpen(true);
+      return;
+    }
+
+    setLastLoginAccount(account);
+    setLastLoginChannel(channel);
+    void notifySuccess();
+    router.replace(`/auth?account=${encodeURIComponent(account)}&channel=${channel}` as never);
+  };
+
+  const switchChannel = () => {
+    setChannel((value) => (value === 'email' ? 'phone' : 'email'));
+    setSubmitted(false);
+  };
+  const accountSubtitle =
+    channel === 'email' ? t('auth.reset.emailSubtitle') : t('auth.reset.phoneSubtitle');
+
+  const verifyCode = (next: string) => {
+    setCode(next);
+
+    if (next.length < 6) {
+      setSubmitted(false);
+      return;
+    }
+
+    setSubmitted(true);
+
+    if (next !== DEMO_OTP) {
+      void notifyWarning();
+      return;
+    }
+
+    void notifySuccess();
+    setSubmitted(false);
+    setStep('password');
+  };
+
+  return (
+    <AuthShell
+      descriptionAction={
+        step === 'account' ? (
+          <AuthDescriptionAction
+            actionLabel={channel === 'email' ? t('auth.reset.usePhoneAction') : t('auth.reset.useEmailAction')}
+            label={t('auth.reset.switchChannelPrefix')}
+            onPress={switchChannel}
+          />
+        ) : null
+      }
+      footer={step === 'code' ? null : <ActionButton disabled={!canContinue} label={step === 'password' ? t('auth.reset.finish') : t('auth.action.continue')} onPress={submit} tone="brand" variant="filled" />}
+      progressStep={resetProgressStep}
+      progressTotal={3}
+      subtitle={step === 'account' ? accountSubtitle : step === 'code' ? t('auth.reset.codeSubtitle', { account }) : t('auth.reset.passwordSubtitle')}
+      title={step === 'account' ? t('auth.reset.title') : step === 'code' ? t('auth.verify.titleShort') : t('auth.reset.passwordTitle')}>
+      {step === 'account' ? (
+        <>
+          {channel === 'email' ? (
+            <AuthTextField
+              autoFocus
+              autoComplete="email"
+              error={accountError}
+              keyboardType="email-address"
+              label={t('auth.email')}
+              onChangeText={setEmail}
+              placeholder={t('auth.emailPlaceholder')}
+              textContentType="emailAddress"
+              value={email}
+            />
+          ) : (
+            <CountryPhoneField
+              autoFocus
+              country={country}
+              error={accountError}
+              onChangeCountry={setCountry}
+              onChangePhone={(value) => setPhone(sanitizePhone(value))}
+              phone={phone}
+            />
+          )}
+        </>
+      ) : null}
+
+      {step === 'code' ? (
+        <View style={styles.codeStack}>
+          <OtpInput autoFocus error={codeError} onChange={verifyCode} value={code} />
+          {secondsLeft > 0 ? (
+            <AppText tone="muted" variant="caption">
+              {t('auth.verify.resendCountdownV2', { time: `00:${String(secondsLeft).padStart(2, '0')}` })}
+            </AppText>
+          ) : (
+            <AuthLink
+              label={t('auth.verify.noCode')}
+              onPress={() => {
+                setCode('');
+                setSubmitted(false);
+                reset();
+              }}
+            />
+          )}
+        </View>
+      ) : null}
+
+      {step === 'password' ? (
+        <>
+          <AuthTextField
+            autoFocus
+            autoComplete="new-password"
+            error={passwordError}
+            label={t('auth.password.new')}
+            onChangeText={setPassword}
+            placeholder={t('auth.password.newPlaceholder')}
+            secureTextEntry
+            textContentType="newPassword"
+            value={password}
+          />
+          <PasswordRuleList password={password} />
+          <AuthTextField
+            autoComplete="new-password"
+            error={confirmError}
+            label={t('auth.confirmPassword')}
+            onChangeText={setConfirmPassword}
+            placeholder={t('auth.confirmPasswordPlaceholder')}
+            secureTextEntry
+            textContentType="newPassword"
+            value={confirmPassword}
+          />
+        </>
+      ) : null}
+
+      <AuthErrorSheet body={t('auth.error.fixFields')} onClose={() => setErrorOpen(false)} open={errorOpen} title={t('auth.reset.blocked')} />
+    </AuthShell>
+  );
+}
+
+const styles = StyleSheet.create({
+  codeStack: {
+    gap: spacing.md,
+  },
+});

@@ -1,0 +1,144 @@
+openapi: 3.1.0
+info:
+  title: Dupoin Broker MVP Contract
+  version: 0.1.0
+  description: Contract scaffold for the simulated FX/CFD Expo app. Current runtime uses local mock data and a development quote proxy.
+servers:
+  - url: https://api.example.invalid
+    description: Placeholder for future production API
+paths:
+  /instruments:
+    get:
+      operationId: listInstruments
+      summary: List tradable instruments
+      responses:
+        "200":
+          description: Instrument list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Instrument"
+  /accounts/current:
+    get:
+      operationId: getCurrentAccount
+      summary: Get current demo account summary
+      responses:
+        "200":
+          description: Account summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+  /orders:
+    post:
+      operationId: createOrder
+      summary: Create a simulated order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+      responses:
+        "201":
+          description: Order accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /partner/clients:
+    get:
+      operationId: listPartnerClients
+      summary: List simulated partner clients
+      responses:
+        "200":
+          description: Partner clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PartnerClient"
+  /partner/upgrade-requests/{id}/decision:
+    post:
+      operationId: decideUpgradeRequest
+      summary: Approve or reject a partner upgrade request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision:
+                  type: string
+                  enum: [approved, rejected]
+                reason:
+                  type: string
+      responses:
+        "200":
+          description: Updated upgrade request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpgradeRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+components:
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Forbidden:
+      description: Permission denied
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    LocalizedText:
+      type: object
+      required: [en-US, zh-CN]
+      properties:
+        en-US:
+          type: string
+        zh-CN:
+          type: string
+    Instrument:
+      $ref: "./schemas/instrument.schema.json"
+    Account:
+      $ref: "./schemas/account.schema.json"
+    CreateOrderRequest:
+      $ref: "./schemas/create-order-request.schema.json"
+    Order:
+      $ref: "./schemas/order.schema.json"
+    PartnerClient:
+      $ref: "./schemas/partner-client.schema.json"
+    UpgradeRequest:
+      $ref: "./schemas/upgrade-request.schema.json"
+    ErrorResponse:
+      type: object
+      required: [code, messageKey]
+      properties:
+        code:
+          type: string
+        messageKey:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+

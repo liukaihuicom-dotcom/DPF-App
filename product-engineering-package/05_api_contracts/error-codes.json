@@ -1,0 +1,22 @@
+{
+  "errors": [
+    { "code": "FUNDING_PERMISSION_DENIED", "category": "permission", "severity": "blocker", "message_key": "funding.error.permissionDenied" },
+    { "code": "FUNDING_ACCOUNT_NOT_ACTIVE", "category": "account", "severity": "critical", "message_key": "funding.error.accountNotActive" },
+    { "code": "FUNDING_KYC_REQUIRED", "category": "kyc", "severity": "critical", "message_key": "funding.error.kycRequired" },
+    { "code": "FUNDING_LIMIT_EXCEEDED", "category": "payment_method", "severity": "critical", "message_key": "funding.error.limitExceeded" },
+    { "code": "FUNDING_METHOD_UNAVAILABLE", "category": "payment_method", "severity": "major", "message_key": "funding.error.methodUnavailable" },
+    { "code": "DEPOSIT_PAYMENT_EXPIRED", "category": "deposit", "severity": "major", "message_key": "funding.error.depositPaymentExpired" },
+    { "code": "DEPOSIT_AMOUNT_MISMATCH", "category": "deposit", "severity": "critical", "message_key": "funding.error.depositAmountMismatch" },
+    { "code": "DEPOSIT_NAME_MISMATCH", "category": "deposit", "severity": "critical", "message_key": "funding.error.depositNameMismatch" },
+    { "code": "WITHDRAWAL_INSUFFICIENT_BALANCE", "category": "withdrawal", "severity": "critical", "message_key": "funding.error.withdrawalInsufficientBalance" },
+    { "code": "WITHDRAWAL_BANK_ACCOUNT_UNVERIFIED", "category": "withdrawal", "severity": "critical", "message_key": "funding.error.withdrawalBankAccountUnverified" },
+    { "code": "WITHDRAWAL_REVIEW_REQUIRED", "category": "withdrawal", "severity": "major", "message_key": "funding.error.withdrawalReviewRequired" },
+    { "code": "TRANSFER_SAME_ACCOUNT_NOT_ALLOWED", "category": "transfer", "severity": "critical", "message_key": "funding.error.transferSameAccount" },
+    { "code": "TRANSFER_OWNER_MISMATCH", "category": "transfer", "severity": "critical", "message_key": "funding.error.transferOwnerMismatch" },
+    { "code": "TRANSFER_TARGET_RESTRICTED", "category": "transfer", "severity": "critical", "message_key": "funding.error.transferTargetRestricted" },
+    { "code": "FX_QUOTE_EXPIRED", "category": "fx_fee", "severity": "critical", "message_key": "funding.error.fxQuoteExpired" },
+    { "code": "FX_RATE_UNAVAILABLE", "category": "fx_fee", "severity": "critical", "message_key": "funding.error.fxRateUnavailable" },
+    { "code": "FEE_RULE_MISSING", "category": "fx_fee", "severity": "critical", "message_key": "funding.error.feeRuleMissing" }
+  ]
+}
+

@@ -1,0 +1,33 @@
+{
+  "app_h5": {
+    "entry_points": [
+      { "from": "account_details", "action": "deposit", "target": "deposit_form" },
+      { "from": "account_details", "action": "withdraw", "target": "withdrawal_form" },
+      { "from": "account_details", "action": "transfer", "target": "transfer_form" },
+      { "from": "account_balance", "action": "view_funding_transactions", "target": "funding_transaction_list" }
+    ],
+    "protected_routes": [
+      "funding_home",
+      "deposit_form",
+      "withdrawal_form",
+      "transfer_form",
+      "funding_transaction_list",
+      "funding_transaction_detail"
+    ]
+  },
+  "admin": {
+    "entry_points": [
+      { "from": "admin_dashboard", "action": "review_funding", "target": "admin_funding_review_list" },
+      { "from": "admin_dashboard", "action": "configure_channels", "target": "admin_funding_channel_config" },
+      { "from": "admin_dashboard", "action": "configure_limits_fees", "target": "admin_funding_limit_fee_config" }
+    ],
+    "protected_routes": [
+      "admin_funding_review_list",
+      "admin_funding_review_detail",
+      "admin_funding_channel_config",
+      "admin_funding_limit_fee_config",
+      "admin_funding_exception_reconciliation"
+    ]
+  }
+}
+

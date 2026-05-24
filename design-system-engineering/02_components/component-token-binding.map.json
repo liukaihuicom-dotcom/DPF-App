@@ -1,0 +1,149 @@
+{
+  "version": "1.0.0",
+  "allowedTokenSources": [
+    "src/theme/tokens.ts",
+    "src/theme/colors.ts",
+    "src/settings/ProductSettings.tsx",
+    "src/icons/iconRegistry.ts"
+  ],
+  "rules": [
+    {
+      "id": "component-token-bound",
+      "description": "Reusable components must resolve spacing, typography, radius, line width, size, and color from tokens, theme palette, or icon registry metadata."
+    },
+    {
+      "id": "route-no-style-system",
+      "description": "app route files must not define reusable styles; screen-level style ownership belongs in src/screens and reusable UI belongs in src/components."
+    },
+    {
+      "id": "icon-registry-bound",
+      "description": "Functional icons must use AppIcon with semantic names registered in design-system-engineering/04_icons/icon-registry.json."
+    },
+    {
+      "id": "form-external-helper-alignment",
+      "description": "Helper or description text rendered outside a form field frame must use a 12px left inset from the field frame edge, bound to spacing.md."
+    }
+  ],
+  "componentBindings": {
+    "foundation": [
+      "typography.*",
+      "spacing.*",
+      "radius.*",
+      "lineWidth.*",
+      "size.*",
+      "palette.*",
+      "iconRegistry.*"
+    ],
+    "layout": [
+      "layout.*",
+      "spacing.*",
+      "radius.*",
+      "lineWidth.*",
+      "palette.*"
+    ],
+    "forms": [
+      "size.input.*",
+      "spacing.*",
+      "radius.*",
+      "lineWidth.*",
+      "typography.*",
+      "palette.*"
+    ],
+    "feedback": [
+      "radius.*",
+      "lineWidth.*",
+      "palette.*",
+      "typography.*"
+    ],
+    "data-display": [
+      "typography.*",
+      "spacing.*",
+      "lineWidth.*",
+      "palette.*"
+    ],
+    "business": [
+      "layout.*",
+      "spacing.*",
+      "radius.*",
+      "lineWidth.*",
+      "typography.*",
+      "palette.*",
+      "iconRegistry.*"
+    ],
+    "navigation": [
+      "size.tab.*",
+      "typography.*",
+      "palette.*",
+      "iconRegistry.*"
+    ]
+  },
+  "componentTokenBindings": {
+    "OrderInfoRow": [
+      "palette.*",
+      "spacing.*",
+      "lineWidth.*"
+    ],
+    "RiskPriceRow": [
+      "palette.*",
+      "spacing.*",
+      "radius.*",
+      "lineWidth.*"
+    ],
+    "TransactionRow": [
+      "palette.*",
+      "spacing.*",
+      "radius.*",
+      "lineWidth.*",
+      "iconRegistry.*"
+    ],
+    "DetailInline": [
+      "spacing.*",
+      "typography.*"
+    ],
+    "DetailRow": [
+      "palette.*",
+      "spacing.*",
+      "lineWidth.*",
+      "iconRegistry.*"
+    ],
+    "LegendDot": [
+      "palette.*",
+      "spacing.*",
+      "radius.*"
+    ],
+    "MiniBarChart": [
+      "palette.*",
+      "spacing.*",
+      "radius.*",
+      "lineWidth.*"
+    ],
+    "MiniMetric": [
+      "palette.*",
+      "spacing.*",
+      "typography.*"
+    ],
+    "EmptyState": [
+      "palette.*",
+      "spacing.*",
+      "radius.*",
+      "iconRegistry.*"
+    ],
+    "StepperButton": [
+      "palette.*",
+      "size.control.*",
+      "radius.*",
+      "lineWidth.*"
+    ],
+    "SwitchControl": [
+      "palette.*",
+      "size.touch.*",
+      "radius.*",
+      "lineWidth.*"
+    ],
+    "SheetGroupTitle": [
+      "palette.*",
+      "spacing.*",
+      "typography.*"
+    ]
+  }
+}

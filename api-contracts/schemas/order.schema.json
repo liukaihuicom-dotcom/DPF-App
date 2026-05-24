@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "order.schema.json",
+  "title": "Order",
+  "type": "object",
+  "required": ["id", "instrumentId", "symbol", "direction", "type", "lots", "requestedPrice", "marginRequired", "status", "createdAt"],
+  "properties": {
+    "id": { "type": "string" },
+    "instrumentId": { "type": "string" },
+    "symbol": { "type": "string" },
+    "direction": { "type": "string", "enum": ["buy", "sell"] },
+    "type": { "type": "string", "enum": ["market", "limit"] },
+    "lots": { "type": "number" },
+    "requestedPrice": { "type": "number" },
+    "filledPrice": { "type": "number" },
+    "marginRequired": { "type": "number" },
+    "status": { "type": "string", "enum": ["filled", "pending", "closed", "cancelled"] },
+    "createdAt": { "type": "string" }
+  }
+}
+

@@ -1,0 +1,2053 @@
+{
+  "version": "1.0.0",
+  "source": "src/components",
+  "components": {
+    "ActionButton": {
+      "category": "foundation",
+      "path": "src/components/ActionButton.tsx",
+      "exports": [
+        "ActionButton",
+        "ActionButtonTone",
+        "ActionButtonVariant"
+      ],
+      "props": [
+        "label",
+        "onPress",
+        "tone",
+        "variant",
+        "icon",
+        "disabled",
+        "loading",
+        "accessibilityLabel"
+      ],
+      "variants": [
+        "filled",
+        "outline",
+        "text",
+        "legacySoft"
+      ],
+      "states": [
+        "default",
+        "pressed",
+        "disabled",
+        "loading"
+      ],
+      "a11y": [
+        "accessibilityRole=button",
+        "accessibilityState exposes disabled and busy",
+        "accessibilityLabel falls back to label"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.button.*"
+      ],
+      "usage": "Primary command button for app screens and sheets.",
+      "forbidden": [
+        "Do not create page-local button styles",
+        "Do not hardcode icon names outside AppIcon registry"
+      ],
+      "status": "active"
+    },
+    "AppIcon": {
+      "category": "foundation",
+      "path": "src/components/AppIcon.tsx",
+      "exports": [
+        "AppIcon",
+        "AppIconName",
+        "IconTone"
+      ],
+      "props": [
+        "name",
+        "tone",
+        "color",
+        "size",
+        "style"
+      ],
+      "variants": [
+        "semantic-icon"
+      ],
+      "states": [
+        "default",
+        "active",
+        "disabled",
+        "danger",
+        "success",
+        "warning"
+      ],
+      "a11y": [
+        "Decorative unless wrapped by an accessible control",
+        "Semantic source comes from iconRegistry"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "iconRegistry.defaultSize",
+        "iconRegistry.strokeWidth",
+        "palette.*"
+      ],
+      "usage": "Only icon rendering entrypoint for functional product icons.",
+      "forbidden": [
+        "Do not import provider icons in pages",
+        "Do not use unknown SVG icons for functional UI"
+      ],
+      "status": "active"
+    },
+    "AppText": {
+      "category": "foundation",
+      "path": "src/components/Typography.tsx",
+      "exports": [
+        "AppText",
+        "AppTextTone"
+      ],
+      "props": [
+        "variant",
+        "tone",
+        "style",
+        "children"
+      ],
+      "variants": [
+        "displayXl",
+        "displayLg",
+        "title",
+        "subtitle",
+        "body",
+        "caption",
+        "number",
+        "largeNumber",
+        "eyebrow"
+      ],
+      "states": [
+        "default",
+        "muted",
+        "dim",
+        "up",
+        "down",
+        "amber",
+        "blue",
+        "brand",
+        "danger",
+        "link",
+        "white"
+      ],
+      "a11y": [
+        "Uses React Native Text semantics",
+        "Supports numberOfLines and dynamic fitting through Text props"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "typography.*",
+        "palette.*"
+      ],
+      "usage": "All product copy and numeric text.",
+      "forbidden": [
+        "Do not use raw Text in governed UI components unless AppText cannot satisfy host requirements"
+      ],
+      "status": "active"
+    },
+    "NativePressable": {
+      "category": "foundation",
+      "path": "src/components/NativePressable.tsx",
+      "exports": [
+        "NativePressable"
+      ],
+      "props": [
+        "minTouch",
+        "pressedStyle",
+        "disabled",
+        "style",
+        "children"
+      ],
+      "variants": [
+        "touchable"
+      ],
+      "states": [
+        "default",
+        "pressed",
+        "disabled"
+      ],
+      "a11y": [
+        "Enforces minimum touch target by default",
+        "Pass accessibilityRole and label from caller"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "layout.touchTargetMin"
+      ],
+      "usage": "Base pressable wrapper for custom interactive rows and tiles.",
+      "forbidden": [
+        "Do not use raw Pressable for reusable component controls without a reason"
+      ],
+      "status": "active"
+    },
+    "Screen": {
+      "category": "layout",
+      "path": "src/components/Screen.tsx",
+      "exports": [
+        "Screen"
+      ],
+      "props": [
+        "title",
+        "subtitle",
+        "rightActions",
+        "back",
+        "topBar",
+        "stickyFooter",
+        "scroll",
+        "keyboardAware",
+        "contentPadding"
+      ],
+      "variants": [
+        "scroll",
+        "fixed",
+        "flush",
+        "keyboardAware"
+      ],
+      "states": [
+        "default",
+        "keyboardVisible",
+        "withStickyFooter"
+      ],
+      "a11y": [
+        "SafeAreaView top/bottom handling",
+        "Keyboard dismissal is opt-in"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "layout.screenPaddingX",
+        "layout.screenGap",
+        "layout.screenBottomPadding",
+        "palette.bg"
+      ],
+      "usage": "Standard screen shell for route screens.",
+      "forbidden": [
+        "Do not recreate page shell padding or safe-area handling in app routes"
+      ],
+      "status": "active"
+    },
+    "Card": {
+      "category": "layout",
+      "path": "src/components/Card.tsx",
+      "exports": [
+        "Card"
+      ],
+      "props": [
+        "compact",
+        "highlight",
+        "style",
+        "children"
+      ],
+      "variants": [
+        "default",
+        "compact",
+        "highlight"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Container only; interactive cards must wrap with NativePressable and provide accessibility props"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "radius.md",
+        "lineWidth.hairline",
+        "spacing.*",
+        "palette.panel",
+        "palette.lineSoft"
+      ],
+      "usage": "Standard content grouping surface.",
+      "forbidden": [
+        "Do not nest decorative page cards",
+        "Do not recreate card border/radius in pages"
+      ],
+      "status": "active"
+    },
+    "BottomSheet": {
+      "category": "layout",
+      "path": "src/components/BottomSheet.tsx",
+      "exports": [
+        "BottomSheetProvider",
+        "GlobalBottomSheetHost",
+        "useBottomSheet",
+        "bottomSheetPresets"
+      ],
+      "props": [
+        "header",
+        "content",
+        "footer",
+        "snapPoints",
+        "contentSizing",
+        "onDismiss"
+      ],
+      "variants": [
+        "actionMenu",
+        "detail",
+        "selection"
+      ],
+      "states": [
+        "closed",
+        "open",
+        "stacked",
+        "dismissed"
+      ],
+      "a11y": [
+        "Backdrop blocks background interaction",
+        "Header actions require accessibility labels"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "layout.sheetHeaderHeight",
+        "layout.topReservedSpace",
+        "palette.*",
+        "spacing.*"
+      ],
+      "usage": "Global bottom sheet system. Use presets for page-triggered sheets.",
+      "forbidden": [
+        "Do not call bottomSheet.show without explicit header or preset",
+        "Do not create page-local sheet containers"
+      ],
+      "status": "active"
+    },
+    "TextField": {
+      "category": "forms",
+      "path": "src/components/TextField.tsx",
+      "exports": [
+        "TextField",
+        "SelectField",
+        "RichTextField",
+        "TextFieldProps",
+        "SelectFieldProps",
+        "FormFieldState"
+      ],
+      "props": [
+        "label",
+        "value",
+        "onChangeText",
+        "fieldState",
+        "error",
+        "helperText",
+        "successText",
+        "icon",
+        "rightSlot"
+      ],
+      "variants": [
+        "neutral",
+        "stage",
+        "select",
+        "richText"
+      ],
+      "states": [
+        "default",
+        "focused",
+        "inputting",
+        "validating",
+        "success",
+        "error",
+        "disabled",
+        "readonly"
+      ],
+      "a11y": [
+        "Label is required",
+        "Disabled and readonly states are visual and behavioral"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "size.input.*",
+        "spacing.*",
+        "radius.*",
+        "lineWidth.*",
+        "typography.*",
+        "palette.*"
+      ],
+      "usage": "All text, select, and rich text form fields.",
+      "forbidden": [
+        "Do not use raw TextInput in pages",
+        "Do not hardcode form field colors"
+      ],
+      "status": "active"
+    },
+    "StatusPill": {
+      "category": "feedback",
+      "path": "src/components/StatusPill.tsx",
+      "exports": [
+        "StatusPill",
+        "StatusPillTone",
+        "StatusPillProps"
+      ],
+      "props": [
+        "label",
+        "tone",
+        "icon",
+        "compact",
+        "style"
+      ],
+      "variants": [
+        "default",
+        "compact"
+      ],
+      "states": [
+        "success",
+        "warning",
+        "danger",
+        "icon.risk.info",
+        "neutral",
+        "brand",
+        "up",
+        "down"
+      ],
+      "a11y": [
+        "Visible status label is required",
+        "Icon cannot replace label"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "radius.full",
+        "lineWidth.hairline",
+        "palette.*"
+      ],
+      "usage": "Compact status and filter labels.",
+      "forbidden": [
+        "Do not encode financial status by color only",
+        "Do not omit visible label"
+      ],
+      "status": "active"
+    },
+    "KeyValueList": {
+      "category": "data-display",
+      "path": "src/components/KeyValueList.tsx",
+      "exports": [
+        "KeyValueList",
+        "KeyValueListItem",
+        "KeyValueListVariant"
+      ],
+      "props": [
+        "items",
+        "variant",
+        "divided",
+        "fill",
+        "style"
+      ],
+      "variants": [
+        "compact",
+        "detail"
+      ],
+      "states": [
+        "default",
+        "divided",
+        "fill"
+      ],
+      "a11y": [
+        "Labels and values remain visible text",
+        "Long values shrink or wrap based on variant"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "spacing.*",
+        "lineWidth.hairline",
+        "palette.lineSoft"
+      ],
+      "usage": "Financial/account detail label-value lists.",
+      "forbidden": [
+        "Do not hand-roll reusable detail rows in pages"
+      ],
+      "status": "active"
+    },
+    "Metric": {
+      "category": "data-display",
+      "path": "src/components/Metric.tsx",
+      "exports": [
+        "Metric"
+      ],
+      "props": [
+        "label",
+        "value",
+        "tone",
+        "caption"
+      ],
+      "variants": [
+        "default",
+        "withCaption"
+      ],
+      "states": [
+        "default",
+        "up",
+        "down",
+        "amber",
+        "brand",
+        "danger"
+      ],
+      "a11y": [
+        "Metric label and value are both visible text"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "typography.*",
+        "palette.*"
+      ],
+      "usage": "Small metric cells in cards and summaries.",
+      "forbidden": [
+        "Do not build page-local metric tiles for repeated summaries"
+      ],
+      "status": "active"
+    },
+    "Sparkline": {
+      "category": "data-display",
+      "path": "src/components/Sparkline.tsx",
+      "exports": [
+        "Sparkline"
+      ],
+      "props": [
+        "values",
+        "color",
+        "height",
+        "width",
+        "style"
+      ],
+      "variants": [
+        "line"
+      ],
+      "states": [
+        "default",
+        "positive",
+        "negative",
+        "empty"
+      ],
+      "a11y": [
+        "Chart must be paired with textual value/label in parent component"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*"
+      ],
+      "usage": "Small trend visualization where textual metrics carry the primary meaning.",
+      "forbidden": [
+        "Do not use chart alone to communicate financial state"
+      ],
+      "status": "active"
+    },
+    "GlobalMenuList": {
+      "category": "business",
+      "path": "src/components/GlobalMenuList.tsx",
+      "exports": [
+        "GlobalMenuList",
+        "GlobalMenuListItem"
+      ],
+      "props": [
+        "items",
+        "contained",
+        "flushRows",
+        "variant"
+      ],
+      "variants": [
+        "navigation",
+        "descriptive",
+        "contained",
+        "flushRows"
+      ],
+      "states": [
+        "default",
+        "pressed",
+        "disabled"
+      ],
+      "a11y": [
+        "Rows expose accessibility labels",
+        "Description remains visible copy"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "radius.md",
+        "lineWidth.hairline",
+        "spacing.*",
+        "palette.*"
+      ],
+      "usage": "Reusable menu/list pattern for account, support, and action sheets.",
+      "forbidden": [
+        "Do not recreate global menu rows in pages",
+        "Do not use unregistered icons"
+      ],
+      "status": "active"
+    },
+    "FundActionGrid": {
+      "category": "business",
+      "path": "src/components/FundActionGrid.tsx",
+      "exports": [
+        "FundActionGrid",
+        "FundActionGridItem",
+        "getDefaultFundActions"
+      ],
+      "props": [
+        "items"
+      ],
+      "variants": [
+        "default",
+        "customItems"
+      ],
+      "states": [
+        "default",
+        "pressed",
+        "disabled"
+      ],
+      "a11y": [
+        "Each action has label or accessibilityLabel",
+        "Touch target is at least 72"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "layout.fundActionIconSize",
+        "layout.fundActionIconBoxSize",
+        "spacing.*",
+        "lineWidth.hairline",
+        "palette.*"
+      ],
+      "usage": "Deposit, withdrawal, and transfer action cluster.",
+      "forbidden": [
+        "Do not use for non-funding shortcuts",
+        "Do not invent unreviewed fund actions"
+      ],
+      "status": "active"
+    },
+    "TabBarIcon": {
+      "category": "navigation",
+      "path": "src/components/navigation/TabBarIcon.tsx",
+      "exports": [
+        "TabBarIcon"
+      ],
+      "props": [
+        "name",
+        "color",
+        "style"
+      ],
+      "variants": [
+        "tab"
+      ],
+      "states": [
+        "active",
+        "inactive"
+      ],
+      "a11y": [
+        "Tab label comes from Expo Router tab options"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "iconRegistry.defaultSize",
+        "size.tab.icon"
+      ],
+      "usage": "Expo Router tab icon adapter bound to AppIcon.",
+      "forbidden": [
+        "Do not define tab icon renderers inside app route files"
+      ],
+      "status": "active"
+    },
+    "AppTopBar": {
+      "category": "layout",
+      "path": "src/components/AppTopBar.tsx",
+      "exports": [
+        "AppTopBar",
+        "AppTopBarAction"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Standard top navigation bar for screens.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "AppViewport": {
+      "category": "layout",
+      "path": "src/components/AppViewport.tsx",
+      "exports": [
+        "AppViewport"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Constrains app viewport width on larger surfaces.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "AuthShell": {
+      "category": "forms",
+      "path": "src/components/AuthShell.tsx",
+      "exports": [
+        "AuthShell",
+        "AuthTextField",
+        "AuthInlineSwitch",
+        "AuthLink",
+        "AuthDescriptionAction"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Authentication flow shell and supporting controls.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "AuthFlowControls": {
+      "category": "forms",
+      "path": "src/components/AuthFlowControls.tsx",
+      "exports": [
+        "CountryPhoneField",
+        "CountryPickerModal",
+        "OtpInput",
+        "OtpRecoveryActions",
+        "AuthContactConfirmDialog",
+        "PasswordRuleList",
+        "AuthErrorSheet",
+        "AuthErrorDialog",
+        "FlagBadge",
+        "useCountdown"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Authentication and verification helper controls.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "BackBar": {
+      "category": "layout",
+      "path": "src/components/BackBar.tsx",
+      "exports": [
+        "BackBar"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Compact back navigation bar.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "CurrencyFlag": {
+      "category": "data-display",
+      "path": "src/components/CurrencyFlag.tsx",
+      "exports": [
+        "CurrencyFlag"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Currency marker visual.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "FlagIcon": {
+      "category": "data-display",
+      "path": "src/components/FlagIcon.tsx",
+      "exports": [
+        "FlagIcon",
+        "isFlagCode"
+      ],
+      "props": [
+        "code",
+        "shape",
+        "size",
+        "accessibilityLabel",
+        "style"
+      ],
+      "variants": [
+        "circle",
+        "square",
+        "rectangle"
+      ],
+      "states": [
+        "default",
+        "missing-code-fallback"
+      ],
+      "a11y": [
+        "Flag assets must expose an accessibility label unless decorative in a parent control",
+        "Flag alone must not be the only country identifier in critical financial forms"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.panelSoft",
+        "palette.lineSoft",
+        "lineWidth.hairline",
+        "size.*"
+      ],
+      "usage": "Governed global flag asset renderer. Defaults to circle; supports square and rectangle.",
+      "forbidden": [
+        "Do not render flag SVG files directly in pages",
+        "Do not use emoji flags as production flag assets",
+        "Do not use unknown-source flag artwork"
+      ],
+      "status": "active"
+    },
+    "DescribedLabel": {
+      "category": "foundation",
+      "path": "src/components/DescribedLabel.tsx",
+      "exports": [
+        "DescribedLabel"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Label with contextual description affordance.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "Header": {
+      "category": "layout",
+      "path": "src/components/Header.tsx",
+      "exports": [
+        "Header"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Simple section/page header.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "HeaderIconButton": {
+      "category": "layout",
+      "path": "src/components/HeaderIconButton.tsx",
+      "exports": [
+        "HeaderIconButton",
+        "HeaderIconSlot"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Icon button and slot for top bars and headers.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "InstrumentIcon": {
+      "category": "data-display",
+      "path": "src/components/InstrumentIcon.tsx",
+      "exports": [
+        "InstrumentIcon"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Governed market instrument visual.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "InstrumentRow": {
+      "category": "data-display",
+      "path": "src/components/InstrumentRow.tsx",
+      "exports": [
+        "InstrumentRow"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Market instrument list row.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "ProductControlPanel": {
+      "category": "business",
+      "path": "src/components/ProductControlPanel.tsx",
+      "exports": [
+        "ProductControlPanel"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Internal product scenario control panel.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "ProfileAvatar": {
+      "category": "business",
+      "path": "src/components/ProfileAvatar.tsx",
+      "exports": [
+        "ProfileAvatar",
+        "getProfileAvatarUri",
+        "profileAvatarOptions",
+        "ProfileAvatarId"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Profile avatar renderer and approved avatar set.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "QuickActionSheet": {
+      "category": "business",
+      "path": "src/components/QuickActionSheet.tsx",
+      "exports": [
+        "QuickActionSheet"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Quick action bottom sheet module.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "SegmentedTabs": {
+      "category": "navigation",
+      "path": "src/components/SegmentedTabs.tsx",
+      "exports": [
+        "SegmentedTabs",
+        "SegmentedTabItem"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Segmented control for local view switching.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "SelectField": {
+      "category": "forms",
+      "path": "src/components/TextField.tsx",
+      "exports": [
+        "SelectField",
+        "SelectFieldProps",
+        "SelectFieldOption"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Select field variant using TextField governance.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "RichTextField": {
+      "category": "forms",
+      "path": "src/components/TextField.tsx",
+      "exports": [
+        "RichTextField",
+        "RichTextFieldProps"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Rich text field variant using TextField governance.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "TradeDirectionIcon": {
+      "category": "data-display",
+      "path": "src/components/TradeDirectionIcon.tsx",
+      "exports": [
+        "TradeDirectionIcon"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Buy/sell direction icon with semantic tones.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "TradingAccountSwitchSheet": {
+      "category": "business",
+      "path": "src/components/TradingAccountSwitchSheet.tsx",
+      "exports": [
+        "TradingAccountSwitchSheet"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Trading account selection sheet.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "UpgradeChatCard": {
+      "category": "business",
+      "path": "src/components/UpgradeChatCard.tsx",
+      "exports": [
+        "UpgradeChatCard"
+      ],
+      "props": [
+        "documented in TypeScript props"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Visible labels or caller-provided accessibility labels are required for interactive use"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "typography.*",
+        "radius.*",
+        "lineWidth.*",
+        "size.*",
+        "layout.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Partner upgrade status chat card.",
+      "forbidden": [
+        "Do not recreate this pattern inside app route files",
+        "Do not bypass token or icon registry bindings"
+      ],
+      "status": "active"
+    },
+    "OrderInfoRow": {
+      "category": "business",
+      "path": "src/components/business/OrderInfoRow.tsx",
+      "exports": [
+        "OrderInfoRow"
+      ],
+      "props": [
+        "label",
+        "value",
+        "tone"
+      ],
+      "variants": [
+        "default",
+        "danger"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Uses text semantics inside parent trade ticket context"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "lineWidth.*"
+      ],
+      "usage": "Displays order ticket key-value estimates such as notional and margin.",
+      "forbidden": [
+        "Do not recreate order estimate rows in route files",
+        "Do not hardcode financial danger colors"
+      ],
+      "status": "active"
+    },
+    "RiskPriceRow": {
+      "category": "business",
+      "path": "src/components/business/RiskPriceRow.tsx",
+      "exports": [
+        "RiskPriceRow"
+      ],
+      "props": [
+        "label",
+        "caption",
+        "price",
+        "pnl"
+      ],
+      "variants": [
+        "stop-loss",
+        "take-profit"
+      ],
+      "states": [
+        "profit",
+        "loss"
+      ],
+      "a11y": [
+        "Exposes risk label, caption, price, and estimated PnL as readable text"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "radius.*",
+        "lineWidth.*"
+      ],
+      "usage": "Displays stop-loss/take-profit price and estimated PnL in order risk controls.",
+      "forbidden": [
+        "Do not use for actual submitted order confirmation without backend values",
+        "Do not hardcode risk colors outside palette tokens"
+      ],
+      "status": "active"
+    },
+    "TransactionRow": {
+      "category": "business",
+      "path": "src/components/business/TransactionRow.tsx",
+      "exports": [
+        "TransactionRow",
+        "TransactionListRow"
+      ],
+      "props": [
+        "transaction",
+        "currency",
+        "onPress",
+        "showDivider",
+        "formatTime",
+        "getIcon",
+        "getTone",
+        "getStatusLabel",
+        "resolveColor"
+      ],
+      "variants": [
+        "deposit",
+        "withdrawal",
+        "adjustment"
+      ],
+      "states": [
+        "completed",
+        "reviewing",
+        "rejected",
+        "pressed"
+      ],
+      "a11y": [
+        "accessibilityRole=button",
+        "accessibilityLabel includes transaction title"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "radius.*",
+        "lineWidth.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Funding and account-balance transaction list row with semantic icon and status pill.",
+      "forbidden": [
+        "Do not use unregistered transaction icons",
+        "Do not bypass status tone mapping"
+      ],
+      "status": "active"
+    },
+    "DetailInline": {
+      "category": "data-display",
+      "path": "src/components/data-display/DetailInline.tsx",
+      "exports": [
+        "DetailInline"
+      ],
+      "props": [
+        "label",
+        "value"
+      ],
+      "variants": [
+        "inline"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Uses readable label and value text pair"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "spacing.*",
+        "typography.*"
+      ],
+      "usage": "Compact inline label/value pair inside detail sheets or expanded rows.",
+      "forbidden": [
+        "Do not use for long multiline legal content"
+      ],
+      "status": "active"
+    },
+    "DetailRow": {
+      "category": "data-display",
+      "path": "src/components/data-display/DetailRow.tsx",
+      "exports": [
+        "DetailRow",
+        "DetailRowItem"
+      ],
+      "props": [
+        "row",
+        "showDivider"
+      ],
+      "variants": [
+        "default",
+        "trailingIcon"
+      ],
+      "states": [
+        "default",
+        "divided"
+      ],
+      "a11y": [
+        "Supports readable label/value text and optional semantic trailing icon"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "lineWidth.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Standard detail-sheet label/value row with optional divider and trailing icon.",
+      "forbidden": [
+        "Do not recreate page-local detail rows",
+        "Do not use unregistered trailing icons"
+      ],
+      "status": "active"
+    },
+    "LegendDot": {
+      "category": "data-display",
+      "path": "src/components/data-display/LegendDot.tsx",
+      "exports": [
+        "LegendDot"
+      ],
+      "props": [
+        "color",
+        "label"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Legend label remains visible text; color is supplementary"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "radius.*"
+      ],
+      "usage": "Small chart or metric legend item paired with visible text.",
+      "forbidden": [
+        "Do not communicate status by color alone without label"
+      ],
+      "status": "active"
+    },
+    "MiniBarChart": {
+      "category": "data-display",
+      "path": "src/components/data-display/MiniBarChart.tsx",
+      "exports": [
+        "MiniBarChart"
+      ],
+      "props": [
+        "values",
+        "color",
+        "maxValue",
+        "ticks"
+      ],
+      "variants": [
+        "compact-bars"
+      ],
+      "states": [
+        "default",
+        "empty-data"
+      ],
+      "a11y": [
+        "Chart must be paired with surrounding textual summary in screen composition"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "radius.*",
+        "lineWidth.*"
+      ],
+      "usage": "Compact bar-chart primitive for history and volume summaries.",
+      "forbidden": [
+        "Do not use as sole source of financial data without text summary"
+      ],
+      "status": "active"
+    },
+    "MiniMetric": {
+      "category": "data-display",
+      "path": "src/components/data-display/MiniMetric.tsx",
+      "exports": [
+        "MiniMetric"
+      ],
+      "props": [
+        "label",
+        "value",
+        "tone",
+        "variant"
+      ],
+      "variants": [
+        "default",
+        "snapshot"
+      ],
+      "states": [
+        "default",
+        "up",
+        "down"
+      ],
+      "a11y": [
+        "Label and value are both rendered as text"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "spacing.*",
+        "typography.*",
+        "palette.*"
+      ],
+      "usage": "Small metric cell for account snapshots and compact summaries.",
+      "forbidden": [
+        "Do not hardcode number colors outside tone props"
+      ],
+      "status": "active"
+    },
+    "EmptyState": {
+      "category": "feedback",
+      "path": "src/components/feedback/EmptyState.tsx",
+      "exports": [
+        "EmptyState"
+      ],
+      "props": [
+        "body",
+        "title",
+        "icon",
+        "variant",
+        "actionLabel",
+        "secondaryLabel",
+        "onAction",
+        "onSecondaryAction"
+      ],
+      "variants": [
+        "plain",
+        "card"
+      ],
+      "states": [
+        "empty",
+        "actionable",
+        "secondary-action"
+      ],
+      "a11y": [
+        "Optional actions use ActionButton semantics",
+        "Icon is decorative next to visible copy"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "spacing.*",
+        "radius.*",
+        "iconRegistry.*"
+      ],
+      "usage": "Reusable empty state for lists, orders, and data panels.",
+      "forbidden": [
+        "Do not use without visible explanatory body",
+        "Do not use unregistered icons"
+      ],
+      "status": "active"
+    },
+    "StepperButton": {
+      "category": "forms",
+      "path": "src/components/forms/StepperButton.tsx",
+      "exports": [
+        "StepperButton"
+      ],
+      "props": [
+        "label",
+        "onPress",
+        "symbol"
+      ],
+      "variants": [
+        "increment",
+        "decrement"
+      ],
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "a11y": [
+        "accessibilityRole=button",
+        "Requires explicit accessibilityLabel"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "size.control.*",
+        "radius.*",
+        "lineWidth.*"
+      ],
+      "usage": "Compact numeric stepper increment/decrement control.",
+      "forbidden": [
+        "Do not use symbol-only control without label"
+      ],
+      "status": "active"
+    },
+    "SwitchControl": {
+      "category": "forms",
+      "path": "src/components/forms/SwitchControl.tsx",
+      "exports": [
+        "SwitchControl"
+      ],
+      "props": [
+        "accessibilityLabel",
+        "value",
+        "onValueChange"
+      ],
+      "variants": [
+        "boolean"
+      ],
+      "states": [
+        "checked",
+        "unchecked",
+        "pressed"
+      ],
+      "a11y": [
+        "accessibilityRole=switch",
+        "accessibilityState.checked reflects value"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "palette.*",
+        "size.touch.*",
+        "radius.*",
+        "lineWidth.*"
+      ],
+      "usage": "Token-bound boolean switch for governed app controls.",
+      "forbidden": [
+        "Do not use for mutually exclusive multi-choice options"
+      ],
+      "status": "active"
+    },
+    "SheetGroupTitle": {
+      "category": "layout",
+      "path": "src/components/layout/SheetGroupTitle.tsx",
+      "exports": [
+        "SheetGroupTitle"
+      ],
+      "props": [
+        "title"
+      ],
+      "variants": [
+        "sheet-section"
+      ],
+      "states": [
+        "default"
+      ],
+      "a11y": [
+        "Rendered as text section label inside sheet content"
+      ],
+      "platforms": [
+        "app",
+        "h5",
+        "web"
+      ],
+      "tokenBindings": [
+        "spacing.*",
+        "typography.*",
+        "palette.*"
+      ],
+      "usage": "Standard group title for bottom-sheet menu sections.",
+      "forbidden": [
+        "Do not use as page title replacement"
+      ],
+      "status": "active"
+    }
+  }
+}

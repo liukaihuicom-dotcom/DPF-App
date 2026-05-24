@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Funding Transaction",
+  "type": "object",
+  "required": ["id", "operation", "status", "customerId", "fee", "riskFlags", "createdAt", "updatedAt"],
+  "properties": {
+    "id": { "type": "string" },
+    "operation": { "type": "string", "enum": ["deposit", "withdrawal", "internal_transfer"] },
+    "status": { "type": "string" },
+    "customerId": { "type": "string" },
+    "tradingAccountId": { "type": "string" },
+    "sourceTradingAccountId": { "type": "string" },
+    "targetTradingAccountId": { "type": "string" },
+    "requestedIdrAmount": { "type": "number" },
+    "requestedUsdAmount": { "type": "number" },
+    "actualUsdAmount": { "type": "number" },
+    "fee": { "type": "object" },
+    "fxQuote": { "type": "object" },
+    "riskFlags": { "type": "array", "items": { "type": "string" } },
+    "reviewRequired": { "type": "boolean" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}
+

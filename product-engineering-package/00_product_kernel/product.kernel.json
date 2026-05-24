@@ -1,0 +1,62 @@
+{
+  "$schema": "./product.kernel.schema.json",
+  "product_id": "trading_account_funding_id_v1",
+  "product_name": "Trading Account Deposit Withdrawal Transfer System",
+  "version": "v1.0.0-contract",
+  "platforms": ["app", "h5", "admin"],
+  "domains": [
+    "funding",
+    "deposit",
+    "withdrawal",
+    "internal_transfer",
+    "payment_method",
+    "fx_quote",
+    "funding_review",
+    "ledger_entry",
+    "trading_account",
+    "kyc",
+    "audit_log"
+  ],
+  "roles": ["guest", "trader", "partner", "funding_reviewer", "risk_compliance", "internal_operator"],
+  "regions": ["ID"],
+  "release_scope": "Product contract package for Indonesia-first direct-to-trading-account funding. No runtime implementation.",
+  "risk_level": "critical",
+  "currency_policy": {
+    "customer_payment_currency": "IDR",
+    "trading_account_currency": "USD",
+    "fx_required": true,
+    "fx_rate_source": "backend_config_or_provider_contract",
+    "display_required": ["fxRate", "fee", "expectedUsdAmount", "actualUsdAmount"]
+  },
+  "funding_model": {
+    "type": "direct_to_trading_account",
+    "wallet_enabled": false,
+    "deposit_target": "tradingAccountId",
+    "withdrawal_source": "tradingAccountId",
+    "transfer_scope": "same_verified_owner_trading_accounts"
+  },
+  "payment_channels": ["bank_transfer", "virtual_account", "e_wallet"],
+  "source_of_truth": [
+    "docs/01-product-modules.md",
+    "docs/03-user-roles.md",
+    "docs/04-permission-rules.md",
+    "docs/05-business-rules.md",
+    "docs/06-state-machine.md",
+    "docs/09-security-compliance-risk.md",
+    "product-engineering-package/README.md"
+  ],
+  "owners": {
+    "product": "Product Owner TBD",
+    "engineering": "Engineering Owner TBD",
+    "risk_compliance": "Risk and Compliance Owner TBD",
+    "qa": "QA Owner TBD"
+  },
+  "assumptions": [
+    "Indonesia V1 supports Bank Transfer, Virtual Account, and E-wallet abstractions; concrete providers are not confirmed.",
+    "Limits, fees, FX spread, AML thresholds, and channel maintenance windows are backend-configured.",
+    "Deposit may be submitted before KYC approval, but withdrawal and transfer require approved KYC.",
+    "Partner cannot initiate client funding operations in V1.",
+    "The package is a product contract and does not connect live payment, KYC, or trading APIs."
+  ]
+}
+

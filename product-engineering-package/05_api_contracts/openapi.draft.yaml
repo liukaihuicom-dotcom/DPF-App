@@ -1,0 +1,249 @@
+openapi: 3.1.0
+info:
+  title: Trading Account Funding API Draft
+  version: 1.0.0-contract
+  description: Draft API contract for Indonesia-first direct-to-trading-account funding.
+servers:
+  - url: https://api.example.local
+    description: Placeholder server. Not a production endpoint.
+paths:
+  /trading-accounts:
+    get:
+      summary: List current user's trading accounts eligible for funding display.
+      responses:
+        "200":
+          description: Trading account list.
+  /funding/payment-methods:
+    get:
+      summary: List payment methods for deposit or withdrawal.
+      parameters:
+        - name: operation
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [deposit, withdrawal]
+      responses:
+        "200":
+          description: Payment method list with availability and maintenance state.
+  /funding/rules:
+    get:
+      summary: Return funding limits, fees, and FX policy for an operation and trading account.
+      parameters:
+        - name: operation
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [deposit, withdrawal, internal_transfer]
+        - name: tradingAccountId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Funding rule config.
+  /funding/deposits:
+    post:
+      summary: Create IDR deposit request for a USD trading account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDepositRequest"
+      responses:
+        "201":
+          description: Deposit transaction created.
+        "400":
+          description: Stable error code response.
+  /funding/withdrawals:
+    post:
+      summary: Create IDR withdrawal request from a USD trading account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWithdrawalRequest"
+      responses:
+        "201":
+          description: Withdrawal transaction created.
+        "400":
+          description: Stable error code response.
+  /funding/transfers:
+    post:
+      summary: Create same-owner USD internal transfer between trading accounts.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTransferRequest"
+      responses:
+        "201":
+          description: Transfer transaction created.
+        "400":
+          description: Stable error code response.
+  /funding/transactions:
+    get:
+      summary: List funding transactions.
+      parameters:
+        - name: operation
+          in: query
+          schema:
+            type: string
+            enum: [deposit, withdrawal, internal_transfer]
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: tradingAccountId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Funding transaction list.
+  /funding/transactions/{id}:
+    get:
+      summary: Get funding transaction detail.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Funding transaction detail.
+  /funding/transactions/{id}/cancel:
+    post:
+      summary: Cancel a cancellable funding transaction.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MutationMeta"
+      responses:
+        "200":
+          description: Transaction cancelled.
+  /admin/funding/reviews/{id}/approve:
+    post:
+      summary: Approve a funding review item.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminReviewDecisionRequest"
+      responses:
+        "200":
+          description: Review approved.
+  /admin/funding/reviews/{id}/reject:
+    post:
+      summary: Reject a funding review item.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminReviewDecisionRequest"
+      responses:
+        "200":
+          description: Review rejected.
+components:
+  schemas:
+    MutationMeta:
+      type: object
+      required: [idempotencyKey, clientRequestId, riskAcknowledged, auditContext]
+      properties:
+        idempotencyKey:
+          type: string
+        clientRequestId:
+          type: string
+        riskAcknowledged:
+          type: boolean
+        auditContext:
+          type: object
+          required: [actor, actorRole, requestId]
+          properties:
+            actor:
+              type: string
+            actorRole:
+              type: string
+            requestId:
+              type: string
+    CreateDepositRequest:
+      allOf:
+        - $ref: "#/components/schemas/MutationMeta"
+        - type: object
+          required: [tradingAccountId, requestedIdrAmount, paymentMethodId, fxQuoteId]
+          properties:
+            tradingAccountId:
+              type: string
+            requestedIdrAmount:
+              type: number
+            paymentMethodId:
+              type: string
+            fxQuoteId:
+              type: string
+    CreateWithdrawalRequest:
+      allOf:
+        - $ref: "#/components/schemas/MutationMeta"
+        - type: object
+          required: [tradingAccountId, requestedIdrAmount, paymentMethodId, payoutAccountId, fxQuoteId]
+          properties:
+            tradingAccountId:
+              type: string
+            requestedIdrAmount:
+              type: number
+            paymentMethodId:
+              type: string
+            payoutAccountId:
+              type: string
+            fxQuoteId:
+              type: string
+    CreateTransferRequest:
+      allOf:
+        - $ref: "#/components/schemas/MutationMeta"
+        - type: object
+          required: [sourceTradingAccountId, targetTradingAccountId, requestedUsdAmount]
+          properties:
+            sourceTradingAccountId:
+              type: string
+            targetTradingAccountId:
+              type: string
+            requestedUsdAmount:
+              type: number
+    AdminReviewDecisionRequest:
+      allOf:
+        - $ref: "#/components/schemas/MutationMeta"
+        - type: object
+          required: [decisionReason]
+          properties:
+            decisionReason:
+              type: string
+            riskNotes:
+              type: string
+

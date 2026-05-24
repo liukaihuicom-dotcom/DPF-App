@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Funding Page Contract",
+  "type": "object",
+  "required": ["page_id", "platform", "roles", "purpose", "states", "apis", "rules"],
+  "properties": {
+    "page_id": { "type": "string" },
+    "platform": { "type": "string" },
+    "roles": { "type": "array", "items": { "type": "string" } },
+    "purpose": { "type": "string" },
+    "states": { "type": "array", "items": { "type": "string" } },
+    "apis": { "type": "array", "items": { "type": "string" } },
+    "rules": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}
+

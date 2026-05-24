@@ -1,0 +1,47 @@
+{
+  "$schema": "./rbac.policy.schema.json",
+  "roles": ["guest", "trader", "partner", "funding_reviewer", "risk_compliance", "internal_operator"],
+  "permissions": [
+    {
+      "permission": "funding.view_own_summary",
+      "roles": ["trader"],
+      "conditions": ["authStatus=signedIn", "dataScope=own_trading_accounts"]
+    },
+    {
+      "permission": "funding.create_deposit",
+      "roles": ["trader"],
+      "conditions": ["authStatus=signedIn", "targetAccount.owner=currentUser", "accountStatus in active"]
+    },
+    {
+      "permission": "funding.create_withdrawal",
+      "roles": ["trader"],
+      "conditions": ["kycStatus=approved", "sourceAccount.owner=currentUser", "accountStatus=active", "payoutOwnership=verified"]
+    },
+    {
+      "permission": "funding.create_internal_transfer",
+      "roles": ["trader"],
+      "conditions": ["kycStatus=approved", "sourceAccount.owner=currentUser", "targetAccount.owner=currentUser", "sourceAccountStatus=active", "targetAccountStatus=active"]
+    },
+    {
+      "permission": "funding.view_authorized_summary",
+      "roles": ["partner"],
+      "conditions": ["explicitDataScopeGrant=true", "no_bank_or_kyc_pii"]
+    },
+    {
+      "permission": "funding.review_decide",
+      "roles": ["funding_reviewer", "risk_compliance"],
+      "conditions": ["reviewStatus=reviewing", "decisionReasonRequired=true"]
+    },
+    {
+      "permission": "funding.configure_channels",
+      "roles": ["internal_operator", "risk_compliance"],
+      "conditions": ["adminSession=true", "changeReasonRequired=true"]
+    },
+    {
+      "permission": "funding.configure_limits_fees",
+      "roles": ["risk_compliance"],
+      "conditions": ["adminSession=true", "approvalWorkflowRequired=true"]
+    }
+  ]
+}
+

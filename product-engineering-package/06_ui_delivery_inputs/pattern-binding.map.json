@@ -1,0 +1,11 @@
+{
+  "deposit_form": ["form-pattern", "review-pattern"],
+  "deposit_detail": ["detail-pattern", "transaction-timeline"],
+  "withdrawal_form": ["form-pattern", "risk-warning-banner", "kyc-status-block"],
+  "withdrawal_detail": ["detail-pattern", "transaction-timeline"],
+  "transfer_form": ["form-pattern", "review-pattern"],
+  "transfer_detail": ["detail-pattern", "transaction-timeline"],
+  "funding_transaction_list": ["list-pattern", "empty-error-pattern"],
+  "admin_funding_review_detail": ["review-pattern", "detail-pattern"]
+}
+

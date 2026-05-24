@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Funding Audit Log",
+  "type": "object",
+  "required": [
+    "auditLogId",
+    "transactionId",
+    "actor",
+    "actorRole",
+    "reason",
+    "previousStatus",
+    "nextStatus",
+    "timestamp",
+    "requestId"
+  ],
+  "properties": {
+    "auditLogId": { "type": "string" },
+    "transactionId": { "type": "string" },
+    "actor": { "type": "string" },
+    "actorRole": { "type": "string" },
+    "reason": { "type": "string" },
+    "previousStatus": { "type": "string" },
+    "nextStatus": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "requestId": { "type": "string" },
+    "metadata": { "type": "object" }
+  }
+}
+

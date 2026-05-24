@@ -1,0 +1,582 @@
+import { useMemo, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+
+import { ActionButton } from '@/src/components/ActionButton';
+import { AppIcon, type AppIconName, type IconTone } from '@/src/components/AppIcon';
+import { bottomSheetPresets, useBottomSheet } from '@/src/components/BottomSheet';
+import { Card } from '@/src/components/Card';
+import { NativePressable } from '@/src/components/NativePressable';
+import { Screen } from '@/src/components/Screen';
+import { StatusPill, type StatusPillTone } from '@/src/components/StatusPill';
+import { AppText } from '@/src/components/Typography';
+import {
+  buildSecurityLoginDevices,
+  reportSecurityEvent,
+  revokeSecuritySession,
+  type SecurityDevice,
+  type SecurityDeviceType,
+  type SecurityLoginEvent,
+  type SecurityRiskLevel,
+  type SecuritySession,
+} from '@/src/domain/securityLoginLog';
+import { useToast } from '@/src/feedback/Toast';
+import { impactLight, notifySuccess, notifyWarning } from '@/src/feedback/haptics';
+import { useProductSettings } from '@/src/settings/ProductSettings';
+import { layout, lineWidth, radius, size, spacing } from '@/src/theme/tokens';
+
+type SummaryMetric = {
+  label: string;
+  tone?: 'amber' | 'danger' | 'default';
+  value: string;
+};
+
+export default function SecurityLoginLogScreen() {
+  const { locale, palette, rememberedLoginSnapshot, t } = useProductSettings();
+  const bottomSheet = useBottomSheet();
+  const toast = useToast();
+  const [devices, setDevices] = useState(() => buildSecurityLoginDevices(rememberedLoginSnapshot));
+  const activeDeviceCount = devices.filter((device) => device.sessions.some((session) => session.status === 'active')).length;
+  const riskEventCount = devices.flatMap((device) => device.events).filter((event) => event.riskLevel !== 'low' && event.status !== 'resolved').length;
+  const currentDevice = devices.find((device) => device.isCurrentDevice);
+  const metrics: SummaryMetric[] = [
+    { label: t('securityLog.summary.activeDevices'), value: String(activeDeviceCount) },
+    { label: t('securityLog.summary.riskEvents'), tone: riskEventCount > 0 ? 'danger' : 'default', value: String(riskEventCount) },
+    { label: t('securityLog.summary.currentDevice'), tone: 'amber', value: currentDevice?.deviceName ?? t('securityLog.device.unknown') },
+  ];
+
+  const updateDevices = (nextDevices: SecurityDevice[]) => {
+    setDevices(nextDevices);
+  };
+
+  const openDevice = (device: SecurityDevice) => {
+    bottomSheet.show(
+      bottomSheetPresets.detail({
+        content: (
+          <DeviceDetailSheet
+            device={device}
+            formatDate={(value) => formatSecurityDate(value, locale)}
+            onOpenConfirmReport={(event) => openReportConfirm(device, event)}
+            onOpenConfirmRevoke={(session) => openRevokeConfirm(device, session)}
+          />
+        ),
+        leftIcon: deviceIcon(device.deviceType),
+        snapPoints: ['84%'],
+        title: device.deviceName,
+      }),
+    );
+  };
+
+  const openRevokeConfirm = (device: SecurityDevice, session: SecuritySession) => {
+    bottomSheet.push(
+      bottomSheetPresets.detail({
+        content: (
+          <ConfirmActionSheet
+            body={session.isCurrentSession ? t('securityLog.revoke.currentBlockedBody') : t('securityLog.revoke.confirmBody', { app: session.appName })}
+            confirmDisabled={session.isCurrentSession || session.status === 'revoked'}
+            confirmLabel={t('securityLog.action.revokeSession')}
+            confirmTone="danger"
+            icon="icon.system.logout"
+            onCancel={bottomSheet.back}
+            onConfirm={() => {
+              const result = revokeSecuritySession(devices, session.sessionId);
+              if (result.code !== 'ok') {
+                void notifyWarning();
+                toast.show({
+                  message: t(`securityLog.error.${result.code}`),
+                  title: t('securityLog.toast.actionBlocked'),
+                  tone: 'warning',
+                });
+                bottomSheet.back();
+                return;
+              }
+
+              updateDevices(result.devices);
+              void notifySuccess();
+              toast.show({
+                message: t('securityLog.toast.revokeBody'),
+                title: t('securityLog.toast.revokeTitle'),
+                tone: 'success',
+              });
+              bottomSheet.show(
+                bottomSheetPresets.detail({
+                  content: (
+                    <DeviceDetailSheet
+                      device={result.devices.find((item) => item.deviceId === device.deviceId) ?? device}
+                      formatDate={(value) => formatSecurityDate(value, locale)}
+                      onOpenConfirmReport={(event) => openReportConfirm(result.devices.find((item) => item.deviceId === device.deviceId) ?? device, event)}
+                      onOpenConfirmRevoke={(nextSession) => openRevokeConfirm(result.devices.find((item) => item.deviceId === device.deviceId) ?? device, nextSession)}
+                    />
+                  ),
+                  leftIcon: deviceIcon(device.deviceType),
+                  snapPoints: ['84%'],
+                  title: device.deviceName,
+                }),
+              );
+            }}
+            title={t('securityLog.revoke.confirmTitle')}
+          />
+        ),
+        leftIcon: 'icon.system.logout',
+        title: t('securityLog.revoke.confirmTitle'),
+      }),
+    );
+  };
+
+  const openReportConfirm = (device: SecurityDevice, event: SecurityLoginEvent) => {
+    bottomSheet.push(
+      bottomSheetPresets.detail({
+        content: (
+          <ConfirmActionSheet
+            body={t('securityLog.report.confirmBody', { device: device.deviceName })}
+            confirmDisabled={event.status === 'reported'}
+            confirmLabel={t('securityLog.action.reportNotMe')}
+            confirmTone="danger"
+            icon="icon.security.risk_shield"
+            onCancel={bottomSheet.back}
+            onConfirm={() => {
+              const result = reportSecurityEvent(devices, event.eventId);
+              if (result.code !== 'ok') {
+                void notifyWarning();
+                toast.show({
+                  message: t(`securityLog.error.${result.code}`),
+                  title: t('securityLog.toast.actionBlocked'),
+                  tone: 'warning',
+                });
+                bottomSheet.back();
+                return;
+              }
+
+              updateDevices(result.devices);
+              void notifyWarning();
+              toast.show({
+                message: t('securityLog.toast.reportBody'),
+                title: t('securityLog.toast.reportTitle'),
+                tone: 'warning',
+              });
+              bottomSheet.hide();
+            }}
+            title={t('securityLog.report.confirmTitle')}
+          />
+        ),
+        leftIcon: 'icon.security.risk_shield',
+        title: t('securityLog.report.confirmTitle'),
+      }),
+    );
+  };
+
+  return (
+    <Screen align="center" back rightActions={[]} subtitle={t('securityLog.subtitle')} title={t('securityLog.title')}>
+      <Card highlight>
+        <View style={styles.summaryHeader}>
+          <View style={StyleSheet.flatten([styles.summaryIcon, { backgroundColor: `${palette.blue}14`, borderColor: `${palette.blue}44` }])}>
+            <AppIcon name="icon.security.risk_shield" size={24} tone="blue" />
+          </View>
+          <View style={styles.flex}>
+            <AppText variant="subtitle">{t('securityLog.summary.title')}</AppText>
+            <AppText tone="muted" variant="caption">
+              {t('securityLog.summary.demoNotice')}
+            </AppText>
+          </View>
+        </View>
+        <View style={styles.summaryGrid}>
+          {metrics.map((metric) => (
+            <View key={metric.label} style={StyleSheet.flatten([styles.summaryMetric, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+              <AppText adjustsFontSizeToFit numberOfLines={1} tone={metric.tone ?? 'default'} variant="subtitle">
+                {metric.value}
+              </AppText>
+              <AppText numberOfLines={2} tone="muted" variant="caption">
+                {metric.label}
+              </AppText>
+            </View>
+          ))}
+        </View>
+      </Card>
+
+      <View style={styles.sectionHeader}>
+        <AppText variant="subtitle">{t('securityLog.devices.title')}</AppText>
+        <AppText tone="muted" variant="caption">
+          {t('securityLog.devices.subtitle')}
+        </AppText>
+      </View>
+
+      {devices.map((device) => (
+        <SecurityDeviceCard
+          device={device}
+          formatDate={(value) => formatSecurityDate(value, locale)}
+          key={device.deviceId}
+          onPress={() => {
+            void impactLight();
+            openDevice(device);
+          }}
+        />
+      ))}
+    </Screen>
+  );
+}
+
+function SecurityDeviceCard({ device, formatDate, onPress }: { device: SecurityDevice; formatDate: (value: string) => string; onPress: () => void }) {
+  const { palette, t } = useProductSettings();
+  const activeSessions = device.sessions.filter((session) => session.status === 'active').length;
+
+  return (
+    <NativePressable
+      accessibilityLabel={t('securityLog.device.open', { device: device.deviceName })}
+      accessibilityRole="button"
+      minTouch={96}
+      onPress={onPress}
+      style={StyleSheet.flatten([styles.deviceCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+      <View style={StyleSheet.flatten([styles.deviceIcon, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+        <AppIcon name={deviceIcon(device.deviceType)} size={22} tone={device.riskLevel === 'high' ? 'danger' : device.riskLevel === 'medium' ? 'amber' : 'text'} />
+      </View>
+      <View style={styles.deviceBody}>
+        <View style={styles.deviceTopRow}>
+          <View style={styles.flex}>
+            <View style={styles.inlineRow}>
+              <AppText numberOfLines={1} variant="subtitle">
+                {device.deviceName}
+              </AppText>
+              {device.isCurrentDevice ? <StatusPill compact label={t('securityLog.status.current')} tone="info" /> : null}
+            </View>
+            <AppText numberOfLines={1} tone="muted" variant="caption">
+              {device.os} · {device.locationLabel}
+            </AppText>
+          </View>
+          <StatusPill compact label={t(`securityLog.risk.${device.riskLevel}`)} tone={riskTone(device.riskLevel)} />
+        </View>
+        <View style={StyleSheet.flatten([styles.divider, { backgroundColor: palette.lineSoft }])} />
+        <View style={styles.deviceMetaRow}>
+          <AppText tone="muted" variant="caption">
+            {t('securityLog.device.lastActive')}: {formatDate(device.lastActiveAt)}
+          </AppText>
+          <AppText tone="muted" variant="caption">
+            {t('securityLog.device.sessions', { count: activeSessions })}
+          </AppText>
+        </View>
+      </View>
+      <AppIcon name="icon.system.chevron_right" size={16} tone="textDim" />
+    </NativePressable>
+  );
+}
+
+function DeviceDetailSheet({
+  device,
+  formatDate,
+  onOpenConfirmReport,
+  onOpenConfirmRevoke,
+}: {
+  device: SecurityDevice;
+  formatDate: (value: string) => string;
+  onOpenConfirmReport: (event: SecurityLoginEvent) => void;
+  onOpenConfirmRevoke: (session: SecuritySession) => void;
+}) {
+  const { palette, t } = useProductSettings();
+  const toast = useToast();
+  const riskyEvents = device.events.filter((event) => event.riskLevel !== 'low' && event.status !== 'resolved');
+  const showPlaceholder = (title: string) => {
+    void impactLight();
+    toast.show({
+      message: t('securityLog.toast.placeholderBody'),
+      title,
+    });
+  };
+
+  return (
+    <View style={styles.sheetContent}>
+      <View style={StyleSheet.flatten([styles.detailHeaderCard, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
+        <View style={styles.inlineRow}>
+          <StatusPill compact label={t(`securityLog.risk.${device.riskLevel}`)} tone={riskTone(device.riskLevel)} />
+          {device.isCurrentDevice ? <StatusPill compact label={t('securityLog.status.current')} tone="info" /> : null}
+        </View>
+        <AppText tone="muted" variant="caption">
+          {device.os} · {device.locationLabel}
+        </AppText>
+        <AppText tone="dim" variant="caption">
+          {t('securityLog.device.lastActive')}: {formatDate(device.lastActiveAt)}
+        </AppText>
+      </View>
+
+      <View style={styles.sheetSection}>
+        <AppText variant="subtitle">{t('securityLog.sessions.title')}</AppText>
+        {device.sessions.map((session) => (
+          <View key={session.sessionId} style={StyleSheet.flatten([styles.recordRow, { borderColor: palette.lineSoft }])}>
+            <View style={styles.recordIcon}>
+              <AppIcon name={session.status === 'revoked' ? 'icon.system.logout' : 'icon.security.lock'} size={18} tone={session.status === 'revoked' ? 'textDim' : 'blue'} />
+            </View>
+            <View style={styles.recordBody}>
+              <View style={styles.inlineRow}>
+                <AppText numberOfLines={1} variant="subtitle">
+                  {session.appName}
+                </AppText>
+                <StatusPill compact label={t(`securityLog.session.${session.status}`)} tone={session.status === 'active' ? 'success' : 'neutral'} />
+              </View>
+              <AppText tone="muted" variant="caption">
+                {session.ipHintMasked} · {formatDate(session.lastActiveAt)}
+              </AppText>
+              {session.isCurrentSession ? (
+                <AppText tone="blue" variant="caption">
+                  {t('securityLog.session.currentHelp')}
+                </AppText>
+              ) : null}
+            </View>
+            <ActionButton
+              disabled={session.isCurrentSession || session.status === 'revoked'}
+              icon="icon.system.logout"
+              label={t('securityLog.action.revokeShort')}
+              onPress={() => onOpenConfirmRevoke(session)}
+              sizePreset="default"
+              tone="danger"
+              variant="text"
+            />
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.sheetSection}>
+        <AppText variant="subtitle">{t('securityLog.events.title')}</AppText>
+        {device.events.map((event) => (
+          <View key={event.eventId} style={StyleSheet.flatten([styles.recordRow, { borderColor: palette.lineSoft }])}>
+            <View style={styles.recordIcon}>
+              <AppIcon name={event.riskLevel === 'low' ? 'icon.trading.history' : 'icon.security.risk_shield'} size={18} tone={event.riskLevel === 'high' ? 'danger' : event.riskLevel === 'medium' ? 'amber' : 'textDim'} />
+            </View>
+            <View style={styles.recordBody}>
+              <View style={styles.inlineRow}>
+                <AppText numberOfLines={1} variant="subtitle">
+                  {t(event.descriptionKey as never)}
+                </AppText>
+                <StatusPill compact label={t(`securityLog.eventStatus.${event.status}`)} tone={event.status === 'reported' ? 'danger' : event.status === 'open' ? riskTone(event.riskLevel) : 'neutral'} />
+              </View>
+              <AppText tone="muted" variant="caption">
+                {formatDate(event.createdAt)}
+              </AppText>
+            </View>
+            {event.status === 'open' && event.riskLevel !== 'low' ? (
+              <ActionButton
+                icon="icon.security.risk_shield"
+                label={t('securityLog.action.reportShort')}
+                onPress={() => onOpenConfirmReport(event)}
+                tone="danger"
+                variant="text"
+              />
+            ) : null}
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.sheetActions}>
+        <ActionButton icon="icon.security.lock" label={t('securityLog.action.changePassword')} onPress={() => showPlaceholder(t('securityLog.action.changePassword'))} tone="blue" variant="outline" />
+        <ActionButton icon="icon.security.key_access" label={t('securityLog.action.enablePin')} onPress={() => showPlaceholder(t('securityLog.action.enablePin'))} tone="brand" variant="outline" />
+      </View>
+      {riskyEvents.length > 0 ? (
+        <AppText tone="danger" variant="caption">
+          {t('securityLog.recoveryHint')}
+        </AppText>
+      ) : null}
+    </View>
+  );
+}
+
+function ConfirmActionSheet({
+  body,
+  confirmDisabled,
+  confirmLabel,
+  confirmTone,
+  icon,
+  onCancel,
+  onConfirm,
+  title,
+}: {
+  body: string;
+  confirmDisabled?: boolean;
+  confirmLabel: string;
+  confirmTone: 'danger' | 'brand';
+  icon: AppIconName;
+  onCancel: () => void;
+  onConfirm: () => void;
+  title: string;
+}) {
+  const { palette, t } = useProductSettings();
+
+  return (
+    <View style={styles.confirmContent}>
+      <View style={StyleSheet.flatten([styles.confirmIcon, { backgroundColor: palette.panelSoft, borderColor: palette.lineSoft }])}>
+        <AppIcon name={icon} size={24} tone={confirmTone === 'danger' ? 'danger' : 'brand'} />
+      </View>
+      <AppText style={styles.centerText} variant="subtitle">
+        {title}
+      </AppText>
+      <AppText style={styles.centerText} tone="muted" variant="body">
+        {body}
+      </AppText>
+      <View style={styles.confirmActions}>
+        <ActionButton label={t('securityLog.action.cancel')} onPress={onCancel} tone="neutral" variant="outline" />
+        <ActionButton disabled={confirmDisabled} label={confirmLabel} onPress={onConfirm} tone={confirmTone} variant="filled" />
+      </View>
+    </View>
+  );
+}
+
+function deviceIcon(deviceType: SecurityDeviceType): AppIconName {
+  if (deviceType === 'phone') {
+    return 'icon.security.key_access';
+  }
+
+  if (deviceType === 'unknown') {
+    return 'icon.security.risk_shield';
+  }
+
+  return 'icon.security.lock';
+}
+
+function riskTone(riskLevel: SecurityRiskLevel): StatusPillTone {
+  if (riskLevel === 'high') {
+    return 'danger';
+  }
+
+  if (riskLevel === 'medium') {
+    return 'warning';
+  }
+
+  return 'success';
+}
+
+function formatSecurityDate(value: string, locale: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat(locale, {
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    month: 'short',
+  }).format(date);
+}
+
+const styles = StyleSheet.create({
+  centerText: {
+    textAlign: 'center',
+  },
+  confirmActions: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    justifyContent: 'center',
+    width: '100%',
+  },
+  confirmContent: {
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingBottom: spacing.lg,
+  },
+  confirmIcon: {
+    alignItems: 'center',
+    borderRadius: radius.full,
+    borderWidth: lineWidth.hairline,
+    height: size.control.lg,
+    justifyContent: 'center',
+    width: size.control.lg,
+  },
+  detailHeaderCard: {
+    borderRadius: radius.md,
+    borderWidth: lineWidth.none,
+    gap: spacing.sm,
+    padding: spacing.md,
+  },
+  deviceBody: {
+    flex: 1,
+    gap: spacing.sm,
+    minWidth: 0,
+  },
+  deviceCard: {
+    alignItems: 'center',
+    borderRadius: radius.md,
+    borderWidth: lineWidth.none,
+    flexDirection: 'row',
+    gap: spacing.md,
+    padding: spacing.md,
+  },
+  deviceIcon: {
+    alignItems: 'center',
+    borderRadius: radius.md,
+    borderWidth: lineWidth.hairline,
+    height: layout.touchTargetMin,
+    justifyContent: 'center',
+    width: layout.touchTargetMin,
+  },
+  deviceMetaRow: {
+    gap: spacing.xs,
+  },
+  deviceTopRow: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  divider: {
+    height: lineWidth.hairline,
+  },
+  flex: {
+    flex: 1,
+    minWidth: 0,
+  },
+  inlineRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  recordBody: {
+    flex: 1,
+    gap: spacing.xs,
+    minWidth: 0,
+  },
+  recordIcon: {
+    paddingTop: spacing.xs,
+  },
+  recordRow: {
+    alignItems: 'flex-start',
+    borderTopWidth: lineWidth.hairline,
+    flexDirection: 'row',
+    gap: spacing.sm,
+    paddingVertical: spacing.md,
+  },
+  sectionHeader: {
+    gap: spacing.xs,
+  },
+  sheetActions: {
+    gap: spacing.sm,
+  },
+  sheetContent: {
+    gap: spacing.lg,
+    paddingBottom: spacing.lg,
+  },
+  sheetSection: {
+    gap: spacing.sm,
+  },
+  summaryGrid: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  summaryHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginBottom: spacing.md,
+  },
+  summaryIcon: {
+    alignItems: 'center',
+    borderRadius: radius.full,
+    borderWidth: lineWidth.hairline,
+    height: size.control.md,
+    justifyContent: 'center',
+    width: size.control.md,
+  },
+  summaryMetric: {
+    borderRadius: radius.md,
+    borderWidth: lineWidth.none,
+    flex: 1,
+    gap: spacing.xs,
+    minHeight: size.control.lg + spacing.xl,
+    padding: spacing.md,
+  },
+});

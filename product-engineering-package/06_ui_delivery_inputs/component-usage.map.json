@@ -1,0 +1,21 @@
+{
+  "status": "draft_for_ui_build",
+  "required_business_components": [
+    "trading-account-card",
+    "deposit-method-card",
+    "withdraw-method-card",
+    "balance-summary-card",
+    "transaction-timeline",
+    "bank-account-card",
+    "risk-warning-banner",
+    "kyc-status-block"
+  ],
+  "required_patterns": [
+    "form-pattern",
+    "review-pattern",
+    "list-pattern",
+    "detail-pattern",
+    "empty-error-pattern"
+  ]
+}
+

@@ -1,0 +1,79 @@
+import { router, useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
+
+import { buildAccount, defaultCountry, safeRedirect, sanitizePhone } from '@/src/auth/authFlow';
+import { ActionButton } from '@/src/components/ActionButton';
+import { AuthShell } from '@/src/components/AuthShell';
+import { AuthContactConfirmDialog, AuthErrorSheet, AuthLeaveVerifiedStepDialog, CountryPhoneField } from '@/src/components/AuthFlowControls';
+import { notifySuccess, notifyWarning } from '@/src/feedback/haptics';
+import { useProductSettings } from '@/src/settings/ProductSettings';
+
+export default function RegisterPhoneScreen() {
+  const params = useLocalSearchParams<{ email?: string; redirect?: string }>();
+  const { t } = useProductSettings();
+  const [phone, setPhone] = useState('');
+  const [country, setCountry] = useState(defaultCountry);
+  const [submitted, setSubmitted] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const redirect = safeRedirect(typeof params.redirect === 'string' ? params.redirect : undefined);
+  const email = typeof params.email === 'string' ? params.email : '';
+  const account = buildAccount('phone', phone, country.dialCode);
+  const phoneError = submitted && phone.length < 6 ? t('auth.error.phone') : '';
+  const canSubmit = phone.length >= 6;
+
+  const submit = () => {
+    setSubmitted(true);
+
+    if (phone.length < 6) {
+      void notifyWarning();
+      setErrorOpen(true);
+      return;
+    }
+
+    setConfirmOpen(true);
+  };
+
+  const confirmPhone = () => {
+    setConfirmOpen(false);
+    void notifySuccess();
+    router.push(
+      `/auth/register-phone-code?email=${encodeURIComponent(email)}&phone=${encodeURIComponent(account)}&redirect=${encodeURIComponent(String(redirect))}` as never,
+    );
+  };
+
+  return (
+    <AuthShell
+      footer={<ActionButton disabled={!canSubmit} label={t('auth.action.continue')} onPress={submit} tone="brand" variant="filled" />}
+      onBackPress={() => setLeaveOpen(true)}
+      progressStep={2}
+      subtitle={t('auth.register.phoneEntrySubtitle')}
+      title={t('auth.register.phoneEntryTitle')}>
+      <CountryPhoneField
+        autoFocus
+        country={country}
+        error={phoneError}
+        onChangeCountry={setCountry}
+        onChangePhone={(value) => setPhone(sanitizePhone(value))}
+        phone={phone}
+      />
+      <AuthErrorSheet body={t('auth.error.fixFields')} onClose={() => setErrorOpen(false)} open={errorOpen} title={t('auth.register.blocked')} />
+      <AuthLeaveVerifiedStepDialog
+        body={t('auth.register.leaveAfterEmailBody')}
+        onCancel={() => setLeaveOpen(false)}
+        onConfirm={() => router.replace(`/auth/register?redirect=${encodeURIComponent(String(redirect))}` as never)}
+        open={leaveOpen}
+        title={t('auth.register.leaveAfterEmailTitle')}
+      />
+      <AuthContactConfirmDialog
+        channel="phone"
+        countryFlag={country.flag}
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={confirmPhone}
+        open={confirmOpen}
+        target={account}
+      />
+    </AuthShell>
+  );
+}

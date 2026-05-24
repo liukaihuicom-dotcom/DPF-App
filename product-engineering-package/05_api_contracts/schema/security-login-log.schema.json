@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Security Login Log Schema",
+  "type": "object",
+  "required": ["devices"],
+  "properties": {
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["deviceId", "deviceName", "deviceType", "os", "locationLabel", "lastActiveAt", "riskLevel", "isCurrentDevice", "sessions", "events"],
+        "properties": {
+          "deviceId": { "type": "string" },
+          "deviceName": { "type": "string" },
+          "deviceType": { "enum": ["desktop", "phone", "unknown"] },
+          "os": { "type": "string" },
+          "locationLabel": { "type": "string" },
+          "lastActiveAt": { "type": "string", "format": "date-time" },
+          "riskLevel": { "enum": ["low", "medium", "high"] },
+          "isCurrentDevice": { "type": "boolean" },
+          "sessions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["sessionId", "appName", "ipHintMasked", "status", "isCurrentSession", "createdAt", "lastActiveAt"],
+              "properties": {
+                "sessionId": { "type": "string" },
+                "appName": { "type": "string" },
+                "ipHintMasked": { "type": "string" },
+                "status": { "enum": ["active", "revoked"] },
+                "isCurrentSession": { "type": "boolean" },
+                "createdAt": { "type": "string", "format": "date-time" },
+                "lastActiveAt": { "type": "string", "format": "date-time" }
+              }
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["eventId", "eventType", "riskLevel", "status", "createdAt", "descriptionKey"],
+              "properties": {
+                "eventId": { "type": "string" },
+                "eventType": { "enum": ["login_success", "login_suspicious", "session_revoked", "not_me_reported"] },
+                "riskLevel": { "enum": ["low", "medium", "high"] },
+                "status": { "enum": ["open", "reported", "resolved"] },
+                "createdAt": { "type": "string", "format": "date-time" },
+                "descriptionKey": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

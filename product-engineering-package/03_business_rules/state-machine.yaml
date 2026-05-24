@@ -1,0 +1,86 @@
+operations:
+  deposit:
+    initial: draft
+    terminal: [completed, rejected, expired, failed, cancelled]
+    states:
+      draft: User is preparing an IDR deposit request.
+      submitted: Request accepted with idempotency and initial validation.
+      awaiting_payment: Customer must complete payment through selected channel.
+      payment_confirmed: Provider or operations confirms IDR payment.
+      fx_locked: IDR/USD quote is locked for settlement.
+      crediting: USD credit is being applied to the target trading account.
+      reviewing: Manual review is required.
+      completed: USD ledger credit completed.
+      rejected: Request rejected by rule or reviewer.
+      expired: Payment window or FX quote expired.
+      failed: Provider, ledger, or system failure occurred.
+      cancelled: User or system cancelled before irreversible processing.
+    transitions:
+      - [draft, submitted, submit_request]
+      - [submitted, awaiting_payment, validation_passed]
+      - [awaiting_payment, payment_confirmed, provider_payment_confirmed]
+      - [payment_confirmed, reviewing, review_required]
+      - [payment_confirmed, fx_locked, auto_review_passed]
+      - [reviewing, fx_locked, reviewer_approved]
+      - [reviewing, rejected, reviewer_rejected]
+      - [fx_locked, crediting, lock_quote]
+      - [crediting, completed, ledger_credit_success]
+      - [awaiting_payment, expired, payment_window_expired]
+      - [submitted, rejected, validation_failed]
+      - [awaiting_payment, failed, provider_failed]
+      - [crediting, failed, ledger_failed]
+      - [draft, cancelled, user_cancelled]
+  withdrawal:
+    initial: draft
+    terminal: [completed, rejected, failed, cancelled]
+    states:
+      draft: User is preparing an IDR payout request from a USD trading account.
+      submitted: Request accepted with idempotency and initial validation.
+      validating: KYC, account, balance, payout ownership, limit, fee, and FX checks run.
+      reviewing: Manual review is required.
+      processing: Payout provider or operations is processing.
+      paid: Provider marks payout as paid.
+      completed: USD debit and IDR payout are reconciled.
+      rejected: Request rejected by rule or reviewer.
+      failed: Provider, ledger, or system failure occurred.
+      cancelled: User or system cancelled before irreversible processing.
+    transitions:
+      - [draft, submitted, submit_request]
+      - [submitted, validating, request_received]
+      - [validating, reviewing, review_required]
+      - [validating, processing, auto_review_passed]
+      - [reviewing, processing, reviewer_approved]
+      - [reviewing, rejected, reviewer_rejected]
+      - [processing, paid, provider_paid]
+      - [paid, completed, ledger_reconciled]
+      - [validating, rejected, validation_failed]
+      - [processing, failed, provider_failed]
+      - [paid, failed, reconciliation_failed]
+      - [draft, cancelled, user_cancelled]
+  internal_transfer:
+    initial: draft
+    terminal: [completed, rejected, failed, cancelled]
+    states:
+      draft: User is preparing same-owner account transfer.
+      submitted: Request accepted with idempotency and initial validation.
+      validating: KYC, ownership, source, target, balance, and limit checks run.
+      reviewing: Manual review is required.
+      completed: Source debit and target credit completed.
+      rejected: Request rejected by rule or reviewer.
+      failed: Ledger or system failure occurred.
+      cancelled: User or system cancelled before irreversible processing.
+    transitions:
+      - [draft, submitted, submit_request]
+      - [submitted, validating, request_received]
+      - [validating, reviewing, review_required]
+      - [validating, completed, auto_review_passed_and_ledger_success]
+      - [reviewing, completed, reviewer_approved_and_ledger_success]
+      - [reviewing, rejected, reviewer_rejected]
+      - [validating, rejected, validation_failed]
+      - [validating, failed, ledger_failed]
+      - [reviewing, failed, ledger_failed]
+      - [draft, cancelled, user_cancelled]
+audit_required:
+  fields: [actor, actorRole, reason, previousStatus, nextStatus, timestamp, requestId]
+  applies_to: every_transition
+

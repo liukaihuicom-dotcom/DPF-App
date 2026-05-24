@@ -1,0 +1,104 @@
+{
+  "$schema": "./business-rule.schema.json",
+  "rules": [
+    {
+      "id": "BR-FUND-001",
+      "domain": "permission",
+      "severity": "blocker",
+      "rule": "Guest users cannot view or initiate funding operations.",
+      "test_refs": ["TC-PERM-001"]
+    },
+    {
+      "id": "BR-FUND-002",
+      "domain": "permission",
+      "severity": "critical",
+      "rule": "Trader users can initiate funding only for trading accounts owned by the same customer identity.",
+      "test_refs": ["TC-PERM-002", "TC-TRANSFER-003"]
+    },
+    {
+      "id": "BR-FUND-003",
+      "domain": "permission",
+      "severity": "critical",
+      "rule": "Partner users cannot initiate client deposit, withdrawal, or transfer in V1.",
+      "test_refs": ["TC-PERM-003"]
+    },
+    {
+      "id": "BR-FUND-004",
+      "domain": "kyc",
+      "severity": "critical",
+      "rule": "Withdrawal and internal transfer require approved KYC.",
+      "test_refs": ["TC-KYC-001", "TC-KYC-002"]
+    },
+    {
+      "id": "BR-FUND-005",
+      "domain": "deposit",
+      "severity": "major",
+      "rule": "Deposit may be submitted before KYC approval, but credited funds can be restricted by risk rules until KYC is approved.",
+      "test_refs": ["TC-KYC-003", "TC-DEPOSIT-001"]
+    },
+    {
+      "id": "BR-FUND-006",
+      "domain": "account_status",
+      "severity": "critical",
+      "rule": "Funding mutations require active trading accounts; demo, readOnly, disabled, and archived accounts are blocked.",
+      "test_refs": ["TC-ACCOUNT-001", "TC-ACCOUNT-002"]
+    },
+    {
+      "id": "BR-FUND-007",
+      "domain": "transfer",
+      "severity": "critical",
+      "rule": "Internal transfer is only allowed between same-owner USD trading accounts and cannot use the same source and target account.",
+      "test_refs": ["TC-TRANSFER-001", "TC-TRANSFER-002"]
+    },
+    {
+      "id": "BR-FUND-008",
+      "domain": "payment_method",
+      "severity": "major",
+      "rule": "Deposit and withdrawal payment methods must be available, configured for the operation, and outside maintenance.",
+      "test_refs": ["TC-DEPOSIT-002", "TC-WITHDRAW-001"]
+    },
+    {
+      "id": "BR-FUND-009",
+      "domain": "limits_fees",
+      "severity": "critical",
+      "rule": "All funding operations must validate configured minAmount, maxAmount, dailyLimit, monthlyLimit, feeType, feeAmount, and fxRateSource before submission.",
+      "test_refs": ["TC-LIMIT-001", "TC-FEE-001"]
+    },
+    {
+      "id": "BR-FUND-010",
+      "domain": "fx",
+      "severity": "critical",
+      "rule": "IDR/USD conversion must use a non-expired FX quote and display expected and actual USD settlement amounts.",
+      "test_refs": ["TC-FX-001", "TC-FX-002"]
+    },
+    {
+      "id": "BR-FUND-011",
+      "domain": "review",
+      "severity": "critical",
+      "rule": "Transactions with amount mismatch, ownership mismatch, velocity anomaly, provider failure, limit exception, or AML hit must enter manual review.",
+      "test_refs": ["TC-REVIEW-001", "TC-REVIEW-002"]
+    },
+    {
+      "id": "BR-FUND-012",
+      "domain": "audit",
+      "severity": "blocker",
+      "rule": "Every state transition must create an audit log with actor, reason, previousStatus, nextStatus, timestamp, and requestId.",
+      "test_refs": ["TC-AUDIT-001"]
+    },
+    {
+      "id": "BR-FUND-013",
+      "domain": "idempotency",
+      "severity": "blocker",
+      "rule": "All mutation APIs must include idempotencyKey, clientRequestId, riskAcknowledged, and auditContext.",
+      "test_refs": ["TC-API-001"]
+    },
+    {
+      "id": "BR-FUND-014",
+      "domain": "demo_regression",
+      "severity": "blocker",
+      "rule": "Existing demo balances and demo transactions must not be represented as real withdrawable funds.",
+      "test_refs": ["TC-REG-001"]
+    }
+  ]
+}
+

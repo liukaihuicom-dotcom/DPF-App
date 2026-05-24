@@ -1,0 +1,9 @@
+{
+  "$source": "src/i18n/translations.ts",
+  "$note": "Runtime source of truth is TypeScript. Export JSON snapshots before backend or CMS integration.",
+  "common.invalidInstrument": "Instrument not found",
+  "order.errorLots": "Enter a lot size greater than 0.",
+  "order.errorMargin": "Free margin is not enough for this simulated order.",
+  "auth.lockedToastTitle": "Login required"
+}
+

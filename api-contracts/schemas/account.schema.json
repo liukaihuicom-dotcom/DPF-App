@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "account.schema.json",
+  "title": "Account",
+  "type": "object",
+  "required": ["accountId", "label", "currency", "balance", "equity", "usedMargin", "freeMargin", "marginLevel"],
+  "properties": {
+    "accountId": { "type": "string" },
+    "label": { "$ref": "localized-text.schema.json" },
+    "mode": { "$ref": "localized-text.schema.json" },
+    "server": { "type": "string" },
+    "leverageProfile": { "type": "string" },
+    "currency": { "type": "string" },
+    "balance": { "type": "number" },
+    "equity": { "type": "number" },
+    "usedMargin": { "type": "number" },
+    "freeMargin": { "type": "number" },
+    "marginLevel": { "type": "number" },
+    "credit": { "type": "number" }
+  }
+}
+

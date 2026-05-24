@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "instrument.schema.json",
+  "title": "Instrument",
+  "type": "object",
+  "required": [
+    "id",
+    "symbol",
+    "name",
+    "assetClass",
+    "baseCurrency",
+    "quoteCurrency",
+    "bid",
+    "ask",
+    "leverage",
+    "spread",
+    "pipSize",
+    "contractSize"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "symbol": { "type": "string" },
+    "name": { "$ref": "localized-text.schema.json" },
+    "assetClass": { "type": "string", "enum": ["forex", "metals", "futures", "stocks"] },
+    "baseCurrency": { "type": "string" },
+    "quoteCurrency": { "type": "string" },
+    "bid": { "type": "number" },
+    "ask": { "type": "number" },
+    "previousClose": { "type": "number" },
+    "dayHigh": { "type": "number" },
+    "dayLow": { "type": "number" },
+    "leverage": { "type": "number" },
+    "spread": { "type": "number" },
+    "pipSize": { "type": "number" },
+    "contractSize": { "type": "number" },
+    "favorite": { "type": "boolean" },
+    "sparkline": { "type": "array", "items": { "type": "number" } }
+  }
+}
+

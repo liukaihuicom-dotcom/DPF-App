@@ -1,0 +1,8 @@
+{
+  "$source": "src/i18n/translations.ts",
+  "$note": "Runtime source of truth is TypeScript. Export JSON snapshots before backend or CMS integration.",
+  "common.invalidInstrument": "品种不存在",
+  "order.errorLots": "请输入大于 0 的交易手数。",
+  "order.errorMargin": "当前可用保证金不足以提交该模拟订单。",
+  "auth.lockedToastTitle": "需要登录"
+}

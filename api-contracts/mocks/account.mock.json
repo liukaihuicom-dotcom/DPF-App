@@ -1,0 +1,21 @@
+{
+  "accountId": "DP-FX-208839",
+  "label": {
+    "en-US": "Dupoin Demo Margin",
+    "zh-CN": "Dupoin Demo Margin"
+  },
+  "mode": {
+    "en-US": "Demo",
+    "zh-CN": "Demo"
+  },
+  "server": "MT5-Demo-01",
+  "leverageProfile": "1:100",
+  "currency": "USD",
+  "balance": 50000,
+  "equity": 50000,
+  "usedMargin": 0,
+  "freeMargin": 50000,
+  "marginLevel": 0,
+  "credit": 2000
+}
+

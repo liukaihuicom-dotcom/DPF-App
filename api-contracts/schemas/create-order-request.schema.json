@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "create-order-request.schema.json",
+  "title": "CreateOrderRequest",
+  "type": "object",
+  "required": ["instrumentId", "direction", "type", "lots"],
+  "properties": {
+    "instrumentId": { "type": "string" },
+    "direction": { "type": "string", "enum": ["buy", "sell"] },
+    "type": { "type": "string", "enum": ["market", "limit"] },
+    "lots": { "type": "number", "exclusiveMinimum": 0 },
+    "limitPrice": { "type": "number" },
+    "idempotencyKey": { "type": "string" }
+  }
+}
+

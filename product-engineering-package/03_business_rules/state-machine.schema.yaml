@@ -1,0 +1,15 @@
+title: FundingStateMachine
+type: object
+required:
+  - operations
+properties:
+  operations:
+    type: object
+    additionalProperties:
+      type: object
+      required:
+        - initial
+        - terminal
+        - states
+        - transitions
+

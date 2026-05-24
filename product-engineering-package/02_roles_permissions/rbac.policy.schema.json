@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Funding RBAC Policy",
+  "type": "object",
+  "required": ["roles", "permissions"],
+  "properties": {
+    "roles": { "type": "array", "items": { "type": "string" } },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["permission", "roles"],
+        "properties": {
+          "permission": { "type": "string" },
+          "roles": { "type": "array", "items": { "type": "string" } },
+          "conditions": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}
+

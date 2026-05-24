@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "source": "src/components/business and src/screens",
+  "components": {
+    "FundActionGrid": {
+      "component": "FundActionGrid",
+      "businessDomain": "funding",
+      "states": ["default", "pressed", "disabled"],
+      "riskRules": ["Fund actions must not imply guaranteed settlement or risk-free movement."],
+      "permissions": ["Visible to signed-in trading account users; action handlers decide eligibility."],
+      "dataInputs": ["FundActionGridItem[]", "locale", "translation keys"],
+      "platforms": ["app", "h5", "web"],
+      "qaGate": ["Registered icons only", "Visible labels required", "No page-local funding shortcut grids"]
+    },
+    "GlobalMenuList": {
+      "component": "GlobalMenuList",
+      "businessDomain": "account-navigation",
+      "states": ["default", "pressed", "descriptive"],
+      "riskRules": ["Destructive or high-risk actions must carry explicit copy and tone in the caller."],
+      "permissions": ["Caller controls visibility based on role and account state."],
+      "dataInputs": ["GlobalMenuListItem[]"],
+      "platforms": ["app", "h5", "web"],
+      "qaGate": ["Accessibility labels required", "Registered semantic icons only"]
+    },
+    "TradingAccountSwitchSheet": {
+      "component": "TradingAccountSwitchSheet",
+      "businessDomain": "trading-account-selection",
+      "states": ["default", "selected", "restricted", "empty"],
+      "riskRules": ["Account status must remain visible when selecting an account."],
+      "permissions": ["Signed-in user with trading account access."],
+      "dataInputs": ["TradingAccountProfile[]", "selected account id", "onSelect"],
+      "platforms": ["app", "h5", "web"],
+      "qaGate": ["Status visibility", "Bottom sheet preset usage", "No page-local account switcher"]
+    },
+    "UpgradeChatCard": {
+      "component": "UpgradeChatCard",
+      "businessDomain": "partner-upgrade",
+      "states": ["none", "pending", "approved", "rejected", "readonly"],
+      "riskRules": ["Partner upgrade state must not be overstated as approval before approved status."],
+      "permissions": ["Shown according to role and upgrade request status."],
+      "dataInputs": ["upgrade request", "readonly flag"],
+      "platforms": ["app", "h5", "web"],
+      "qaGate": ["State label visible", "No promise of financial outcome"]
+    },
+    "ScreenCompositions": {
+      "component": "src/screens route compositions",
+      "businessDomain": "route-orchestration",
+      "states": ["default", "loading", "empty", "error", "restricted", "reviewing"],
+      "riskRules": ["Screens may orchestrate business actions but must not define reusable uppercase UI in app routes."],
+      "permissions": ["Route and store guards own access rules."],
+      "dataInputs": ["useBroker", "useProductSettings", "router params", "domain formatters"],
+      "platforms": ["app"],
+      "qaGate": ["app route boundary check", "component manifest check", "icon registry check"]
+    }
+  }
+}

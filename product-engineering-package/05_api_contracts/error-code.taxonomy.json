@@ -1,0 +1,17 @@
+{
+  "categories": [
+    "permission",
+    "account",
+    "kyc",
+    "payment_method",
+    "deposit",
+    "withdrawal",
+    "transfer",
+    "fx_fee",
+    "review",
+    "system"
+  ],
+  "severity": ["blocker", "critical", "major", "minor"],
+  "ui_behavior": ["redirect", "disabled", "inline_error", "toast", "review_timeline", "support_path"]
+}
+

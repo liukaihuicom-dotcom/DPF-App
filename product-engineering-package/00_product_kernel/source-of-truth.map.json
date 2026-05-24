@@ -1,0 +1,21 @@
+{
+  "funding_product_contract": {
+    "kernel": "product-engineering-package/00_product_kernel/product.kernel.json",
+    "business_rules": "product-engineering-package/03_business_rules/business-rule.matrix.json",
+    "state_machine": "product-engineering-package/03_business_rules/state-machine.yaml",
+    "page_contracts": "product-engineering-package/04_page_contracts/page-contract.index.md",
+    "api_contracts": "product-engineering-package/05_api_contracts/openapi.draft.yaml",
+    "traceability": "product-engineering-package/09_traceability_and_tests/traceability.matrix.md"
+  },
+  "existing_project_context": [
+    "docs/01-product-modules.md",
+    "docs/02-page-map.md",
+    "docs/03-user-roles.md",
+    "docs/04-permission-rules.md",
+    "docs/05-business-rules.md",
+    "docs/06-state-machine.md",
+    "docs/09-security-compliance-risk.md",
+    "handoff/account-assets-state-spec.md"
+  ]
+}
+

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DupoinBusinessComponentManifest",
+  "type": "object",
+  "required": ["version", "source", "components"],
+  "properties": {
+    "version": { "type": "string" },
+    "source": { "type": "string" },
+    "components": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["component", "businessDomain", "states", "riskRules", "permissions", "dataInputs", "platforms", "qaGate"],
+        "properties": {
+          "component": { "type": "string" },
+          "businessDomain": { "type": "string" },
+          "states": { "type": "array", "items": { "type": "string" } },
+          "riskRules": { "type": "array", "items": { "type": "string" } },
+          "permissions": { "type": "array", "items": { "type": "string" } },
+          "dataInputs": { "type": "array", "items": { "type": "string" } },
+          "platforms": { "type": "array", "items": { "type": "string", "enum": ["app", "h5", "web", "admin"] } },
+          "qaGate": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

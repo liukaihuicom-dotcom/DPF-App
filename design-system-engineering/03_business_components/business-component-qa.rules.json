@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "checks": [
+    {
+      "id": "BUSINESS_COMPONENT_REGISTRY",
+      "severity": "critical",
+      "pass": "Financial business components have business domain, states, risk rules, permissions, data inputs, platforms, and QA gate entries."
+    },
+    {
+      "id": "SCREEN_ORCHESTRATION_BOUNDARY",
+      "severity": "blocker",
+      "pass": "Business screen orchestration is located in src/screens, not app route files."
+    }
+  ]
+}

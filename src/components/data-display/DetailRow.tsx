@@ -1,0 +1,66 @@
+import { StyleSheet, View } from 'react-native';
+
+import { useThemePalette } from '@/src/settings/ProductSettings';
+import { lineWidth, spacing } from '@/src/theme/tokens';
+
+import { AppIcon, type AppIconName } from '../AppIcon';
+import { AppText, type AppTextTone } from '../Typography';
+
+export type DetailRowItem = {
+  label: string;
+  trailingIcon?: AppIconName | boolean;
+  value: string;
+  valueTone?: AppTextTone;
+};
+
+type DetailRowProps = {
+  row: DetailRowItem;
+  showDivider?: boolean;
+};
+
+export function DetailRow({ row, showDivider }: DetailRowProps) {
+  const palette = useThemePalette();
+  const trailingIcon = row.trailingIcon === true ? 'icon.system.chevron_right' : row.trailingIcon;
+
+  return (
+    <View style={StyleSheet.flatten([styles.row, showDivider && { borderBottomColor: palette.lineSoft, borderBottomWidth: lineWidth.hairline }])}>
+      <AppText numberOfLines={1} style={styles.label} tone="muted" variant="caption">
+        {row.label}
+      </AppText>
+      <View style={styles.valueWrap}>
+        <AppText adjustsFontSizeToFit numberOfLines={2} style={styles.value} tone={row.valueTone} variant="caption">
+          {row.value}
+        </AppText>
+        {trailingIcon ? <AppIcon tone="textDim" name={trailingIcon} size={13} /> : null}
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  label: {
+    flex: 0.72,
+    minWidth: 0,
+  },
+  row: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: spacing.md,
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+  },
+  value: {
+    flex: 1,
+    minWidth: 0,
+    textAlign: 'right',
+  },
+  valueWrap: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    gap: spacing.xs,
+    justifyContent: 'flex-end',
+    minWidth: 0,
+  },
+});

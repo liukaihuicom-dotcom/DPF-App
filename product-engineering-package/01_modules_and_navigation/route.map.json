@@ -1,0 +1,22 @@
+{
+  "route_policy": "Draft route ids for future implementation. No runtime routes are added by this contract.",
+  "app_h5_routes": {
+    "funding_home": "/funding",
+    "deposit_form": "/funding/deposit",
+    "deposit_detail": "/funding/deposit/:id",
+    "withdrawal_form": "/funding/withdrawal",
+    "withdrawal_detail": "/funding/withdrawal/:id",
+    "transfer_form": "/funding/transfer",
+    "transfer_detail": "/funding/transfer/:id",
+    "funding_transaction_list": "/funding/transactions",
+    "funding_transaction_detail": "/funding/transactions/:id"
+  },
+  "admin_routes": {
+    "admin_funding_review_list": "/admin/funding/reviews",
+    "admin_funding_review_detail": "/admin/funding/reviews/:id",
+    "admin_funding_channel_config": "/admin/funding/channels",
+    "admin_funding_limit_fee_config": "/admin/funding/rules",
+    "admin_funding_exception_reconciliation": "/admin/funding/exceptions"
+  }
+}
+

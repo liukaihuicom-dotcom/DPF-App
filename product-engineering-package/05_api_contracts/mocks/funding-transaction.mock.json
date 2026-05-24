@@ -1,0 +1,28 @@
+{
+  "id": "fund_txn_100001",
+  "operation": "deposit",
+  "status": "awaiting_payment",
+  "customerId": "cus_demo_001",
+  "tradingAccountId": "ta_live_001",
+  "targetTradingAccountId": "ta_live_001",
+  "requestedIdrAmount": 1500000,
+  "requestedUsdAmount": 92.5,
+  "actualUsdAmount": null,
+  "paymentMethodId": "pm_va_bca_placeholder",
+  "fee": {
+    "feeType": "fixed",
+    "feeAmount": 5000,
+    "currency": "IDR"
+  },
+  "fxQuote": {
+    "fxQuoteId": "fxq_100001",
+    "pair": "USDIDR",
+    "rate": 16216.21,
+    "expiresAt": "2026-05-24T10:15:00Z"
+  },
+  "riskFlags": [],
+  "reviewRequired": false,
+  "createdAt": "2026-05-24T10:00:00Z",
+  "updatedAt": "2026-05-24T10:00:00Z"
+}
+

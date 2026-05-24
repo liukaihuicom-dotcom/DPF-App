@@ -1,0 +1,54 @@
+{
+  "$schema": "../page-contract.schema.json",
+  "page_id": "admin_funding_operations",
+  "platform": "admin",
+  "roles": ["funding_reviewer", "risk_compliance", "internal_operator"],
+  "purpose": "Admin-side review, configuration, exception, and reconciliation surfaces for funding operations.",
+  "states": [
+    "default",
+    "loading",
+    "empty",
+    "error",
+    "disabled",
+    "submitting",
+    "success",
+    "failed",
+    "permission-denied",
+    "restricted"
+  ],
+  "pages": [
+    {
+      "id": "admin_funding_review_list",
+      "required_content": ["review queue", "operation filter", "risk flags", "SLA", "assigned reviewer", "bulk disabled by default"]
+    },
+    {
+      "id": "admin_funding_review_detail",
+      "required_content": ["customer identity summary", "masked payout data", "transaction detail", "risk flags", "audit trail", "approve action", "reject action", "decision reason"]
+    },
+    {
+      "id": "admin_funding_channel_config",
+      "required_content": ["channel type", "operation support", "maintenance status", "cut-off time", "change reason", "audit preview"]
+    },
+    {
+      "id": "admin_funding_limit_fee_config",
+      "required_content": ["operation", "method type", "min amount", "max amount", "daily limit", "monthly limit", "fee type", "fee amount", "FX source", "approval workflow"]
+    },
+    {
+      "id": "admin_funding_exception_reconciliation",
+      "required_content": ["exception type", "provider reference", "ledger reference", "amount mismatch", "FX mismatch", "resolution status", "audit log"]
+    }
+  ],
+  "apis": [
+    "GET /funding/transactions",
+    "GET /funding/transactions/{id}",
+    "POST /admin/funding/reviews/{id}/approve",
+    "POST /admin/funding/reviews/{id}/reject"
+  ],
+  "rules": [
+    "BR-FUND-009",
+    "BR-FUND-011",
+    "BR-FUND-012",
+    "BR-FUND-013"
+  ]
+}
+

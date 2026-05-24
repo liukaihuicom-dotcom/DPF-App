@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Funding Business Rule",
+  "type": "object",
+  "required": ["rules"],
+  "properties": {
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "domain", "severity", "rule", "test_refs"],
+        "properties": {
+          "id": { "type": "string" },
+          "domain": { "type": "string" },
+          "severity": { "type": "string", "enum": ["blocker", "critical", "major", "minor"] },
+          "rule": { "type": "string" },
+          "test_refs": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}
+

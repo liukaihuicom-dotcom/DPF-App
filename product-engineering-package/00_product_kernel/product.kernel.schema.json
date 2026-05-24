@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Funding Product Kernel",
+  "type": "object",
+  "required": [
+    "product_id",
+    "product_name",
+    "version",
+    "platforms",
+    "domains",
+    "roles",
+    "regions",
+    "release_scope",
+    "risk_level",
+    "source_of_truth",
+    "owners",
+    "assumptions"
+  ],
+  "properties": {
+    "product_id": { "type": "string", "pattern": "^[a-z0-9_\\-]+$" },
+    "product_name": { "type": "string" },
+    "version": { "type": "string" },
+    "platforms": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "domains": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "roles": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "regions": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "release_scope": { "type": "string" },
+    "risk_level": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+    "source_of_truth": { "type": "array", "items": { "type": "string" } },
+    "owners": {
+      "type": "object",
+      "required": ["product", "engineering", "risk_compliance", "qa"],
+      "properties": {
+        "product": { "type": "string" },
+        "engineering": { "type": "string" },
+        "risk_compliance": { "type": "string" },
+        "qa": { "type": "string" }
+      }
+    },
+    "assumptions": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}
+

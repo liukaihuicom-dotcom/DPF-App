@@ -1,0 +1,14 @@
+{
+  "ready_for_ui_build": false,
+  "blockers": [
+    "Financial copy and localization package not generated.",
+    "Design System component usage needs review before implementation.",
+    "UX Interaction Quality Gate is required before production handoff.",
+    "Provider-specific payment instructions and compliance copy are not confirmed."
+  ],
+  "page_contracts": [
+    "product-engineering-package/04_page_contracts/pages/app-funding.page-contract.json",
+    "product-engineering-package/04_page_contracts/pages/admin-funding.page-contract.json"
+  ]
+}
+

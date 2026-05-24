@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "partner-client.schema.json",
+  "title": "PartnerClient",
+  "type": "object",
+  "required": ["id", "name", "status", "role", "upgradeStatus", "joinedAt", "netDeposit", "monthlyVolume"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "status": { "type": "string", "enum": ["invited", "funded", "active", "dormant"] },
+    "role": { "type": "string", "enum": ["trader", "partner"] },
+    "upgradeStatus": { "type": "string", "enum": ["none", "pending", "approved", "rejected"] },
+    "superiorName": { "type": "string" },
+    "joinedAt": { "type": "string" },
+    "netDeposit": { "type": "number" },
+    "monthlyVolume": { "type": "number" },
+    "openPositions": { "type": "number" },
+    "country": { "type": "string" }
+  }
+}
+

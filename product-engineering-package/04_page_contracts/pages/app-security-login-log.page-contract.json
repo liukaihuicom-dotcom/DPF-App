@@ -1,0 +1,44 @@
+{
+  "page_id": "app-security-login-log",
+  "page_name": "Security Login Log",
+  "platform": "app",
+  "roles": ["trader", "partner"],
+  "purpose": "Customer-facing local demo page for reviewing login devices, sessions, and security events before future production identity integration.",
+  "entry_points": ["/settings", "/settings/security-log"],
+  "states": ["default", "risk_event", "session_revoked", "event_reported", "restricted"],
+  "sections": [
+    {
+      "section_id": "security_summary",
+      "required_content": ["active device count", "risk event count", "current device", "local demo security notice"]
+    },
+    {
+      "section_id": "device_list",
+      "required_content": ["device name", "device type", "operating system", "location label", "last active time", "active session count", "risk level", "current device badge"]
+    },
+    {
+      "section_id": "device_detail",
+      "required_content": ["session list", "security event list", "revoke non-current session action", "report not-me action", "password and security-code recovery placeholders"]
+    }
+  ],
+  "business_rules": [
+    "Current session cannot be revoked from the security log action.",
+    "Revoked sessions remain visible as audit-style history.",
+    "Reporting suspicious activity marks the event and device as high risk in local state.",
+    "No real IP address, token, password, or device fingerprint is stored by this local demo."
+  ],
+  "api_dependencies": [
+    "GET /account/security/devices",
+    "GET /account/security/devices/{deviceId}",
+    "GET /account/security/login-events",
+    "POST /account/security/sessions/{sessionId}/revoke",
+    "POST /account/security/events/{eventId}/report"
+  ],
+  "qa_gate": {
+    "release_decision": "conditional_ready",
+    "blockers_before_production": [
+      "Production identity provider and session service are not connected.",
+      "Server-side audit log and risk policy are not implemented.",
+      "Compliance review required before production account-protection copy is finalized."
+    ]
+  }
+}

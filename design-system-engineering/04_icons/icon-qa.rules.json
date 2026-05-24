@@ -1,0 +1,69 @@
+{
+  "version": "3.0.0",
+  "sourcePolicy": {
+    "allowedLibraries": ["phosphor", "remix", "lucide", "custom"],
+    "blockedLibraries": ["hugeicons-free-stroke-rounded", "hugeicons-pro-duotone-rounded", "@hugeicons/core-free-icons", "@hugeicons/react-native"],
+    "primaryLibrary": "phosphor",
+    "supplementLibraries": ["remix", "lucide"]
+  },
+  "severity": {
+    "blocker": [
+      "blocked-icon-provider-dependency",
+      "hugeicons-code-reference",
+      "icon-registry-invalid-shape",
+      "registry-glyph-missing-from-source",
+      "registry-glyph-not-mapped",
+      "low-level-icon-import-outside-app-icon",
+      "unapproved-local-svg-functional-icon",
+      "blocked-or-unapproved-source-library"
+    ],
+    "critical": [
+      "semantic-icon-missing-required-metadata",
+      "license-metadata-missing",
+      "token-binding-invalid",
+      "legacy-icon-name-used",
+      "migration-target-missing",
+      "brand-launcher-icon-not-1024-png"
+    ],
+    "major": [
+      "unused-registry-icon",
+      "market-tone-used-for-non-market-icon",
+      "hardcoded-size-outside-size-token"
+    ],
+    "minor": [
+      "icon-description-too-short",
+      "icon-forbidden-rule-missing-specificity"
+    ]
+  },
+  "requiredMetadata": [
+    "icon_key",
+    "legacy_names",
+    "category",
+    "meaning",
+    "source_library",
+    "source_icon_name",
+    "style",
+    "sizes",
+    "default_size",
+    "states",
+    "tone_tokens",
+    "default_tone",
+    "token_binding",
+    "usage",
+    "forbidden",
+    "platforms",
+    "license",
+    "modified",
+    "status"
+  ],
+  "tokenRules": {
+    "colorPattern": "^color\\.icon\\.",
+    "sizePattern": "^size\\.icon\\.",
+    "allowedSizes": [16, 20, 24, 32, 40]
+  },
+  "brandAssetRules": {
+    "launcherIcon": { "requiredPixels": 1024, "format": "png" },
+    "adaptiveIcon": { "requiredPixels": 1024, "format": "png" },
+    "splashIcon": { "requiredPixels": 1024, "format": "png" }
+  }
+}

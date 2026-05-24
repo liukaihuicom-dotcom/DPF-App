@@ -1,0 +1,25 @@
+[
+  {
+    "id": "eur-usd",
+    "symbol": "EUR/USD",
+    "name": {
+      "en-US": "Euro / US Dollar",
+      "zh-CN": "Euro / US Dollar"
+    },
+    "assetClass": "forex",
+    "baseCurrency": "EUR",
+    "quoteCurrency": "USD",
+    "bid": 1.08642,
+    "ask": 1.08657,
+    "previousClose": 1.0831,
+    "dayHigh": 1.08812,
+    "dayLow": 1.08184,
+    "leverage": 100,
+    "spread": 1.5,
+    "pipSize": 0.0001,
+    "contractSize": 100000,
+    "favorite": true,
+    "sparkline": [1.0831, 1.0842, 1.0838, 1.0851, 1.086, 1.0857, 1.0865]
+  }
+]
+

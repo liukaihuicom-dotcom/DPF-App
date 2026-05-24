@@ -1,0 +1,48 @@
+{
+  "version": "0.1.0",
+  "codes": [
+    {
+      "code": "AUTH_REQUIRED",
+      "messageKey": "auth.lockedToastTitle",
+      "httpStatus": 401,
+      "severity": "warning"
+    },
+    {
+      "code": "PERMISSION_DENIED",
+      "messageKey": "common.permissionDenied",
+      "httpStatus": 403,
+      "severity": "warning"
+    },
+    {
+      "code": "INSTRUMENT_NOT_FOUND",
+      "messageKey": "common.invalidInstrument",
+      "httpStatus": 404,
+      "severity": "error"
+    },
+    {
+      "code": "ORDER_INVALID_LOTS",
+      "messageKey": "order.errorLots",
+      "httpStatus": 400,
+      "severity": "error"
+    },
+    {
+      "code": "ORDER_INSUFFICIENT_MARGIN",
+      "messageKey": "order.errorMargin",
+      "httpStatus": 400,
+      "severity": "error"
+    },
+    {
+      "code": "QUOTE_TIMEOUT",
+      "messageKey": "quote.timeout",
+      "httpStatus": 504,
+      "severity": "warning"
+    },
+    {
+      "code": "RISK_RESTRICTED",
+      "messageKey": "risk.restricted",
+      "httpStatus": 423,
+      "severity": "danger"
+    }
+  ]
+}
+

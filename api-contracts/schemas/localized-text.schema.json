@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "localized-text.schema.json",
+  "title": "LocalizedText",
+  "type": "object",
+  "required": ["en-US", "zh-CN"],
+  "properties": {
+    "en-US": { "type": "string" },
+    "zh-CN": { "type": "string" }
+  },
+  "additionalProperties": false
+}
+

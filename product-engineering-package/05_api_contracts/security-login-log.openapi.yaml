@@ -1,0 +1,58 @@
+openapi: 3.0.3
+info:
+  title: Security Login Log API Draft
+  version: 0.1.0
+  description: Draft contract for future production login device, session, and security event management.
+paths:
+  /account/security/devices:
+    get:
+      summary: List current user's login devices and sessions.
+      responses:
+        "200":
+          description: Security device list.
+  /account/security/devices/{deviceId}:
+    get:
+      summary: Return a single device with sessions and events.
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Device detail.
+  /account/security/login-events:
+    get:
+      summary: List security login events for the current user.
+      responses:
+        "200":
+          description: Security event list.
+  /account/security/sessions/{sessionId}/revoke:
+    post:
+      summary: Revoke a non-current login session.
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Session revoked.
+        "409":
+          description: SECURITY_CURRENT_SESSION_REVOKE_BLOCKED or SECURITY_SESSION_ALREADY_REVOKED.
+  /account/security/events/{eventId}/report:
+    post:
+      summary: Report a security event as not performed by the current user.
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Event reported.
+        "409":
+          description: SECURITY_EVENT_ALREADY_REPORTED.
