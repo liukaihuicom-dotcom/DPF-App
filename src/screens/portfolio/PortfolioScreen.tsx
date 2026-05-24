@@ -489,7 +489,7 @@ export function TraderPortfolioScreen() {
                   ? `Margin Account (${accountSuffix})`
                   : `保证金账户 (${accountSuffix})`}
               </AppText>
-              <AppIcon tone="text" name="icon.system.chevron_down" size={14} />
+              <AppIcon name="icon.system.chevron_down" size={14} />
             </NativePressable>
           </View>
           <NativePressable
@@ -503,7 +503,7 @@ export function TraderPortfolioScreen() {
               { backgroundColor: colors.surface.subtle },
             ])}
           >
-            <AppIcon tone="text" name="icon.market.watchlist" size={20} />
+            <AppIcon name="icon.market.watchlist" size={20} />
           </NativePressable>
         </View>
 
@@ -676,7 +676,6 @@ export function TraderPortfolioScreen() {
                       {order.status}
                     </AppText>
                     <AppIcon
-                      tone="textDim"
                       name="icon.system.chevron_right"
                       size={14}
                     />
@@ -1548,7 +1547,7 @@ function OrderSectionToolbar({
         <AppText numberOfLines={1} variant="caption">
           {actionLabel}
         </AppText>
-        <AppIcon tone="text" name="icon.system.more" size={18} />
+        <AppIcon name="icon.system.more" size={18} />
       </NativePressable>
     </View>
   );

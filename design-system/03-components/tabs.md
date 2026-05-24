@@ -25,10 +25,11 @@ Use `SegmentedTabs` for mutually exclusive in-page choices such as order type, f
 | Radius | `radius.full` |
 | Gap and padding | `spacing.xs` |
 | Minimum item height | `size.tab.itemMinHeight` |
-| Label | `AppText variant="caption"` with semantic tone |
+| Label | `AppText variant="label.control"` with semantic tone |
 
 Rules:
 
 - Page code should pass `items`, `value`, and `onValueChange`; it should not recreate local segmented-tab rail styles.
 - Each option must expose `accessibilityRole="tab"` and selected state.
 - Use `SegmentedTabs` for compact tabs inside cards, sheets, and order tickets; use Expo Router `Tabs` only for app-level navigation.
+- Expo Router bottom tab labels must use `titleTypography.bottomTabs`; in-page segmented tab labels must use `label.control`.

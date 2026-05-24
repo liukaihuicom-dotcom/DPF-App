@@ -21,6 +21,9 @@
       "semantic-icon-missing-required-metadata",
       "license-metadata-missing",
       "token-binding-invalid",
+      "default-icon-size-invalid",
+      "icon-style-contract-invalid",
+      "icon-stroke-width-invalid",
       "legacy-icon-name-used",
       "migration-target-missing",
       "brand-launcher-icon-not-1024-png"
@@ -59,7 +62,9 @@
   "tokenRules": {
     "colorPattern": "^color\\.icon\\.",
     "sizePattern": "^size\\.icon\\.",
-    "allowedSizes": [16, 20, 24, 32, 40]
+    "allowedSizes": [8, 12, 16, 20, 24, 32, 40, 48, 64],
+    "defaultSize": 24,
+    "lineStrokeWidth": 1.5
   },
   "brandAssetRules": {
     "launcherIcon": { "requiredPixels": 1024, "format": "png" },

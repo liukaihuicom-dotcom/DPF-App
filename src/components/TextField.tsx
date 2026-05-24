@@ -305,7 +305,7 @@ export function SelectField({
             {fieldText || placeholder}
           </AppText>
         </View>
-        <AppIcon tone="textDim" name="icon.system.chevron_down" size={15} />
+        <AppIcon name="icon.system.chevron_down" size={15} />
         {usesWebMenu ? (
           <NativePressable
             accessibilityLabel={label}

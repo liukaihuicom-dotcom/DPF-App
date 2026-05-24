@@ -12,9 +12,15 @@ Size tokens define component dimensions and layout constraints. They are separat
 | header.icon-button | 40 | Reserved header icon-button area for level-1 pages, level-2 pages, and sheet title bars |
 | fund-action.icon-box | 40 | Reserved visual box for deposit, withdraw, transfer, and account funding action glyphs |
 | touch.min | 44 | Minimum touch target |
-| icon.sm | 16 | Dense inline icons |
-| icon.md | 20 | Tab and button icons |
-| icon.lg | 24 | Toolbar and sheet icons |
+| icon.micro | 8 | Micro indicators and tiny badges |
+| icon.mini | 12 | Dense helper cues and compact status glyphs |
+| icon.xs | 16 | Dense inline icons |
+| icon.sm | 20 | Tab, small button, and list icons |
+| icon.md | 24 | Default functional icons, toolbars, and sheet icons |
+| icon.lg | 32 | Feature cards and empty-state icons |
+| icon.xl | 40 | Large function-entry glyphs |
+| icon.xxl | 48 | Result-state icons |
+| icon.display | 64 | Display business icons |
 | icon.fund-action | 24 | Deposit, withdraw, and transfer action glyph size |
 | tabbar.height | 68 | Current bottom tab bar |
 
@@ -34,7 +40,7 @@ Size tokens define component dimensions and layout constraints. They are separat
 | `size.tag.mdMinHeight` | 30 | Default status pill |
 | `size.tab.barHeight` | 68 | Bottom tab bar height |
 | `size.tab.itemMinHeight` | 44 | Minimum tab item touch height |
-| `size.icon.sm/md/lg` | 16 / 20 / 24 | Inline, button, toolbar, and sheet icons |
+| `size.icon.micro/mini/xs/sm/md/lg/xl/xxl/display` | 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 / 64 | Governed icon size variants; 24px is the default |
 | `size.touch.min` | 44 | Minimum touch target |
 | `size.sheet.headerHeight` | 56 | Global BottomSheet title bar and spacer |
 | `size.sheet.tradeHeaderMinHeight` | 76 | Trading/order sheet information header with account and quote summary |

@@ -372,7 +372,7 @@ export function ProfileModule({
         {statCards.map((item) => (
           <Card compact key={item.label} style={styles.profileStatCard}>
             <View style={StyleSheet.flatten([styles.profileStatIcon, { backgroundColor: `${colors.brand.fg}10` }])}>
-              <AppIcon tone="brand" name={item.icon} size={18} />
+              <AppIcon name={item.icon} size={18} />
             </View>
             <AppText variant="body">{item.label}</AppText>
             <AppText variant="title">{item.value}</AppText>
@@ -515,7 +515,7 @@ function ProfileListCard({
           </AppText>
         ) : null}
       </View>
-      <AppIcon tone="textDim" name="icon.system.chevron_right" size={17} />
+      <AppIcon name="icon.system.chevron_right" size={17} />
     </Card>
   );
 }
@@ -532,7 +532,7 @@ function ProfileCardHeader({ icon, iconTone, title }: { icon: AppIconName; iconT
       <AppText style={styles.profileCardTitle} variant="subtitle">
         {title}
       </AppText>
-      <AppIcon tone="textDim" name="icon.system.chevron_right" size={17} />
+      <AppIcon name="icon.system.chevron_right" size={17} />
     </View>
   );
 }
@@ -557,7 +557,7 @@ function GiftIllustration() {
         <AppText tone="amber" variant="eyebrow">$</AppText>
       </View>
       <View style={StyleSheet.flatten([styles.giftBox, { backgroundColor: `${colors.brand.fg}16`, borderColor: `${colors.brand.fg}33` }])}>
-        <AppIcon tone="brand" name="icon.promotion.reward" size={42} />
+        <AppIcon name="icon.promotion.reward" size={42} />
       </View>
     </View>
   );
@@ -586,7 +586,7 @@ function SettingsRow({
       style={StyleSheet.flatten([styles.settingsRow, showDivider && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
       <View style={styles.settingsLeft}>
         <View style={styles.settingsIconSlot}>
-          {icon ? <AppIcon tone="text" name={icon} size={20} /> : <View style={StyleSheet.flatten([styles.placeholderRing, { borderColor: colors.text.tertiary }])} />}
+          {icon ? <AppIcon name={icon} size={20} /> : <View style={StyleSheet.flatten([styles.placeholderRing, { borderColor: colors.text.tertiary }])} />}
         </View>
         <AppText variant="body">{label}</AppText>
       </View>
@@ -615,13 +615,13 @@ function SettingsRowRight({ value }: { value: 'switchOff' | 'switchOn' | 'chevro
             ★
           </AppText>
         ))}
-        <AppIcon tone="textDim" name="icon.system.chevron_right" size={16} />
+        <AppIcon name="icon.system.chevron_right" size={16} />
       </View>
     );
   }
 
   if (value === 'chevron') {
-    return <AppIcon tone="textDim" name="icon.system.chevron_right" size={16} />;
+    return <AppIcon name="icon.system.chevron_right" size={16} />;
   }
 
   return (
@@ -629,7 +629,7 @@ function SettingsRowRight({ value }: { value: 'switchOff' | 'switchOn' | 'chevro
       <AppText tone="muted" variant="body">
         {value}
       </AppText>
-      <AppIcon tone="textDim" name="icon.system.chevron_right" size={16} />
+      <AppIcon name="icon.system.chevron_right" size={16} />
     </View>
   );
 }

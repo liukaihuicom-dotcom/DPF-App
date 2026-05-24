@@ -22,6 +22,12 @@ const dependencies = {
 
 const issues = [];
 const approvedSources = new Set(['phosphor', 'remix', 'lucide', 'custom']);
+const governedIconSizes = [8, 12, 16, 20, 24, 32, 40, 48, 64];
+const governedIconSizeSet = new Set(governedIconSizes);
+const defaultIconSize = 24;
+const defaultIconStrokeWidth = 1.5;
+const allowedLiteralIconTones = new Set(['amber', 'danger', 'disabled', 'down', 'panel', 'up', 'white']);
+const blockedDecorativeLiteralIconTones = new Set(['blue', 'brand', 'cyan', 'text', 'textDim', 'textMuted']);
 const forbiddenPackagePatterns = [
   '@expo/vector-icons',
   '@hugeicons/core-free-icons',
@@ -40,7 +46,6 @@ const allowedSvgRenderers = new Set([
   'src/screens/accounts/AccountDetailsScreen.tsx',
   'src/screens/markets/InstrumentDetailScreen.tsx',
 ]);
-
 function addIssue(id, severity, message, file = registryPath) {
   issues.push({ file: path.relative(root, file), id, message, severity });
 }
@@ -180,8 +185,20 @@ function assertRegistryEntries() {
       addIssue('ICON_TOKEN_BINDING_INVALID', 'critical', `${key} must bind to color.icon.* and size.icon.* tokens.`);
     }
 
-    if (!Array.isArray(icon.sizes) || icon.sizes.some((size) => ![16, 20, 24, 32, 40].includes(size))) {
-      addIssue('ICON_SIZE_TOKEN_INVALID', 'critical', `${key} must use governed icon sizes 16/20/24/32/40.`);
+    if (!Array.isArray(icon.sizes) || icon.sizes.some((size) => !governedIconSizeSet.has(size))) {
+      addIssue('ICON_SIZE_TOKEN_INVALID', 'critical', `${key} must use governed icon sizes ${governedIconSizes.join('/')}.`);
+    }
+
+    if (icon.category !== 'brand' && icon.default_size !== defaultIconSize) {
+      addIssue('DEFAULT_ICON_SIZE_INVALID', 'critical', `${key} must default to ${defaultIconSize}px unless it is a brand asset exception.`);
+    }
+
+    if (icon.category !== 'brand' && icon.token_binding?.size !== 'size.icon.md') {
+      addIssue('ICON_TOKEN_BINDING_INVALID', 'critical', `${key} default size must bind to size.icon.md.`);
+    }
+
+    if (icon.style?.default !== 'line' || icon.style?.active !== 'fill') {
+      addIssue('ICON_STYLE_CONTRACT_INVALID', 'critical', `${key} must declare line as default style and fill as active style.`);
     }
 
     if (icon.source_library !== 'custom') {
@@ -255,6 +272,27 @@ function assertCodeUsage() {
 
     if (/from ['"](@expo\/vector-icons|phosphor-react-native|lucide-react-native|react-native-remix-icon)['"]/.test(source)) {
       addIssue('LOW_LEVEL_ICON_IMPORT', 'blocker', 'Runtime icon libraries are blocked; AppIcon must render local vendored assets from src/icons/local.', file);
+    }
+
+    const literalAppIconToneMatches = source.matchAll(/<AppIcon\b[^>]*\btone=(['"])([^'"]+)\1/g);
+    for (const match of literalAppIconToneMatches) {
+      const tone = match[2];
+      if (blockedDecorativeLiteralIconTones.has(tone) || !allowedLiteralIconTones.has(tone)) {
+        addIssue(
+          'APP_ICON_LITERAL_TONE_NOT_GOVERNED',
+          'critical',
+          `AppIcon literal tone "${tone}" is not allowed. Omit decorative tones so color.icon.primary owns the default, or use a governed state/inverse tone.`,
+          file,
+        );
+      }
+    }
+
+    const literalAppIconStyleMatches = source.matchAll(/<AppIcon\b[^>]*\bstyleVariant=(['"])([^'"]+)\1/g);
+    for (const match of literalAppIconStyleMatches) {
+      const styleVariant = match[2];
+      if (!['line', 'fill'].includes(styleVariant)) {
+        addIssue('APP_ICON_STYLE_VARIANT_NOT_GOVERNED', 'critical', `AppIcon styleVariant "${styleVariant}" must be line or fill.`, file);
+      }
     }
 
     for (const key of registryKeys) {
@@ -339,11 +377,31 @@ function assertBrandAssets() {
   }
 }
 
+function assertRuntimeContract() {
+  if (!appIconSource.includes("sizeVariant = 'md'")) {
+    addIssue('APP_ICON_DEFAULT_SIZE_VARIANT_INVALID', 'critical', 'AppIcon must default sizeVariant to md / 24px.', appIconPath);
+  }
+
+  if (!appIconSource.includes("styleVariant = 'line'")) {
+    addIssue('APP_ICON_DEFAULT_STYLE_VARIANT_INVALID', 'critical', 'AppIcon must default styleVariant to line.', appIconPath);
+  }
+
+  if (!appIconSource.includes('lineWidth.icon.default')) {
+    addIssue('ICON_STROKE_WIDTH_INVALID', 'critical', 'AppIcon must pass lineWidth.icon.default to local icon renderers.', appIconPath);
+  }
+
+  const tokenSource = readFileIfExists(path.join(root, 'src/theme/tokens.ts'));
+  if (!tokenSource.includes('default: 1.5')) {
+    addIssue('ICON_STROKE_WIDTH_INVALID', 'critical', `lineWidth.icon.default must be ${defaultIconStrokeWidth}.`, path.join(root, 'src/theme/tokens.ts'));
+  }
+}
+
 assertPackageClean();
 assertRegistryPolicy();
 assertRegistryEntries();
 assertCodeUsage();
 assertBrandAssets();
+assertRuntimeContract();
 
 const blockerOrCritical = issues.some((issue) => issue.severity === 'blocker' || issue.severity === 'critical');
 const result = {

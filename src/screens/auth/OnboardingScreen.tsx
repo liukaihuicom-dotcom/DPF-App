@@ -52,7 +52,7 @@ export default function OnboardingScreen() {
           {steps.map(([icon, title, hint], index) => (
             <View key={title} style={styles.stepRow}>
               <View style={StyleSheet.flatten([styles.stepIndex, { backgroundColor: index === 0 ? colors.brand.fg : colors.surface.subtle }])}>
-                <AppIcon name={icon as AppIconName} size={13} tone={index === 0 ? 'white' : 'textDim'} />
+                <AppIcon name={icon as AppIconName} size={13} tone={index === 0 ? 'white' : undefined} />
               </View>
               <View style={styles.flex}>
                 <AppText variant="body">{title}</AppText>
@@ -111,7 +111,7 @@ export default function OnboardingScreen() {
             }}
             style={StyleSheet.flatten([styles.choiceCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
             <View style={StyleSheet.flatten([styles.choiceIcon, { backgroundColor: `${colors.brand.fg}12`, borderColor: `${colors.brand.fg}55` }])}>
-              <AppIcon tone="brand" name={icon as AppIconName} size={15} />
+              <AppIcon name={icon as AppIconName} size={15} />
             </View>
             <AppText variant="body">{title}</AppText>
             <AppText numberOfLines={3} tone="muted" variant="caption">
@@ -122,7 +122,7 @@ export default function OnboardingScreen() {
       </View>
 
       <View style={StyleSheet.flatten([styles.notice, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
-        <AppIcon tone="textMuted" name="icon.risk.info" size={15} />
+        <AppIcon name="icon.risk.info" size={15} />
         <AppText numberOfLines={3} tone="muted" variant="caption">
           {t('onboarding.notice')}
         </AppText>

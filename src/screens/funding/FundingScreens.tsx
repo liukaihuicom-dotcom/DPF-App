@@ -64,6 +64,10 @@ export function FundingHomeScreen() {
   }
 
   const actionItems = getFundingOperationActions(t, primary?.id);
+  const monthlyInflow = transactions
+    .filter((transaction) => transaction.operation === 'deposit')
+    .reduce((total, transaction) => total + Math.max(0, getFundingSignedAmount(transaction)), 0);
+  const pendingCount = transactions.filter((transaction) => !isFundingFinalStatus(transaction.status)).length;
 
   return (
     <Screen
@@ -71,24 +75,40 @@ export function FundingHomeScreen() {
       back
       rightActions={[{ icon: 'icon.trading.history', label: t('funding.action.openTransactions'), onPress: () => router.push('/funding/transactions' as never) }]}
       title={t('funding.home.title')}>
-      <FundingRiskBanner />
-      <Card>
-        <View style={styles.heroHeader}>
-          <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: `${colors.status.info.fg}14` }])}>
-            <AppIcon tone="blue" name="icon.wallet.balance" size={24} />
+      <Card highlight>
+        <View style={styles.heroStack}>
+          <View style={styles.heroHeader}>
+            <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: colors.overlay.info.subtle }])}>
+              <AppIcon name="icon.wallet.balance" size={size.icon.lg} />
+            </View>
+            <View style={styles.flex}>
+              <AppText tone="muted" variant="eyebrow">{t('funding.home.eyebrow')}</AppText>
+              <AppText variant="title">{t('funding.home.title')}</AppText>
+            </View>
+            <StatusPill compact label={primary ? statusLabel(primary.group, t) : t('funding.account.selectFirst')} tone={primary?.group === 'active' ? 'success' : 'warning'} />
           </View>
-          <View style={styles.flex}>
-            <AppText variant="subtitle">{t('funding.home.title')}</AppText>
-            <AppText tone="muted" variant="caption">{t('funding.home.subtitle')}</AppText>
+          <AppText tone="muted" variant="caption">{t('funding.home.subtitle')}</AppText>
+          <View style={StyleSheet.flatten([styles.summaryGrid, { borderTopColor: colors.border.subtle }])}>
+            <MiniSummary label={t('accountDetails.accountNo')} value={primary?.accountNo ?? '--'} />
+            <MiniSummary label={t('funding.account.available')} value={primary ? formatMoney(primary.freeMargin, primary.currency, 0, locale) : '--'} />
+          </View>
+          <View style={styles.insightGrid}>
+            <FundingInsight
+              icon="icon.trading.history"
+              label={t('funding.home.pending')}
+              tone={pendingCount > 0 ? 'warning' : 'success'}
+              value={String(pendingCount)}
+            />
+            <FundingInsight
+              icon="icon.wallet.deposit"
+              label={t('funding.home.monthlyInflow')}
+              tone="info"
+              value={formatMoney(monthlyInflow, 'USD', 2, locale)}
+            />
           </View>
         </View>
-        {primary ? (
-          <View style={StyleSheet.flatten([styles.summaryGrid, { borderTopColor: colors.border.subtle }])}>
-            <MiniSummary label={t('accountDetails.accountNo')} value={primary.accountNo} />
-            <MiniSummary label={t('funding.account.available')} value={formatMoney(primary.freeMargin, primary.currency, 0, locale)} />
-          </View>
-        ) : null}
       </Card>
+      <FundingRiskBanner />
       <FundActionGrid items={actionItems} />
       <Card>
         <View style={styles.sectionHeader}>
@@ -255,7 +275,7 @@ function FundingFormScreen({ operation }: { operation: FundingOperation }) {
   const openAccountSheet = (mode: 'source' | 'target') => {
     bottomSheet.show({
       header: {
-        title: locale !== 'zh-CN' ? 'Switch trading account' : '切换交易账号',
+        title: t('funding.account.switchTitle'),
       },
       content: (
         <TradingAccountSwitchSheet
@@ -405,11 +425,9 @@ function FundingFormScreen({ operation }: { operation: FundingOperation }) {
       stickyFooter={(
         <View style={styles.fundingFooter}>
           <FundingFooterSummary
-            badge={rules ? t('funding.summary.rateSource') : t('funding.status.validating')}
             expanded={summaryExpanded}
             onToggle={() => setSummaryExpanded((current) => !current)}
             rows={footerPreviewRows}
-            title={previewTitle(operation, t)}
           />
           {disabledReason ? <AppText tone="danger" variant="caption">{disabledReason}</AppText> : null}
           <ActionButton disabled={!canSubmit} label={submitLabel(operation, t)} loading={submitting} onPress={submit} tone="brand" variant="filled" />
@@ -417,6 +435,7 @@ function FundingFormScreen({ operation }: { operation: FundingOperation }) {
       )}
       stickyFooterBackground="page"
       title={title}>
+      <FundingFormHint />
       <FundingRiskBanner />
       <View style={styles.formFlow}>
         {operation === 'withdrawal' ? (
@@ -523,10 +542,10 @@ export function FundingTransactionDetailScreen() {
 
   return (
     <Screen align="center" back title={t('funding.detail.title')}>
-      <Card>
+      <Card highlight>
         <View style={styles.detailHero}>
           <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: resolveStatusOverlay(transaction.status, colors) }])}>
-            <AppIcon name={detailStatusIcon(transaction.status)} size={24} tone={resolveStatusIconTone(transaction.status)} />
+            <AppIcon name={detailStatusIcon(transaction.status)} size={size.icon.lg} tone={resolveStatusIconTone(transaction.status)} />
           </View>
           <StatusPill compact label={statusText(transaction.status, t)} tone={statusTone} />
           <AppText adjustsFontSizeToFit numberOfLines={1} tone={signedAmount >= 0 ? 'down' : 'up'} variant="largeNumber">
@@ -655,12 +674,12 @@ function AccountSheetField({
         minTouch={58}
         onPress={onPress}
         style={StyleSheet.flatten([styles.sheetField, { backgroundColor: colors.surface.panel, borderColor: error ? colors.status.danger.fg : colors.border.default }])}>
-        <AppIcon tone="textDim" name="icon.account.trading" size={15} />
+        <AppIcon name="icon.account.trading" size={15} />
         <View style={styles.flex}>
           <AppText numberOfLines={1} tone="muted" variant="eyebrow">{label}</AppText>
           <AppText numberOfLines={1} variant="body">{account ? `${account.accountNo} · ${statusLabel(account.group, t)}` : label}</AppText>
         </View>
-        <AppIcon tone="textDim" name="icon.system.chevron_down" size={15} />
+        <AppIcon name="icon.system.chevron_down" size={15} />
       </NativePressable>
       {error ? (
         <AppText style={styles.sheetFieldHelper} tone="danger" variant="caption">{error}</AppText>
@@ -694,13 +713,13 @@ function PaymentMethodField({
         minTouch={58}
         onPress={onPress}
         style={StyleSheet.flatten([styles.sheetField, { backgroundColor: colors.surface.panel, borderColor: error ? colors.status.danger.fg : colors.border.default }])}>
-        <AppIcon tone="textDim" name={method?.icon ?? 'icon.wallet.balance'} size={15} />
+        <AppIcon name={method?.icon ?? 'icon.wallet.balance'} size={15} />
         <View style={styles.flex}>
           <AppText numberOfLines={1} tone="muted" variant="eyebrow">{label}</AppText>
           <AppText numberOfLines={1} variant="body">{method ? localizeText(method.label, locale) : label}</AppText>
         </View>
         {method ? <StatusPill compact label={methodTypeText(method.type, t)} tone="neutral" /> : null}
-        <AppIcon tone="textDim" name="icon.system.chevron_down" size={15} />
+        <AppIcon name="icon.system.chevron_down" size={15} />
       </NativePressable>
       {error ? (
         <AppText style={styles.sheetFieldHelper} tone="danger" variant="caption">{error}</AppText>
@@ -784,7 +803,7 @@ function PaymentMethodRow({
         disabled && { opacity: 0.5 },
       ])}>
       <View style={StyleSheet.flatten([styles.methodIcon, { backgroundColor: colors.surface.subtle }])}>
-        <AppIcon name={method.icon} size={18} tone={disabled ? 'textDim' : 'text'} />
+        <AppIcon name={method.icon} size={18} tone={disabled ? 'disabled' : undefined} />
       </View>
       <View style={styles.flex}>
         <View style={styles.methodRowTop}>
@@ -793,7 +812,7 @@ function PaymentMethodRow({
         </View>
         <AppText numberOfLines={2} tone="muted" variant="caption">{helper}</AppText>
       </View>
-      <AppIcon name={selected ? 'icon.status.verified' : 'icon.system.chevron_right'} size={15} tone={selected ? 'text' : 'textDim'} />
+      <AppIcon name={selected ? 'icon.status.verified' : 'icon.system.chevron_right'} size={15} />
     </NativePressable>
   );
 }
@@ -831,7 +850,7 @@ function AmountStageField({
     <View style={StyleSheet.flatten([styles.amountStageWrap, { backgroundColor: colors.surface.raised, borderColor: error ? colors.status.danger.fg : colors.border.subtle }])}>
       <View style={styles.amountStageHeader}>
         <View style={StyleSheet.flatten([styles.amountStageIcon, { backgroundColor: `${colors.brand.fg}14` }])}>
-          <AppIcon tone="brand" name={icon} size={16} />
+          <AppIcon name={icon} size={16} />
         </View>
         <View style={styles.flex}>
           <AppText numberOfLines={1} tone="muted" variant="eyebrow">{label}</AppText>
@@ -897,28 +916,58 @@ function AmountStageField({
   );
 }
 
+function FundingFormHint() {
+  const { t } = useProductSettings();
+
+  return (
+    <AppText style={styles.formHint} tone="muted" variant="caption">{t('funding.form.hint')}</AppText>
+  );
+}
+
 function FundingRiskBanner() {
   const { kycStatus, colors, t } = useProductSettings();
   const kycApproved = kycStatus === 'approved';
 
+  if (kycApproved) {
+    return null;
+  }
+
   return (
     <View style={StyleSheet.flatten([styles.riskBanner, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
-      <AppIcon tone={kycApproved ? 'down' : 'amber'} name={kycApproved ? 'icon.status.verified' : 'icon.security.risk_shield'} size={18} />
+      <AppIcon tone="amber" name="icon.security.risk_shield" size={18} />
       <View style={styles.flex}>
-        <AppText variant="caption">{kycApproved ? t('funding.kyc.approved') : t('funding.kyc.required')}</AppText>
+        <AppText variant="caption">{t('funding.kyc.required')}</AppText>
         <AppText tone="muted" variant="caption">{t('funding.banner.synthetic')}</AppText>
       </View>
     </View>
   );
 }
 
+function FundingInsight({
+  icon,
+  label,
+  tone,
+  value,
+}: {
+  icon: AppIconName;
+  label: string;
+  tone: StatusPillTone;
+  value: string;
+}) {
+  return (
+    <View style={styles.insightCell}>
+      <StatusPill compact icon={icon} label={label} tone={tone} />
+      <AppText adjustsFontSizeToFit numberOfLines={1} variant="subtitle">{value}</AppText>
+    </View>
+  );
+}
+
 function FundingTransactionRow({ onPress, showDivider, transaction }: { onPress: () => void; showDivider?: boolean; transaction: FundingTransaction }) {
   const { locale, colors, t } = useProductSettings();
-  const color = resolveOperationColor(transaction.operation, colors);
 
   return (
     <NativePressable accessibilityLabel={localizeText(transaction.note, locale)} accessibilityRole="button" minTouch={58} onPress={onPress} style={StyleSheet.flatten([styles.transactionRow, showDivider && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
-      <View style={StyleSheet.flatten([styles.rowIcon, { backgroundColor: `${color}14` }])}>
+      <View style={StyleSheet.flatten([styles.rowIcon, { backgroundColor: resolveOperationOverlay(transaction.operation, colors) }])}>
         <AppIcon name={getFundingOperationIcon(transaction.operation)} size={18} tone={resolveOperationIconTone(transaction.operation)} />
       </View>
       <View style={styles.flex}>
@@ -931,7 +980,7 @@ function FundingTransactionRow({ onPress, showDivider, transaction }: { onPress:
         </AppText>
         <StatusPill compact label={statusText(transaction.status, t)} tone={getStatusTone(transaction.status)} />
       </View>
-      <AppIcon tone="textDim" name="icon.system.chevron_right" size={14} />
+      <AppIcon name="icon.system.chevron_right" size={14} />
     </NativePressable>
   );
 }
@@ -946,17 +995,13 @@ function MiniSummary({ label, value }: { label: string; value: string }) {
 }
 
 function FundingFooterSummary({
-  badge,
   expanded,
   onToggle,
   rows,
-  title,
 }: {
-  badge: string;
   expanded: boolean;
   onToggle: () => void;
   rows: { label: string; value: string }[];
-  title: string;
 }) {
   const { colors, t } = useProductSettings();
   const canExpand = rows.length > 1;
@@ -964,10 +1009,6 @@ function FundingFooterSummary({
 
   return (
     <View style={StyleSheet.flatten([styles.fundingFooterSummary, { borderTopColor: colors.border.subtle }])}>
-      <View style={styles.fundingFooterSummaryHeader}>
-        <AppText numberOfLines={1} variant="caption">{title}</AppText>
-        <StatusPill compact label={badge} tone="neutral" />
-      </View>
       <View style={styles.fundingFooterRows}>
         {visibleRows.map((row, index) => (
           <View
@@ -990,7 +1031,7 @@ function FundingFooterSummary({
                   minTouch={size.touch.min}
                   onPress={onToggle}
                   style={styles.fundingFooterToggle}>
-                  <AppIcon name={expanded ? 'icon.system.chevron_down' : 'icon.system.chevron_right'} size={size.icon.sm} tone="textDim" />
+                  <AppIcon name={expanded ? 'icon.system.chevron_down' : 'icon.system.chevron_right'} size={size.icon.sm} />
                 </NativePressable>
               ) : null}
             </View>
@@ -1009,24 +1050,12 @@ function titleForOperation(operation: FundingOperation, t: ReturnType<typeof use
   return t(operation === 'deposit' ? 'funding.action.deposit' : operation === 'withdrawal' ? 'funding.action.withdrawal' : 'funding.action.transfer');
 }
 
-function previewTitle(operation: FundingOperation, t: ReturnType<typeof useProductSettings>['t']) {
-  if (operation === 'withdrawal') {
-    return t('funding.detail.estimatedDebit');
-  }
-
-  if (operation === 'internal_transfer') {
-    return t('funding.detail.expectedTransfer');
-  }
-
-  return t('funding.detail.expectedUsd');
-}
-
 function statusLabel(status: FundingAccountStatus, t: ReturnType<typeof useProductSettings>['t']) {
   if (status === 'active') return t('status.active');
-  if (status === 'demo') return 'Demo';
-  if (status === 'readOnly') return 'Read only';
-  if (status === 'disabled') return 'Disabled';
-  return 'Archived';
+  if (status === 'demo') return t('funding.account.status.demo');
+  if (status === 'readOnly') return t('funding.account.status.readOnly');
+  if (status === 'disabled') return t('funding.account.status.disabled');
+  return t('funding.account.status.archived');
 }
 
 function accountRestrictionReason(status: FundingAccountStatus, t: ReturnType<typeof useProductSettings>['t']) {
@@ -1096,10 +1125,10 @@ function resolveStatusIconTone(status: FundingStatus): IconTone {
   return 'blue';
 }
 
-function resolveOperationColor(operation: FundingOperation, colors: ReturnType<typeof useProductSettings>['colors']) {
-  if (operation === 'deposit') return colors.market.down.fg;
-  if (operation === 'withdrawal') return colors.status.warning.fg;
-  return colors.status.info.fg;
+function resolveOperationOverlay(operation: FundingOperation, colors: ReturnType<typeof useProductSettings>['colors']) {
+  if (operation === 'deposit') return colors.overlay.down.subtle;
+  if (operation === 'withdrawal') return colors.overlay.warning.subtle;
+  return colors.overlay.info.subtle;
 }
 
 function resolveOperationIconTone(operation: FundingOperation): IconTone {
@@ -1123,7 +1152,7 @@ function buildDetailRows(transaction: FundingTransaction, locale: Locale, t: Ret
   ];
 
   if (transaction.errorCode) {
-    rows.push({ label: 'Error', value: errorText(transaction.errorCode, t) });
+    rows.push({ label: t('funding.detail.error'), value: errorText(transaction.errorCode, t) });
   }
 
   return rows;
@@ -1263,7 +1292,7 @@ function formatDateTitle(value: string) {
 const styles = StyleSheet.create({
   detailHero: {
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   detailRows: {
     borderRadius: radius.md,
@@ -1276,6 +1305,9 @@ const styles = StyleSheet.create({
   },
   formFlow: {
     gap: spacing.md,
+  },
+  formHint: {
+    paddingHorizontal: spacing.sm,
   },
   fundingFooter: {
     gap: spacing.sm,
@@ -1295,12 +1327,6 @@ const styles = StyleSheet.create({
     borderTopWidth: lineWidth.hairline,
     gap: spacing.xxs,
     paddingTop: spacing.sm,
-  },
-  fundingFooterSummaryHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: spacing.sm,
-    justifyContent: 'space-between',
   },
   fundingFooterRowSide: {
     alignItems: 'center',
@@ -1372,6 +1398,18 @@ const styles = StyleSheet.create({
     height: size.control.md,
     justifyContent: 'center',
     width: size.control.md,
+  },
+  heroStack: {
+    gap: spacing.md,
+  },
+  insightCell: {
+    flex: 1,
+    gap: spacing.xs,
+    minWidth: 0,
+  },
+  insightGrid: {
+    flexDirection: 'row',
+    gap: spacing.md,
   },
   listFrame: {
     borderRadius: radius.md,

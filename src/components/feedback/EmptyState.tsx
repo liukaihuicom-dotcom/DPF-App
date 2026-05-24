@@ -37,12 +37,12 @@ export function EmptyState({
         <View style={styles.row}>
           {icon ? (
             <View style={StyleSheet.flatten([styles.icon, { backgroundColor: colors.surface.subtle }])}>
-              <AppIcon tone="textDim" name={icon} size={24} />
+              <AppIcon name={icon} size={24} />
             </View>
           ) : null}
           <View style={styles.text}>
-            {title ? <AppText variant="subtitle">{title}</AppText> : null}
-            <AppText tone="muted" variant="caption">
+            {title ? <AppText variant="title.card">{title}</AppText> : null}
+            <AppText tone="muted" variant="label.helper">
               {body}
             </AppText>
           </View>
@@ -65,7 +65,7 @@ export function EmptyState({
 
   return (
     <View style={StyleSheet.flatten([styles.plain, { backgroundColor: colors.surface.subtle }])}>
-      <AppText tone="muted" variant="body">
+      <AppText tone="muted" variant="body.secondary">
         {body}
       </AppText>
     </View>

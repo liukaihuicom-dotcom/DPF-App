@@ -54,7 +54,7 @@ export default function RegisterPasswordScreen() {
 
   const visibilityButton = (
     <NativePressable accessibilityRole="button" minTouch={34} onPress={() => setVisible((value) => !value)}>
-      <AppIcon tone="textDim" name="icon.system.password_visible" size={18} />
+      <AppIcon name="icon.system.password_visible" size={18} />
     </NativePressable>
   );
 

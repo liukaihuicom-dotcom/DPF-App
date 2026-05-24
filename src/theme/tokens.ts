@@ -28,6 +28,9 @@ export const lineWidth = {
   none: 0,
   hairline: 0.5,
   default: 0.5,
+  icon: {
+    default: 1.5,
+  },
   strong: 1,
   selected: 2,
 } as const;
@@ -45,10 +48,15 @@ export const size = {
     lg: 56,
   },
   icon: {
-    xs: 8,
-    sm: 16,
-    md: 20,
-    lg: 24,
+    micro: 8,
+    mini: 12,
+    xs: 16,
+    sm: 20,
+    md: 24,
+    lg: 32,
+    xl: 40,
+    xxl: 48,
+    display: 64,
     header: 24,
     fundAction: 24,
     fundActionBox: 40,
@@ -206,3 +214,39 @@ export const typography = {
 } satisfies Record<string, TextStyle>;
 
 export type TypographyToken = keyof typeof typography;
+
+export const titleTypography = {
+  page: typography.displayXl,
+  pageCompact: typography.displayLg,
+  dialog: typography.sheetTitle,
+  sheet: typography.sheetTitle,
+  card: typography.titleMd,
+  section: typography.titleMd,
+  list: typography.caption,
+  listItem: typography.titleMd,
+  tabs: typography.caption,
+  bottomTabs: typography.microLabel,
+} satisfies Record<string, TextStyle>;
+
+export type TitleTypographyRole = keyof typeof titleTypography;
+
+export const bodyTypography = {
+  primary: typography.bodyMd,
+  secondary: typography.bodySm,
+  dense: typography.bodySm,
+  prominent: typography.bodyLg,
+} satisfies Record<string, TextStyle>;
+
+export type BodyTypographyRole = keyof typeof bodyTypography;
+
+export const labelTypography = {
+  default: typography.caption,
+  helper: typography.captionSm,
+  metadata: typography.captionSm,
+  field: typography.bodySm,
+  control: typography.caption,
+  status: typography.microLabel,
+  minimum: typography.microLabel,
+} satisfies Record<string, TextStyle>;
+
+export type LabelTypographyRole = keyof typeof labelTypography;

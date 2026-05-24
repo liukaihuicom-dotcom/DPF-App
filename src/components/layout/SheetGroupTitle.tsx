@@ -10,7 +10,7 @@ type SheetGroupTitleProps = {
 
 export function SheetGroupTitle({ title }: SheetGroupTitleProps) {
   return (
-    <AppText style={styles.title} tone="muted" variant="caption">
+    <AppText style={styles.title} tone="muted" variant="label.default">
       {title}
     </AppText>
   );

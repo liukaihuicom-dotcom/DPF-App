@@ -600,10 +600,10 @@ export function ProductControlPanel() {
                   onPress={() => setAdvancedOpen((value) => !value)}
                   style={StyleSheet.flatten([styles.foldButton, { borderColor: colors.border.subtle }])}>
                   <View style={styles.foldTitle}>
-                    <AppIcon tone="textDim" name="icon.system.settings" size={size.icon.sm} />
+                    <AppIcon name="icon.system.settings" size={size.icon.sm} />
                     <AppText variant="caption">{t('control.devConsole.advanced')}</AppText>
                   </View>
-                  <AppIcon tone="textDim" name={advancedOpen ? 'icon.system.chevron_down' : 'icon.system.chevron_right'} size={size.icon.sm} />
+                  <AppIcon name={advancedOpen ? 'icon.system.chevron_down' : 'icon.system.chevron_right'} size={size.icon.sm} />
                 </NativePressable>
 
                 {advancedOpen ? (
@@ -633,7 +633,7 @@ export function ProductControlPanel() {
                     minTouch={40}
                     onPress={() => setScreen('pages')}
                     style={StyleSheet.flatten([styles.secondaryButton, { borderColor: colors.border.subtle }])}>
-                    <AppIcon tone="textDim" name="icon.navigation.function_center" size={size.icon.sm} />
+                    <AppIcon name="icon.navigation.function_center" size={size.icon.sm} />
                     <AppText numberOfLines={1} variant="caption">
                       {t('control.pageConsole.menu.pages')}
                     </AppText>
@@ -643,7 +643,7 @@ export function ProductControlPanel() {
                     minTouch={40}
                     onPress={handleReset}
                     style={StyleSheet.flatten([styles.resetButton, { borderColor: resetArmed ? colors.status.danger.fg : colors.border.subtle }])}>
-                    <AppIcon name="icon.system.settings" size={size.icon.sm} tone={resetArmed ? 'danger' : 'textDim'} />
+                    <AppIcon name="icon.system.settings" size={size.icon.sm} tone={resetArmed ? 'danger' : undefined} />
                     <AppText numberOfLines={1} tone={resetArmed ? 'danger' : 'default'} variant="caption">
                       {resetArmed ? t('control.devConsole.resetConfirm') : t('control.devConsole.reset')}
                     </AppText>
@@ -694,7 +694,7 @@ export function ProductControlPanel() {
         minTouch={48}
         onPress={open ? closePanel : () => setOpen(true)}
         style={StyleSheet.flatten([styles.fab, shadows.panel, { backgroundColor: colors.surface.raised, borderColor: colors.brand.fg }])}>
-        <AppIcon tone="brand" name={open ? 'icon.system.close' : 'icon.system.settings'} size={size.icon.md} />
+        <AppIcon name={open ? 'icon.system.close' : 'icon.system.settings'} size={size.icon.md} />
       </NativePressable>
     </View>
   );
@@ -908,7 +908,7 @@ function ModuleAction({
           {body}
         </AppText>
       </View>
-      <AppIcon tone="textDim" name="icon.system.chevron_right" size={size.icon.sm} />
+      <AppIcon name="icon.system.chevron_right" size={size.icon.sm} />
     </NativePressable>
   );
 }

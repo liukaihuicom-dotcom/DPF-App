@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "platforms": {
+    "app": {
+      "status": "active",
+      "runtime": "Expo Router / React Native",
+      "rules": "design-system-engineering/06_platform_modes/app-rules.md",
+      "safeAreaRequired": true,
+      "touchTarget": "src/theme/tokens.ts layout.touchTargetMin"
+    },
+    "h5": {
+      "status": "governed",
+      "runtime": "React Native Web target",
+      "rules": "design-system-engineering/06_platform_modes/h5-rules.md",
+      "safeAreaRequired": true,
+      "touchTarget": "src/theme/tokens.ts layout.touchTargetMin"
+    },
+    "web": {
+      "status": "governed",
+      "runtime": "React Native Web target",
+      "rules": "design-system-engineering/06_platform_modes/web-rules.md",
+      "safeAreaRequired": false,
+      "touchTarget": "src/theme/tokens.ts layout.touchTargetMin"
+    },
+    "admin": {
+      "status": "future",
+      "runtime": "not implemented",
+      "rules": "design-system-engineering/06_platform_modes/admin-rules.md",
+      "safeAreaRequired": false,
+      "touchTarget": "requires admin token mode before implementation"
+    }
+  }
+}

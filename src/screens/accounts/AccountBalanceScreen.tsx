@@ -98,7 +98,7 @@ export default function AccountBalanceScreen() {
             minTouch={36}
             style={StyleSheet.flatten([styles.periodButton, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
             <AppText variant="caption">{t('balance.period.last7')}</AppText>
-            <AppIcon tone="textDim" name="icon.system.chevron_down" size={13} />
+            <AppIcon name="icon.system.chevron_down" size={13} />
           </NativePressable>
         </View>
         <View style={StyleSheet.flatten([styles.snapshotGrid, { borderTopColor: colors.border.subtle }])}>

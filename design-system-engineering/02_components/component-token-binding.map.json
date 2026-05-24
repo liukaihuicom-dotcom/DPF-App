@@ -22,6 +22,18 @@
     {
       "id": "form-external-helper-alignment",
       "description": "Helper or description text rendered outside a form field frame must use a 12px left inset from the field frame edge, bound to spacing.md."
+    },
+    {
+      "id": "title-role-bound",
+      "description": "Page, dialog, card, list, and tab titles must use AppText title.* variants or component-owned titleTypography mappings; do not hardcode or select generic text variants for title roles."
+    },
+    {
+      "id": "body-role-bound",
+      "description": "Paragraphs, descriptions, row body text, and empty-state body copy must use AppText body.* variants instead of generic body/caption guessing."
+    },
+    {
+      "id": "label-role-bound",
+      "description": "Labels, helper text, metadata, status text, badges, and compact control text must use AppText label.* variants with minimum text constrained to approved 12px roles."
     }
   ],
   "componentBindings": {

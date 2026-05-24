@@ -21,7 +21,7 @@ export function BackBar({ label }: BackBarProps) {
         onPress={() => router.back()}
         tone="default"
       />
-      <AppText numberOfLines={1} variant="subtitle">
+      <AppText numberOfLines={1} variant="title.pageCompact">
         {label}
       </AppText>
     </View>

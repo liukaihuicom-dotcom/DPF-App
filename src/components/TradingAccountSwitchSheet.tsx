@@ -100,7 +100,7 @@ function SwitchAccountCard({
         },
       ])}>
       <View style={StyleSheet.flatten([styles.iconWrap, { backgroundColor: disabled ? colors.surface.panel : colors.surface.subtle }])}>
-        <AppIcon tone={disabled ? 'disabled' : 'text'} name="icon.account.trading" size={18} />
+        <AppIcon tone={disabled ? 'disabled' : undefined} name="icon.account.trading" size={18} />
       </View>
       <View style={styles.cardBody}>
         <View style={styles.topRow}>

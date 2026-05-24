@@ -74,7 +74,7 @@ export default function DiscoverLayoutScreen() {
       }
       title={title}>
       <View style={StyleSheet.flatten([styles.introCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
-        <AppIcon tone="brand" name="icon.system.settings" size={20} />
+        <AppIcon name="icon.system.settings" size={20} />
         <View style={styles.flex}>
           <AppText variant="subtitle">{title}</AppText>
           <AppText numberOfLines={2} tone="muted" variant="caption">
@@ -162,7 +162,7 @@ function LayoutEditorRow({
         ]}>
         <View style={styles.editorRowHeader}>
           <View style={styles.dragHandle}>
-            <AppIcon tone="textDim" name="icon.system.more" size={18} />
+            <AppIcon name="icon.system.more" size={18} />
           </View>
           <View style={styles.flex}>
             <AppText numberOfLines={1} variant="subtitle">
@@ -179,7 +179,7 @@ function LayoutEditorRow({
               minTouch={32}
               onPress={() => moveItem(index, index - 1)}
               style={StyleSheet.flatten([styles.moveButton, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
-              <AppIcon tone="textDim" name="icon.system.chevron_down" size={13} style={styles.moveUpIcon} />
+              <AppIcon name="icon.system.chevron_down" size={13} style={styles.moveUpIcon} />
             </NativePressable>
             <NativePressable
               accessibilityLabel={`${title} move down`}
@@ -187,7 +187,7 @@ function LayoutEditorRow({
               minTouch={32}
               onPress={() => moveItem(index, index + 1)}
               style={StyleSheet.flatten([styles.moveButton, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
-              <AppIcon tone="textDim" name="icon.system.chevron_down" size={13} />
+              <AppIcon name="icon.system.chevron_down" size={13} />
             </NativePressable>
           </View>
         </View>

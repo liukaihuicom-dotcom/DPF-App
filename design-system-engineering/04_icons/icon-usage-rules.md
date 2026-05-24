@@ -4,7 +4,8 @@
 
 - Pages and feature components must consume semantic `icon.*` registry keys through `AppIcon`.
 - `AppIcon` must render only local vendored icon components from `src/icons/local`; it must not import third-party icon runtime packages.
-- `AppIcon` defaults to the active theme text primary color (`palette.text`); use explicit `tone` only for governed status, risk, active, inverse, market, or brand contexts.
+- `AppIcon` defaults to `color.icon.primary`, which resolves to the active theme text level 1 color (`colors.text.primary`) across all modes.
+- Page and feature code must omit decorative icon tones such as `brand`, `blue`, `text`, `textMuted`, or `textDim`; use explicit `tone` only for governed status, risk, disabled, market, or inverse contrast contexts.
 - Phosphor is the primary icon library; Remix is only a financial/business supplement; Lucide is only a system-operation supplement.
 - Hugeicons is blocked for production use and must not appear in dependencies, source code, registry entries, or design-system documentation except migration notes.
 - Custom icons require a Custom Icon Request with ownership, style, license, token, and QA approval before use.
@@ -21,9 +22,19 @@
 
 ## Size Rules
 
-- Registry sizes must be limited to 16 / 20 / 24 / 32 / 40.
-- Runtime icon calls may pass a concrete `size` only when matching a governed component size; otherwise use the registry default.
+- Registry sizes must be limited to 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 / 64.
+- `AppIcon` defaults to `size.icon.md`, which is 24px.
+- Runtime icon calls should use `sizeVariant` for governed icon sizes; concrete `size` is migration-compatible only for documented component-owned exceptions.
+- 8px and 12px are only for micro indicators, badges, and dense helper cues; they are not default functional icon sizes.
+- 48px and 64px are only for empty states, result states, feature entry visuals, and display business icons.
 - Every registry entry must bind to `size.icon.*` and `color.icon.*` tokens.
+
+## Style Rules
+
+- Linear icon stroke width must resolve to `lineWidth.icon.default`, which is 1.5px.
+- `AppIcon` supports `styleVariant="line"` and `styleVariant="fill"`; default is `line`.
+- Fill style is reserved for selected, active, state-emphasis, or business-emphasis scenarios.
+- Page code must not simulate fill or stroke changes through local SVG overrides.
 
 ## Provider Rules
 

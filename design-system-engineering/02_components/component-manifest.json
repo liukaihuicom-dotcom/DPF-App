@@ -119,6 +119,27 @@
       "variants": [
         "displayXl",
         "displayLg",
+        "title.page",
+        "title.pageCompact",
+        "title.dialog",
+        "title.sheet",
+        "title.card",
+        "title.section",
+        "title.list",
+        "title.listItem",
+        "title.tabs",
+        "title.bottomTabs",
+        "body.primary",
+        "body.secondary",
+        "body.dense",
+        "body.prominent",
+        "label.default",
+        "label.helper",
+        "label.metadata",
+        "label.field",
+        "label.control",
+        "label.status",
+        "label.minimum",
         "title",
         "subtitle",
         "body",
@@ -155,7 +176,9 @@
       ],
       "usage": "All product copy and numeric text.",
       "forbidden": [
-        "Do not use raw Text in governed UI components unless AppText cannot satisfy host requirements"
+        "Do not use raw Text in governed UI components unless AppText cannot satisfy host requirements",
+        "Do not use generic typography variants for page, dialog, card, list, or tab titles in new code; use title.* roles",
+        "Do not use generic body/caption/microLabel for governed body, label, helper, metadata, or minimum text roles in new code; use body.* or label.* roles"
       ],
       "status": "active"
     },

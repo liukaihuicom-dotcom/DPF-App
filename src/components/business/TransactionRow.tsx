@@ -72,7 +72,7 @@ export function TransactionRow<T extends TransactionListRow>({
         </AppText>
         <StatusPill compact label={getStatusLabel(transaction)} tone={getTone(transaction)} />
       </View>
-      <AppIcon tone="textDim" name="icon.system.chevron_right" size={14} />
+      <AppIcon name="icon.system.chevron_right" size={14} />
     </NativePressable>
   );
 }

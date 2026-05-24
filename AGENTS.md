@@ -404,6 +404,88 @@ Hard rules:
 - Do not mix Phosphor, Remix, and Lucide without registry approval.
 - All icons must pass semantic, visual, technical, token, accessibility, and license QA.
 
+## UI Quality Governance Mode
+
+Trigger this mode when the user says:
+
+- UI 质量不高
+- 页面不好看
+- 优化 UI
+- 提升视觉质量
+- 高质量 UI
+- 生产级 UI
+- 页面像 demo
+- 金融产品不够专业
+- 设计风格不统一
+- 视觉质感差
+
+Codex must not directly beautify the page.
+
+Codex must run UI quality governance in this order:
+
+1. Use Product Skill to confirm Page Contract and avoid changing business flow.
+2. Use Design System Skill to confirm tokens, components, patterns, and layout rules.
+3. Use Reference Adaptation Add-on if screenshots, Mobbin, or competitor references are provided.
+4. Use Icon Governance Add-on if icons are involved.
+5. Use Financial Copy & Localization Add-on if user-facing copy is involved.
+6. Use UI Build Skill to refactor the page.
+7. Use UX Interaction Quality Gate to audit task flow, feedback, error recovery, accessibility, and financial UX risk.
+8. Capture or generate a preview screenshot / visual snapshot for review.
+9. Score the page using UI Quality Scorecard.
+10. If score < 85 or any Blocker / Critical exists, fix and re-run QA.
+
+Required outputs:
+
+- UI Audit Report
+- Page Refactor Plan
+- Updated Page Implementation
+- Preview Screenshot or Visual Snapshot
+- State Matrix
+- Token Usage Report
+- Component Usage Report
+- Pattern Usage Report
+- Icon Usage Report
+- Copy Table / i18n keys
+- Interaction Map
+- UX QA Report
+- Visual QA Score
+- Dev Handoff
+- Release Decision
+
+UI Quality Scorecard:
+
+- Information hierarchy: 12
+- Visual consistency: 10
+- Token binding: 10
+- Component reuse: 10
+- Pattern usage: 8
+- Icon quality: 8
+- Copy quality: 8
+- Interaction feedback: 10
+- UX task success: 10
+- Financial trust: 8
+- Dev handoff clarity: 6
+
+Decision rules:
+
+- Score >= 90: Production UI Ready
+- Score 85-89: Conditional Ready
+- Score 75-84: Major Fix Required
+- Score 60-74: Critical Fix Required
+- Score < 60: Blocked
+
+Hard rules:
+
+- Do not change business flow unless Product Skill confirms it.
+- Do not bypass Page Contract.
+- Do not create random visual styles.
+- Do not hardcode color, spacing, radius, typography, shadows, icons, or copy.
+- Do not use unregistered icons.
+- Do not use user-facing copy without i18n keys.
+- Do not directly copy reference UI.
+- Do not mark production-ready if UI Quality Score is below 85.
+- Do not deliver if there are Blocker or Critical issues.
+
 # Execution Order
 
 ## Local dev startup work

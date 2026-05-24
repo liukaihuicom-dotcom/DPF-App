@@ -15,11 +15,11 @@ export function Header({ eyebrow, title, subtitle }: HeaderProps) {
         <AppText tone="dim" variant="eyebrow">
           {eyebrow}
         </AppText>
-        <AppText adjustsFontSizeToFit numberOfLines={1} variant="title">
+        <AppText adjustsFontSizeToFit numberOfLines={1} variant="title.pageCompact">
           {title}
         </AppText>
         {subtitle ? (
-          <AppText numberOfLines={1} tone="muted" variant="caption">
+          <AppText numberOfLines={1} tone="muted" variant="label.helper">
             {subtitle}
           </AppText>
         ) : null}

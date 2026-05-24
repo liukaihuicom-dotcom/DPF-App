@@ -289,12 +289,12 @@ function BottomSheetHeader({
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
             style={styles.decorativeHeaderIcon}>
-            <AppIcon tone="text" name={header.leftIcon} size={layout.headerIconSize} />
+            <AppIcon name={header.leftIcon} size={layout.headerIconSize} />
           </View>
         ) : null}
       </HeaderIconSlot>
       <View style={styles.headerCopy}>
-        <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.headerTitle} variant="sheetTitle">
+        <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.headerTitle} variant="title.sheet">
           {header.title}
         </AppText>
       </View>

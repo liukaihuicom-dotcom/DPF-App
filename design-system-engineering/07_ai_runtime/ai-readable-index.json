@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "readOrder": [
+    "product-engineering-package/00_product_kernel/product.kernel.json",
+    "product-engineering-package/04_page_contracts/page-contract.index.md",
+    "design-system-engineering/00_principles/l5-acceptance-standard.md",
+    "design-system-engineering/01_tokens/tokens.json",
+    "design-system-engineering/02_components/component-manifest.json",
+    "design-system-engineering/03_business_components/business-component-manifest.json",
+    "design-system-engineering/04_icons/icon-registry.json",
+    "design-system-engineering/05_patterns/pattern-registry.json",
+    "design-system-engineering/06_platform_modes/mode-matrix.json",
+    "design-system-engineering/08_code_mapping/css-variable.mapping.css",
+    "design-system-engineering/08_code_mapping/tailwind.mapping.js",
+    "qa/production-gates.json"
+  ],
+  "blockedWithout": [
+    "page contract",
+    "token mapping",
+    "component manifest",
+    "icon registry for functional icons",
+    "pattern registry",
+    "QA gate decision"
+  ],
+  "outputRequirements": [
+    "Token Usage Report",
+    "Component Usage Report",
+    "Pattern Usage Report",
+    "Icon Usage Report when icons are involved",
+    "QA Gate result"
+  ]
+}

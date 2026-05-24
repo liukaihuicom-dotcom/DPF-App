@@ -22,13 +22,13 @@ export type StatusPillProps = {
 function resolveTone(colors: ThemeColors, tone: StatusPillTone): { color: string; iconTone: IconTone; textTone: AppTextTone } {
   switch (tone) {
     case 'success':
-      return { color: colors.market.down.fg, iconTone: 'down', textTone: 'down' };
+      return { color: colors.market.down.fg, iconTone: 'success', textTone: 'down' };
     case 'warning':
-      return { color: colors.status.warning.fg, iconTone: 'amber', textTone: 'amber' };
+      return { color: colors.status.warning.fg, iconTone: 'warning', textTone: 'amber' };
     case 'danger':
       return { color: colors.status.danger.fg, iconTone: 'danger', textTone: 'danger' };
     case 'info':
-      return { color: colors.status.info.fg, iconTone: 'blue', textTone: 'blue' };
+      return { color: colors.status.info.fg, iconTone: 'info', textTone: 'blue' };
     case 'brand':
       return { color: colors.brand.fg, iconTone: 'brand', textTone: 'brand' };
     case 'up':
@@ -37,7 +37,7 @@ function resolveTone(colors: ThemeColors, tone: StatusPillTone): { color: string
       return { color: colors.market.down.fg, iconTone: 'down', textTone: 'down' };
     case 'neutral':
     default:
-      return { color: colors.text.tertiary, iconTone: 'textDim', textTone: 'muted' };
+      return { color: colors.text.tertiary, iconTone: 'primary', textTone: 'muted' };
   }
 }
 

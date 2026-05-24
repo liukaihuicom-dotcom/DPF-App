@@ -95,7 +95,7 @@ export function AuthShell({
         showsVerticalScrollIndicator={false}>
         {progressStep ? <AuthProgressBar current={progressStep} total={progressTotal} /> : null}
         <View style={styles.hero}>
-          <AppText style={styles.titleText} variant="displayXl">
+          <AppText style={styles.titleText} variant="title.page">
             {title}
           </AppText>
           <AppText numberOfLines={3} style={styles.subtitleText} tone="muted" variant="bodyLg">
@@ -166,11 +166,11 @@ export function AuthTextField({ containerStyle, error, helperText, icon, label, 
 export function AuthInlineSwitch({ description, label, onPress }: { description?: string; label: string; onPress: () => void }) {
   return (
     <NativePressable accessibilityRole="button" minTouch={36} onPress={onPress} style={styles.inlineSwitch}>
-      <AppText numberOfLines={1} style={styles.authLinkText} tone="brand" variant="caption">
+        <AppText numberOfLines={1} style={styles.authLinkText} tone="brand" variant="label.control">
         {label}
       </AppText>
       {description ? (
-        <AppText numberOfLines={2} tone="dim" variant="microLabel">
+          <AppText numberOfLines={2} tone="dim" variant="label.minimum">
           {description}
         </AppText>
       ) : null}
@@ -193,11 +193,11 @@ export function AuthLink({
 }) {
   return (
     <NativePressable accessibilityRole="button" minTouch={36} onPress={onPress} style={StyleSheet.flatten([styles.linkButton, style])}>
-      <AppText numberOfLines={1} style={styles.authLinkText} tone={tone} variant="caption">
+      <AppText numberOfLines={1} style={styles.authLinkText} tone={tone} variant="label.control">
         {label}
       </AppText>
       {description ? (
-        <AppText numberOfLines={2} tone="dim" variant="microLabel">
+        <AppText numberOfLines={2} tone="dim" variant="label.minimum">
           {description}
         </AppText>
       ) : null}

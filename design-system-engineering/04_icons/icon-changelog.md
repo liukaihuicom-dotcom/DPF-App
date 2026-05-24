@@ -1,5 +1,19 @@
 # Icon Changelog
 
+## 3.4.0 - 2026-05-25
+
+- Expanded governed icon sizes to 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 / 64.
+- Set the global functional icon default to 24px through `size.icon.md`.
+- Added governed `AppIcon` size and style variants for line and fill usage.
+- Standardized linear icon stroke width to `lineWidth.icon.default` at 1.5px.
+- Added QA coverage for default size, size scale, style contract, and stroke-width contract.
+
+## 3.3.0 - 2026-05-25
+
+- Added runtime `colors.icon.*` theme tokens and aligned default functional icon color to text level 1 through `color.icon.primary`.
+- Updated `AppIcon` tone resolution so decorative legacy tones normalize to the unified default while state, disabled, inverse, and market-risk tones remain governed exceptions.
+- Added icon QA coverage for blocked literal decorative `AppIcon` tones in page and component code.
+
 ## 3.2.0 - 2026-05-24
 
 - Added governed global flag assets from `flag-icons` v7.5.0 under `src/assets/flags/flag-icons`.

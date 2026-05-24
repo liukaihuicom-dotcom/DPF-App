@@ -421,9 +421,46 @@ if (!/icon\?: AppIconName/.test(bottomSheetRuntimeText) || !/icon=\{action\.icon
 if (!/sheetHeaderHeight/.test(bottomSheetRuntimeText) || !/height: SHEET_HEADER_HEIGHT/.test(bottomSheetRuntimeText)) {
   bottomSheetFooterIssues.push(fail('QA_STYLE_BOTTOM_SHEET_HEADER', 'Global BottomSheet header must use the fixed sheetHeaderHeight token', 'src/components/BottomSheet.tsx'));
 }
-if (!/sheetTitle:\s*\{\s*fontSize: 20,/.test(runtimeTokenText) || !/variant="sheetTitle"/.test(bottomSheetRuntimeText)) {
-  bottomSheetFooterIssues.push(fail('QA_STYLE_BOTTOM_SHEET_HEADER', 'Global BottomSheet title must use the 20px sheetTitle typography token', 'src/components/BottomSheet.tsx'));
+if (!/sheetTitle:\s*\{\s*fontSize: 20,/.test(runtimeTokenText) || !/variant="title\.sheet"/.test(bottomSheetRuntimeText)) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_BOTTOM_SHEET_HEADER', 'Global BottomSheet title must use the title.sheet semantic role backed by the 20px sheetTitle typography token', 'src/components/BottomSheet.tsx'));
 }
+if (!/titleTypography\s*=\s*\{[\s\S]*?page:\s*typography\.displayXl[\s\S]*?dialog:\s*typography\.sheetTitle[\s\S]*?card:\s*typography\.titleMd[\s\S]*?tabs:\s*typography\.caption[\s\S]*?bottomTabs:\s*typography\.microLabel/m.test(runtimeTokenText)) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_TITLE_TYPOGRAPHY', 'Design system must expose semantic titleTypography roles for page, dialog, card, list, and tab titles', 'src/theme/tokens.ts'));
+}
+if (!/bodyTypography\s*=\s*\{[\s\S]*?primary:\s*typography\.bodyMd[\s\S]*?secondary:\s*typography\.bodySm[\s\S]*?dense:\s*typography\.bodySm[\s\S]*?prominent:\s*typography\.bodyLg/m.test(runtimeTokenText)) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_BODY_TYPOGRAPHY', 'Design system must expose semantic bodyTypography roles for primary, secondary, dense, and prominent body text', 'src/theme/tokens.ts'));
+}
+if (!/labelTypography\s*=\s*\{[\s\S]*?default:\s*typography\.caption[\s\S]*?helper:\s*typography\.captionSm[\s\S]*?metadata:\s*typography\.captionSm[\s\S]*?control:\s*typography\.caption[\s\S]*?minimum:\s*typography\.microLabel/m.test(runtimeTokenText)) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_LABEL_TYPOGRAPHY', 'Design system must expose semantic labelTypography roles for labels, helper text, metadata, controls, status, and minimum text', 'src/theme/tokens.ts'));
+}
+if (!/`title\.\$\{TitleTypographyRole\}`/.test(read('src/components/Typography.tsx'))) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_TITLE_TYPOGRAPHY', 'AppText must support title.* semantic variants for governed title roles', 'src/components/Typography.tsx'));
+}
+if (!/`body\.\$\{BodyTypographyRole\}`/.test(read('src/components/Typography.tsx')) || !/`label\.\$\{LabelTypographyRole\}`/.test(read('src/components/Typography.tsx'))) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_TEXT_ROLE_TYPOGRAPHY', 'AppText must support body.* and label.* semantic variants for governed text roles', 'src/components/Typography.tsx'));
+}
+if (!/variant=\{back \? 'title\.pageCompact' : 'title\.page'\}/.test(read('src/components/AppTopBar.tsx'))) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_TITLE_TYPOGRAPHY', 'AppTopBar must map root and back titles to semantic page title roles', 'src/components/AppTopBar.tsx'));
+}
+if (!/variant="title\.sheet"/.test(bottomSheetRuntimeText)) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_TITLE_TYPOGRAPHY', 'Global BottomSheet title must use title.sheet semantic role', 'src/components/BottomSheet.tsx'));
+}
+if (!/variant="label\.control"/.test(read('src/components/SegmentedTabs.tsx'))) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_LABEL_TYPOGRAPHY', 'SegmentedTabs labels must use label.control semantic role', 'src/components/SegmentedTabs.tsx'));
+}
+if (!/titleTypography\.bottomTabs/.test(read('src/screens/navigation/TabLayout.tsx'))) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_TITLE_TYPOGRAPHY', 'Bottom navigation labels must use titleTypography.bottomTabs', 'src/screens/navigation/TabLayout.tsx'));
+}
+if (!/variant="label\.status"/.test(read('src/feedback/Toast.tsx')) || !/variant="body\.primary"/.test(read('src/feedback/Toast.tsx')) || !/variant="label\.helper"/.test(read('src/feedback/Toast.tsx'))) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_TEXT_ROLE_TYPOGRAPHY', 'Toast must use label.status, body.primary, and label.helper text roles', 'src/feedback/Toast.tsx'));
+}
+if (!/variant="title\.card"/.test(read('src/components/feedback/EmptyState.tsx')) || !/variant="label\.helper"/.test(read('src/components/feedback/EmptyState.tsx')) || !/variant="body\.secondary"/.test(read('src/components/feedback/EmptyState.tsx'))) {
+  bottomSheetFooterIssues.push(fail('QA_STYLE_TEXT_ROLE_TYPOGRAPHY', 'EmptyState must use title.card, label.helper, and body.secondary roles', 'src/components/feedback/EmptyState.tsx'));
+}
+const subMinimumTypographyIssues = allSourceFiles.flatMap((file) => {
+  const matches = read(file).match(/\bfontSize\s*:\s*(?:[0-9]|1[01])\b/g) ?? [];
+  return matches.map((match) => fail('QA_STYLE_MIN_TEXT_SIZE', `Text size ${match.trim()} is below the 12px minimum`, file));
+});
 if (!/function BottomSheetHeaderSpacer\(\)/.test(bottomSheetRuntimeText) || !/hasHeader \? <BottomSheetHeaderSpacer \/> : null/.test(bottomSheetRuntimeText)) {
   bottomSheetFooterIssues.push(fail('QA_STYLE_BOTTOM_SHEET_HEADER', 'Global BottomSheet content must insert the component-owned header spacer only when a header is present', 'src/components/BottomSheet.tsx'));
 }
@@ -439,7 +476,10 @@ if (!/contentWithHeader:\s*\{\s*paddingTop: 0,\s*\}/m.test(bottomSheetRuntimeTex
 if (/header:\s*\{[\s\S]*?borderBottomWidth:/m.test(bottomSheetRuntimeText)) {
   bottomSheetFooterIssues.push(fail('QA_STYLE_BOTTOM_SHEET_HEADER', 'Global BottomSheet header title bar must not render a divider line', 'src/components/BottomSheet.tsx'));
 }
-if (!/HeaderIconButton[\s\S]*?tone="default"[\s\S]*?HeaderIconButton/m.test(bottomSheetRuntimeText) || !/AppIcon tone="text" name=\{header\.leftIcon\}/.test(bottomSheetRuntimeText)) {
+if (
+  !/HeaderIconButton[\s\S]*?tone="default"[\s\S]*?HeaderIconButton/m.test(bottomSheetRuntimeText)
+  || !/(<AppIcon tone="text" name=\{header\.leftIcon\}|<AppIcon name=\{header\.leftIcon\})/.test(bottomSheetRuntimeText)
+) {
   bottomSheetFooterIssues.push(fail('QA_STYLE_BOTTOM_SHEET_HEADER', 'Global BottomSheet header reserved/action icons must use text-color contrast, not muted icon color', 'src/components/BottomSheet.tsx'));
 }
 if (/rightIcon\s*=\s*header\.rightIcon\s*\?\?\s*['"](closeX|icon\.system\.close)['"]/.test(bottomSheetRuntimeText) || /onRightPress\s*\?\?\s*hide/.test(bottomSheetRuntimeText)) {
@@ -509,6 +549,10 @@ complete('qa:style', [
     ? pass('QA_STYLE_TYPOGRAPHY', 'No hardcoded typography styles found outside typography surfaces')
     : fail('QA_STYLE_TYPOGRAPHY', 'Hardcoded typography styles found outside typography surfaces'),
   ...hardcodedTypographyIssues,
+  subMinimumTypographyIssues.length === 0
+    ? pass('QA_STYLE_MIN_TEXT_SIZE', 'No text size below 12px found')
+    : fail('QA_STYLE_MIN_TEXT_SIZE', 'Text size below 12px found'),
+  ...subMinimumTypographyIssues,
   directTextInputIssues.length === 0
     ? pass('QA_STYLE_TEXT_INPUT', 'No direct TextInput usage outside shared wrappers')
     : fail('QA_STYLE_TEXT_INPUT', 'Direct TextInput usage found outside shared wrappers'),

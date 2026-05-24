@@ -132,7 +132,7 @@ function DiscoverSelectableTile({ onPress, selected, tile }: { onPress: () => vo
               borderColor: selected ? colors.brand.fg : `${tileColor}55`,
             },
           ])}>
-          <AppIcon name={tile.icon} size={18} tone={selected ? 'brand' : tile.tone} />
+          <AppIcon name={tile.icon} size={18} tone={tile.tone} />
         </View>
         <View style={StyleSheet.flatten([styles.selectedDot, { backgroundColor: selected ? colors.brand.fg : colors.border.subtle }])} />
       </View>

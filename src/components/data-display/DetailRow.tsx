@@ -31,7 +31,7 @@ export function DetailRow({ row, showDivider }: DetailRowProps) {
         <AppText adjustsFontSizeToFit numberOfLines={2} style={styles.value} tone={row.valueTone} variant="caption">
           {row.value}
         </AppText>
-        {trailingIcon ? <AppIcon tone="textDim" name={trailingIcon} size={13} /> : null}
+        {trailingIcon ? <AppIcon name={trailingIcon} size={13} /> : null}
       </View>
     </View>
   );

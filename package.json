@@ -2,6 +2,7 @@
   "name": "dupoin-mvp",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.25.0",
   "scripts": {
     "start": "node scripts/dev/dev-with-quotes.cjs --lan --port 8081",
     "start:expo": "expo start --lan --port 8081",

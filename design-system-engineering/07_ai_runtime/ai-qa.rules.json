@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "severity": {
+    "skippedReadOrder": "critical",
+    "inventedToken": "critical",
+    "unregisteredComponent": "major",
+    "unregisteredIcon": "critical",
+    "missingQaEvidence": "major"
+  },
+  "requiredEvidence": [
+    "Read order followed",
+    "Token usage identified",
+    "Component usage identified",
+    "Pattern usage identified",
+    "QA command result"
+  ]
+}

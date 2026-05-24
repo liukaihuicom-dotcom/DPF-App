@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "requiredFiles": [
+    "design-system-engineering/08_code_mapping/css-variable.mapping.css",
+    "design-system-engineering/08_code_mapping/tailwind.mapping.js",
+    "design-system-engineering/08_code_mapping/react.mapping.md",
+    "design-system-engineering/08_code_mapping/vue.mapping.md",
+    "design-system-engineering/08_code_mapping/figma-variable.mapping.md"
+  ],
+  "severity": {
+    "missingRuntimeMapping": "blocker",
+    "staleMapping": "major",
+    "unmappedTokenFamily": "major"
+  }
+}

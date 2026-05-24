@@ -3,7 +3,16 @@ import { StyleSheet, Text, TextProps } from 'react-native';
 
 import { useThemeColors } from '@/src/settings/ProductSettings';
 import { resolveThemeTone } from '@/src/theme/colors';
-import { typography, type TypographyToken } from '@/src/theme/tokens';
+import {
+  bodyTypography,
+  labelTypography,
+  titleTypography,
+  typography,
+  type BodyTypographyRole,
+  type LabelTypographyRole,
+  type TitleTypographyRole,
+  type TypographyToken,
+} from '@/src/theme/tokens';
 
 export type AppTextTone =
   | 'amber'
@@ -34,7 +43,10 @@ type AppTextProps = PropsWithChildren<
       | 'largeNumber'
       | 'number'
       | 'subtitle'
-      | 'title';
+      | 'title'
+      | `body.${BodyTypographyRole}`
+      | `label.${LabelTypographyRole}`
+      | `title.${TitleTypographyRole}`;
   }
 >;
 
@@ -51,6 +63,15 @@ export function AppText({ children, tone = 'default', variant = 'body', style, .
 
 const variantStyles = {
   ...typography,
+  ...(Object.fromEntries(
+    Object.entries(titleTypography).map(([role, style]) => [`title.${role}`, style]),
+  ) as Record<`title.${TitleTypographyRole}`, (typeof titleTypography)[TitleTypographyRole]>),
+  ...(Object.fromEntries(
+    Object.entries(bodyTypography).map(([role, style]) => [`body.${role}`, style]),
+  ) as Record<`body.${BodyTypographyRole}`, (typeof bodyTypography)[BodyTypographyRole]>),
+  ...(Object.fromEntries(
+    Object.entries(labelTypography).map(([role, style]) => [`label.${role}`, style]),
+  ) as Record<`label.${LabelTypographyRole}`, (typeof labelTypography)[LabelTypographyRole]>),
   body: typography.bodySm,
   caption: typography.captionSm,
   eyebrow: {

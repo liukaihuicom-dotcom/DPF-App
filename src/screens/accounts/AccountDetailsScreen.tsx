@@ -71,7 +71,7 @@ export default function AccountDetailsScreen() {
       <Card compact>
         <View style={styles.detailHeader}>
           <View style={StyleSheet.flatten([styles.walletIcon, { backgroundColor: colors.surface.subtle }])}>
-            <AppIcon tone="text" name="icon.account.trading" size={18} />
+            <AppIcon name="icon.account.trading" size={18} />
           </View>
           <View style={styles.detailTitleBlock}>
             <View style={styles.detailTitleRow}>
@@ -140,7 +140,7 @@ export default function AccountDetailsScreen() {
       <Card compact>
         <View style={styles.cardTitleRow}>
           <AppText variant="subtitle">{t('portfolio.current')}</AppText>
-          <AppIcon tone="textDim" name="icon.system.chevron_right" size={14} />
+          <AppIcon name="icon.system.chevron_right" size={14} />
         </View>
         {positionRows.map((position, index) => (
           <View key={position.id} style={StyleSheet.flatten([styles.positionRow, index < positionRows.length - 1 && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
@@ -199,7 +199,7 @@ export default function AccountDetailsScreen() {
       <Card>
         <View style={styles.cardTitleRow}>
           <AppText variant="subtitle">{t('portfolio.pnlCalendar')}</AppText>
-          <AppIcon tone="textDim" name="icon.system.chevron_right" size={14} />
+          <AppIcon name="icon.system.chevron_right" size={14} />
         </View>
         <View style={styles.calendarGrid}>
           {Array.from({ length: 31 }).map((_, index) => {

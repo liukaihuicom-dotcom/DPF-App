@@ -259,7 +259,7 @@ export default function OrderTicketScreen() {
             <Card>
               <View style={styles.cardHeaderRow}>
                 <View style={styles.riskTitle}>
-                  <AppIcon name="icon.security.risk_shield" size={18} tone="brand" />
+                  <AppIcon name="icon.security.risk_shield" size={18} />
                   <View>
                     <AppText variant="subtitle">{t('order.riskManagement')}</AppText>
                     <AppText tone="muted" variant="caption">

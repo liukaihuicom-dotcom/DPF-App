@@ -157,7 +157,7 @@ export default function LoginScreen() {
             minTouch={40}
             onPress={switchAccount}
             style={StyleSheet.flatten([styles.switchAccountButton, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
-            <AppIcon name="icon.account.add_user" size={20} tone="text" />
+            <AppIcon name="icon.account.add_user" size={20} />
           </NativePressable>
         </View>
       ) : null}

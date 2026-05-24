@@ -84,7 +84,7 @@ function ClosedOrderRow({ order, showDivider }: { order: ClosedOrder; showDivide
           <AppText tone={order.pnl >= 0 ? 'down' : 'up'} variant="subtitle">{formatNumber(order.pnl, 2, locale)}</AppText>
           <AppText tone="muted" variant="caption">{t('portfolio.ticket')} {order.dealId}</AppText>
         </View>
-        <AppIcon tone="textDim" name="icon.system.chevron_right" size={14} />
+        <AppIcon name="icon.system.chevron_right" size={14} />
       </View>
       <View style={StyleSheet.flatten([styles.detailBox, { borderColor: colors.border.subtle }])}>
         <DetailRow row={{ label: t('portfolio.openTime'), value: order.openTime }} showDivider />

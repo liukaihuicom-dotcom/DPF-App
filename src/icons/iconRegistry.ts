@@ -1,4 +1,4 @@
-import { resolveThemeTone, type ThemeColors } from '@/src/theme/colors';
+import type { ThemeColors } from '@/src/theme/colors';
 
 export type IconCategory =
   | 'account'
@@ -21,7 +21,24 @@ export type IconCategory =
   | 'trading_account'
   | 'wallet';
 export type IconPlatform = 'app' | 'h5' | 'web' | 'admin';
-export type IconTone = 'text' | 'textMuted' | 'textDim' | 'brand' | 'blue' | 'amber' | 'danger' | 'up' | 'down' | 'white' | 'panel' | 'disabled';
+export type IconTone =
+  | 'amber'
+  | 'blue'
+  | 'brand'
+  | 'danger'
+  | 'disabled'
+  | 'down'
+  | 'info'
+  | 'inverse'
+  | 'panel'
+  | 'primary'
+  | 'success'
+  | 'text'
+  | 'textDim'
+  | 'textMuted'
+  | 'up'
+  | 'warning'
+  | 'white';
 export type IconSourceLibrary = 'phosphor' | 'remix' | 'lucide' | 'custom';
 export type IconState = 'default' | 'active' | 'disabled' | 'success' | 'warning' | 'danger' | 'inverse';
 export type IconStyleName = 'line' | 'fill' | 'duotone';
@@ -84,9 +101,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "AppleLogo",
     "sourceLibrary": "phosphor",
@@ -113,7 +136,7 @@ export const iconRegistry = {
   },
   "icon.wallet.withdrawal": {
     "category": "wallet",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "amber",
     "forbidden": [
       "Do not use for price trend.",
@@ -137,9 +160,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "HandWithdraw",
     "sourceLibrary": "phosphor",
@@ -156,7 +185,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.warning",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "amber",
@@ -193,9 +222,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ArrowsLeftRight",
     "sourceLibrary": "phosphor",
@@ -212,7 +247,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.info",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "blue",
@@ -226,7 +261,7 @@ export const iconRegistry = {
   },
   "icon.account.trading": {
     "category": "trading_account",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "blue",
     "forbidden": [
       "Avoid for generic profile, user switching, or archive action.",
@@ -250,9 +285,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Vault",
     "sourceLibrary": "phosphor",
@@ -269,7 +310,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.info",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "blue",
@@ -283,7 +324,7 @@ export const iconRegistry = {
   },
   "icon.notification.bell": {
     "category": "notification",
-    "defaultSize": 16,
+    "defaultSize": 24,
     "defaultTone": "textMuted",
     "forbidden": [
       "Do not use for alert risk severity; use riskWarning/riskShield."
@@ -305,9 +346,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Bell",
     "sourceLibrary": "lucide",
@@ -319,12 +366,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.secondary",
-      "size": "size.icon.xs"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "textMuted",
@@ -337,7 +384,7 @@ export const iconRegistry = {
   },
   "icon.system.chevron_down": {
     "category": "system",
-    "defaultSize": 14,
+    "defaultSize": 24,
     "defaultTone": "textDim",
     "forbidden": [
       "Do not use as next navigation.",
@@ -360,9 +407,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ChevronDown",
     "sourceLibrary": "lucide",
@@ -373,12 +426,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.tertiary",
-      "size": "size.icon.xs"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "text",
@@ -391,7 +444,7 @@ export const iconRegistry = {
   },
   "icon.system.back": {
     "category": "system",
-    "defaultSize": 22,
+    "defaultSize": 24,
     "defaultTone": "text",
     "forbidden": [
       "Do not use for previous market movement."
@@ -413,9 +466,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ArrowLeft",
     "sourceLibrary": "lucide",
@@ -427,7 +486,7 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
@@ -445,7 +504,7 @@ export const iconRegistry = {
   },
   "icon.system.chevron_right": {
     "category": "system",
-    "defaultSize": 16,
+    "defaultSize": 24,
     "defaultTone": "textDim",
     "forbidden": [
       "Do not use for market up/down state."
@@ -467,9 +526,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ChevronRight",
     "sourceLibrary": "lucide",
@@ -481,12 +546,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.tertiary",
-      "size": "size.icon.xs"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "text",
@@ -500,7 +565,7 @@ export const iconRegistry = {
   },
   "icon.trading.market": {
     "category": "trading",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Use up/down tones only when representing market direction."
@@ -522,9 +587,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "stock-line",
     "sourceLibrary": "remix",
@@ -537,12 +608,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -558,7 +629,7 @@ export const iconRegistry = {
   },
   "icon.notification.feedback": {
     "category": "notification",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for community group."
@@ -580,9 +651,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ChatCircle",
     "sourceLibrary": "phosphor",
@@ -598,7 +675,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -611,7 +688,7 @@ export const iconRegistry = {
   },
   "icon.copy.community": {
     "category": "copy_trading",
-    "defaultSize": 22,
+    "defaultSize": 24,
     "defaultTone": "textMuted",
     "forbidden": [
       "Do not use for individual support ticket."
@@ -633,9 +710,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "UsersThree",
     "sourceLibrary": "phosphor",
@@ -687,9 +770,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Check",
     "sourceLibrary": "lucide",
@@ -700,12 +789,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.xs"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "panel",
@@ -720,7 +809,7 @@ export const iconRegistry = {
   },
   "icon.status.verified": {
     "category": "status",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for generic checkbox when checkMark is enough."
@@ -742,9 +831,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "SealCheck",
     "sourceLibrary": "phosphor",
@@ -761,7 +856,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -775,7 +870,7 @@ export const iconRegistry = {
   },
   "icon.trading.history": {
     "category": "trading",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "text",
     "forbidden": [
       "Do not use for countdown risk unless paired with warning tone."
@@ -797,9 +892,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "History",
     "sourceLibrary": "lucide",
@@ -810,12 +911,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.primary",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "text",
@@ -829,7 +930,7 @@ export const iconRegistry = {
   },
   "icon.navigation.discover": {
     "category": "navigation",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for location."
@@ -851,9 +952,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Compass",
     "sourceLibrary": "phosphor",
@@ -869,7 +976,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -882,7 +989,7 @@ export const iconRegistry = {
   },
   "icon.system.more": {
     "category": "system",
-    "defaultSize": 22,
+    "defaultSize": 24,
     "defaultTone": "textMuted",
     "forbidden": [
       "Do not use for loading."
@@ -904,9 +1011,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Ellipsis",
     "sourceLibrary": "lucide",
@@ -917,7 +1030,7 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
@@ -935,7 +1048,7 @@ export const iconRegistry = {
   },
   "icon.notification.email": {
     "category": "notification",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for app notifications."
@@ -957,9 +1070,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "EnvelopeOpen",
     "sourceLibrary": "phosphor",
@@ -974,7 +1093,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -987,7 +1106,7 @@ export const iconRegistry = {
   },
   "icon.account.phone_verified": {
     "category": "account",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for voice support or customer service headset."
@@ -1009,9 +1128,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "SmartphoneNfc",
     "sourceLibrary": "lucide",
@@ -1022,12 +1147,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -1041,7 +1166,7 @@ export const iconRegistry = {
   },
   "icon.promotion.reward": {
     "category": "promotion",
-    "defaultSize": 22,
+    "defaultSize": 24,
     "defaultTone": "amber",
     "forbidden": [
       "Do not use for trading ticket or coupon unless promo-specific."
@@ -1063,9 +1188,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Gift",
     "sourceLibrary": "phosphor",
@@ -1116,9 +1247,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "GlobeHemisphereWest",
     "sourceLibrary": "phosphor",
@@ -1134,7 +1271,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -1147,7 +1284,7 @@ export const iconRegistry = {
   },
   "icon.education.academy": {
     "category": "education",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for KYC completion."
@@ -1169,9 +1306,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Student",
     "sourceLibrary": "phosphor",
@@ -1187,7 +1330,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -1200,7 +1343,7 @@ export const iconRegistry = {
   },
   "icon.support.headset": {
     "category": "support",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "textMuted",
     "forbidden": [
       "Do not use for audio/media."
@@ -1222,9 +1365,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Headset",
     "sourceLibrary": "phosphor",
@@ -1240,7 +1389,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.secondary",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "textMuted",
@@ -1253,7 +1402,7 @@ export const iconRegistry = {
   },
   "icon.kyc.identity": {
     "category": "kyc_compliance",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for generic account tab."
@@ -1275,9 +1424,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "IdentificationCard",
     "sourceLibrary": "phosphor",
@@ -1294,7 +1449,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "down",
@@ -1308,7 +1463,7 @@ export const iconRegistry = {
   },
   "icon.risk.info": {
     "category": "status",
-    "defaultSize": 15,
+    "defaultSize": 24,
     "defaultTone": "textMuted",
     "forbidden": [
       "Do not use as success status."
@@ -1330,9 +1485,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Info",
     "sourceLibrary": "lucide",
@@ -1344,12 +1505,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.secondary",
-      "size": "size.icon.xs"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "textMuted",
@@ -1363,7 +1524,7 @@ export const iconRegistry = {
   },
   "icon.market.watchlist": {
     "category": "trading",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "text",
     "forbidden": [
       "Do not use for task checklist."
@@ -1385,9 +1546,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ListBullets",
     "sourceLibrary": "phosphor",
@@ -1403,7 +1570,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.primary",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "text",
@@ -1416,7 +1583,7 @@ export const iconRegistry = {
   },
   "icon.trading.order": {
     "category": "trading",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for plain market quote list.",
@@ -1440,9 +1607,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ListChecks",
     "sourceLibrary": "phosphor",
@@ -1458,7 +1631,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -1473,7 +1646,7 @@ export const iconRegistry = {
   },
   "icon.security.lock": {
     "category": "security",
-    "defaultSize": 16,
+    "defaultSize": 24,
     "defaultTone": "textDim",
     "forbidden": [
       "Do not use for regulatory review."
@@ -1495,9 +1668,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "LockKey",
     "sourceLibrary": "phosphor",
@@ -1515,7 +1694,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.tertiary",
-      "size": "size.icon.xs"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "textDim",
@@ -1528,7 +1707,7 @@ export const iconRegistry = {
   },
   "icon.security.password_rules": {
     "category": "security",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for PIN keypad or account lock."
@@ -1550,9 +1729,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Password",
     "sourceLibrary": "phosphor",
@@ -1569,7 +1754,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "textDim",
@@ -1583,7 +1768,7 @@ export const iconRegistry = {
   },
   "icon.security.key_access": {
     "category": "security",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for password visibility toggle."
@@ -1605,9 +1790,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "KeyRound",
     "sourceLibrary": "lucide",
@@ -1618,12 +1809,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -1636,7 +1827,7 @@ export const iconRegistry = {
   },
   "icon.system.keyboard_digits": {
     "category": "system",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "textDim",
     "forbidden": [
       "Do not use for text search or trading keyboard shortcuts."
@@ -1658,9 +1849,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Keyboard",
     "sourceLibrary": "lucide",
@@ -1671,12 +1868,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.tertiary",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "textDim",
@@ -1689,7 +1886,7 @@ export const iconRegistry = {
   },
   "icon.system.password_visible": {
     "category": "system",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "textDim",
     "forbidden": [
       "Do not use for market watchlist visibility."
@@ -1711,9 +1908,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Eye",
     "sourceLibrary": "lucide",
@@ -1724,12 +1927,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.tertiary",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "textDim",
@@ -1742,7 +1945,7 @@ export const iconRegistry = {
   },
   "icon.system.search": {
     "category": "system",
-    "defaultSize": 17,
+    "defaultSize": 24,
     "defaultTone": "text",
     "forbidden": [
       "Do not use for inspect/detail navigation."
@@ -1764,9 +1967,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Search",
     "sourceLibrary": "lucide",
@@ -1778,12 +1987,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.primary",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "text",
@@ -1796,7 +2005,7 @@ export const iconRegistry = {
   },
   "icon.wallet.deposit": {
     "category": "wallet",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "down",
     "forbidden": [
       "Do not use for generic code/coupon.",
@@ -1820,9 +2029,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "HandDeposit",
     "sourceLibrary": "phosphor",
@@ -1839,7 +2054,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.success",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "down",
@@ -1854,7 +2069,7 @@ export const iconRegistry = {
   },
   "icon.ib.network": {
     "category": "ib_partner",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for transfer funds."
@@ -1876,9 +2091,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ShareNetwork",
     "sourceLibrary": "phosphor",
@@ -1894,7 +2115,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -1908,7 +2129,7 @@ export const iconRegistry = {
   },
   "icon.security.risk_shield": {
     "category": "security",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use as generic success when statusVerified is clearer."
@@ -1930,9 +2151,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ShieldCheck",
     "sourceLibrary": "phosphor",
@@ -1949,7 +2176,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -1963,7 +2190,7 @@ export const iconRegistry = {
   },
   "icon.system.settings": {
     "category": "system",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "textDim",
     "forbidden": [
       "Do not use for market depth."
@@ -1985,9 +2212,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "SlidersHorizontal",
     "sourceLibrary": "lucide",
@@ -1998,12 +2231,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.tertiary",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -2016,7 +2249,7 @@ export const iconRegistry = {
   },
   "icon.promotion.ticket": {
     "category": "promotion",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "amber",
     "forbidden": [
       "Do not use for trading order ticket; use icon.trading.order."
@@ -2038,9 +2271,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Ticket",
     "sourceLibrary": "phosphor",
@@ -2056,7 +2295,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.warning",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "amber",
@@ -2069,7 +2308,7 @@ export const iconRegistry = {
   },
   "icon.promotion.achievement": {
     "category": "promotion",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "amber",
     "forbidden": [
       "Do not use for account status."
@@ -2091,9 +2330,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Trophy",
     "sourceLibrary": "phosphor",
@@ -2109,7 +2354,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.warning",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "amber",
@@ -2122,7 +2367,7 @@ export const iconRegistry = {
   },
   "icon.account.user": {
     "category": "account",
-    "defaultSize": 22,
+    "defaultSize": 24,
     "defaultTone": "text",
     "forbidden": [
       "Do not use for bank/funding account."
@@ -2144,9 +2389,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "User",
     "sourceLibrary": "phosphor",
@@ -2175,7 +2426,7 @@ export const iconRegistry = {
   },
   "icon.account.avatar": {
     "category": "account",
-    "defaultSize": 22,
+    "defaultSize": 24,
     "defaultTone": "text",
     "forbidden": [
       "Do not use for add-account action."
@@ -2197,9 +2448,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "UserCircle",
     "sourceLibrary": "phosphor",
@@ -2228,7 +2485,7 @@ export const iconRegistry = {
   },
   "icon.account.add_user": {
     "category": "account",
-    "defaultSize": 22,
+    "defaultSize": 24,
     "defaultTone": "text",
     "forbidden": [
       "Do not use for KYC verification."
@@ -2250,9 +2507,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "UserCirclePlus",
     "sourceLibrary": "phosphor",
@@ -2281,7 +2544,7 @@ export const iconRegistry = {
   },
   "icon.system.close": {
     "category": "system",
-    "defaultSize": 16,
+    "defaultSize": 24,
     "defaultTone": "textDim",
     "forbidden": [
       "Do not use as failed status without label."
@@ -2303,9 +2566,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "X",
     "sourceLibrary": "lucide",
@@ -2317,12 +2586,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.tertiary",
-      "size": "size.icon.xs"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "textDim",
@@ -2336,7 +2605,7 @@ export const iconRegistry = {
   },
   "icon.wallet.balance": {
     "category": "wallet",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "blue",
     "forbidden": [
       "Do not use for bank institution, deposit action, or archive action."
@@ -2358,9 +2627,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Wallet",
     "sourceLibrary": "phosphor",
@@ -2376,7 +2651,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.info",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "blue",
@@ -2390,7 +2665,7 @@ export const iconRegistry = {
   },
   "icon.account.archive": {
     "category": "account",
-    "defaultSize": 22,
+    "defaultSize": 24,
     "defaultTone": "text",
     "forbidden": [
       "Do not use for wallet, balance, delete, or download."
@@ -2412,9 +2687,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Archive",
     "sourceLibrary": "lucide",
@@ -2425,7 +2706,7 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
@@ -2443,7 +2724,7 @@ export const iconRegistry = {
   },
   "icon.system.delete": {
     "category": "system",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "danger",
     "forbidden": [
       "Do not use for modal close or temporary dismiss."
@@ -2465,9 +2746,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Trash2",
     "sourceLibrary": "lucide",
@@ -2478,12 +2765,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.danger",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "danger",
@@ -2496,7 +2783,7 @@ export const iconRegistry = {
   },
   "icon.system.logout": {
     "category": "system",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "danger",
     "forbidden": [
       "Do not use for deleting account data or closing a modal."
@@ -2518,9 +2805,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "LogOut",
     "sourceLibrary": "lucide",
@@ -2531,12 +2824,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.danger",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "danger",
@@ -2550,7 +2843,7 @@ export const iconRegistry = {
   },
   "icon.trading.order_ticket": {
     "category": "trading",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for market watchlist or transaction history."
@@ -2572,9 +2865,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Receipt",
     "sourceLibrary": "phosphor",
@@ -2590,7 +2889,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -2605,7 +2904,7 @@ export const iconRegistry = {
   },
   "icon.trading.group_by_symbol": {
     "category": "trading",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "textDim",
     "forbidden": [
       "Do not use for QR code, scan, or payment address."
@@ -2627,9 +2926,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "SortAscending",
     "sourceLibrary": "phosphor",
@@ -2645,7 +2950,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.tertiary",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "text",
@@ -2659,7 +2964,7 @@ export const iconRegistry = {
   },
   "icon.trading.close_position": {
     "category": "trading",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "danger",
     "forbidden": [
       "Do not use for modal close; use icon.system.close for dismissal."
@@ -2681,9 +2986,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "XCircle",
     "sourceLibrary": "phosphor",
@@ -2699,7 +3010,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.danger",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "danger",
@@ -2712,7 +3023,7 @@ export const iconRegistry = {
   },
   "icon.trading.close_losing_position": {
     "category": "trading",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "danger",
     "forbidden": [
       "Do not use for successful verification or completed status."
@@ -2734,9 +3045,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "TrendDown",
     "sourceLibrary": "phosphor",
@@ -2752,7 +3069,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.danger",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "danger",
@@ -2787,9 +3104,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ChartLineUp",
     "sourceLibrary": "phosphor",
@@ -2841,9 +3164,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ChartLineDown",
     "sourceLibrary": "phosphor",
@@ -2873,7 +3202,7 @@ export const iconRegistry = {
   },
   "icon.status.rejected": {
     "category": "status",
-    "defaultSize": 18,
+    "defaultSize": 24,
     "defaultTone": "danger",
     "forbidden": [
       "Do not use for user-close or dismiss actions."
@@ -2895,9 +3224,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "CircleX",
     "sourceLibrary": "lucide",
@@ -2908,12 +3243,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.danger",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "danger",
@@ -2926,7 +3261,7 @@ export const iconRegistry = {
   },
   "icon.feedback.rating": {
     "category": "support",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "amber",
     "forbidden": [
       "Do not use for challenge award, promotion, or verified status."
@@ -2948,9 +3283,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Star",
     "sourceLibrary": "phosphor",
@@ -2966,7 +3307,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.warning",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "amber",
@@ -3001,9 +3342,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "CircleQuestionMark",
     "sourceLibrary": "lucide",
@@ -3013,12 +3360,12 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
       "color": "color.icon.secondary",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "textMuted",
@@ -3031,7 +3378,7 @@ export const iconRegistry = {
   },
   "icon.support.about": {
     "category": "support",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "textMuted",
     "forbidden": [
       "Do not use for risk warning or inline disclosure."
@@ -3053,9 +3400,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Info",
     "sourceLibrary": "phosphor",
@@ -3070,7 +3423,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.secondary",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "textMuted",
@@ -3083,7 +3436,7 @@ export const iconRegistry = {
   },
   "icon.navigation.function_center": {
     "category": "navigation",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for trading orders or task checklist."
@@ -3105,9 +3458,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "SquaresFour",
     "sourceLibrary": "phosphor",
@@ -3123,7 +3482,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -3136,7 +3495,7 @@ export const iconRegistry = {
   },
   "icon.trading.volume": {
     "category": "trading",
-    "defaultSize": 20,
+    "defaultSize": 24,
     "defaultTone": "brand",
     "forbidden": [
       "Do not use for price trend or market direction."
@@ -3158,9 +3517,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ChartBar",
     "sourceLibrary": "phosphor",
@@ -3175,7 +3540,7 @@ export const iconRegistry = {
     },
     "tokenBinding": {
       "color": "color.icon.active",
-      "size": "size.icon.sm"
+      "size": "size.icon.md"
     },
     "toneTokens": [
       "brand",
@@ -3211,9 +3576,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "Coins",
     "sourceLibrary": "phosphor",
@@ -3263,9 +3634,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "ChartLine",
     "sourceLibrary": "phosphor",
@@ -3316,9 +3693,15 @@ export const iconRegistry = {
       "web"
     ],
     "sizes": [
+      8,
+      12,
       16,
       20,
-      24
+      24,
+      32,
+      40,
+      48,
+      64
     ],
     "sourceIconName": "stock-line",
     "sourceLibrary": "remix",
@@ -3328,7 +3711,7 @@ export const iconRegistry = {
     "status": "approved",
     "style": {
       "default": "line",
-      "active": "line",
+      "active": "fill",
       "disabled": "line"
     },
     "tokenBinding": {
@@ -3427,5 +3810,34 @@ export function resolveIconName(name: AppIconName | LegacyAppIconName): AppIconN
 }
 
 export function resolveIconTone(colors: ThemeColors, tone: IconTone | string): string {
-  return resolveThemeTone(colors, tone);
+  switch (tone) {
+    case 'danger':
+      return colors.icon.danger;
+    case 'disabled':
+      return colors.icon.disabled;
+    case 'down':
+    case 'success':
+      return colors.icon.success;
+    case 'inverse':
+    case 'panel':
+    case 'white':
+      return colors.icon.inverse;
+    case 'up':
+      return colors.icon.danger;
+    case 'amber':
+    case 'warning':
+      return colors.icon.warning;
+    case 'blue':
+    case 'info':
+      return colors.icon.info;
+    case 'brand':
+    case 'cyan':
+    case 'primary':
+    case 'text':
+    case 'textDim':
+    case 'textMuted':
+      return colors.icon.primary;
+    default:
+      return tone;
+  }
 }

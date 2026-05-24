@@ -110,11 +110,15 @@
       "color.icon.active"
     ],
     "size": [
+      "size.icon.micro",
+      "size.icon.mini",
       "size.icon.xs",
       "size.icon.sm",
       "size.icon.md",
       "size.icon.lg",
-      "size.icon.xl"
+      "size.icon.xl",
+      "size.icon.xxl",
+      "size.icon.display"
     ]
   },
   "migration": {
@@ -208,9 +212,15 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
       "default_size": 17,
       "states": [
@@ -222,7 +232,7 @@
       "default_tone": "text",
       "token_binding": {
         "color": "color.icon.primary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Apple sign-in provider mark.",
@@ -261,9 +271,15 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
       "default_size": 24,
       "states": [
@@ -279,7 +295,7 @@
       "default_tone": "amber",
       "token_binding": {
         "color": "color.icon.warning",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Refresh or withdraw-style cyclical action when paired with label.",
@@ -319,11 +335,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active",
@@ -337,7 +359,7 @@
       "default_tone": "textDim",
       "token_binding": {
         "color": "color.icon.info",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Transfer, swap, or two-way movement between accounts.",
@@ -376,11 +398,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active",
@@ -394,7 +422,7 @@
       "default_tone": "blue",
       "token_binding": {
         "color": "color.icon.info",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Bank, balance, funding account, or institutional account.",
@@ -430,15 +458,21 @@
       "source_icon_name": "Bell",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 16,
+      "default_size": 24,
       "states": [
         "default",
         "active",
@@ -451,7 +485,7 @@
       "default_tone": "textMuted",
       "token_binding": {
         "color": "color.icon.secondary",
-        "size": "size.icon.xs"
+        "size": "size.icon.md"
       },
       "usage": [
         "Notifications entry.",
@@ -485,15 +519,21 @@
       "source_icon_name": "ChevronDown",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 14,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -505,7 +545,7 @@
       "default_tone": "textDim",
       "token_binding": {
         "color": "color.icon.tertiary",
-        "size": "size.icon.xs"
+        "size": "size.icon.md"
       },
       "usage": [
         "Dropdown or expandable control. Use the chevron-style down arrow without a shaft for global dropdown affordances.",
@@ -540,15 +580,21 @@
       "source_icon_name": "ArrowLeft",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 22,
+      "default_size": 24,
       "states": [
         "default",
         "active",
@@ -595,15 +641,21 @@
       "source_icon_name": "ChevronRight",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 16,
+      "default_size": 24,
       "states": [
         "default",
         "active",
@@ -617,7 +669,7 @@
       "default_tone": "textDim",
       "token_binding": {
         "color": "color.icon.tertiary",
-        "size": "size.icon.xs"
+        "size": "size.icon.md"
       },
       "usage": [
         "Next row navigation and disclosure.",
@@ -651,15 +703,21 @@
       "source_icon_name": "stock-line",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active",
@@ -676,7 +734,7 @@
       "default_tone": "textDim",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Market trend, quote movement, trading volume, or position direction.",
@@ -714,11 +772,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -730,7 +794,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Feedback or single conversation entry.",
@@ -768,11 +832,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 22,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -819,13 +889,19 @@
       "source_icon_name": "Check",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
       "default_size": 24,
       "states": [
@@ -841,7 +917,7 @@
       "default_tone": "textMuted",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.xs"
+        "size": "size.icon.md"
       },
       "usage": [
         "Checkbox or compact selected indicator.",
@@ -879,11 +955,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "success",
@@ -897,7 +979,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Verified state, selected account, completed status.",
@@ -931,15 +1013,21 @@
       "source_icon_name": "History",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "warning"
@@ -952,7 +1040,7 @@
       "default_tone": "text",
       "token_binding": {
         "color": "color.icon.primary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Order history, pending review, recent activity, time filter.",
@@ -990,11 +1078,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -1006,7 +1100,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Discover and module exploration entry.",
@@ -1040,15 +1134,21 @@
       "source_icon_name": "Ellipsis",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 22,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -1098,11 +1198,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default"
       ],
@@ -1113,7 +1219,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Email, inbox, password recovery.",
@@ -1147,15 +1253,21 @@
       "source_icon_name": "SmartphoneNfc",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "success"
@@ -1168,7 +1280,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Phone number entry, SMS verification, and confirmed phone contact.",
@@ -1206,11 +1318,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 22,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -1260,9 +1378,15 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
       "default_size": 24,
       "states": [
@@ -1276,7 +1400,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Global market, language, regional onboarding.",
@@ -1314,9 +1438,15 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
       "default_size": 24,
       "states": [
@@ -1330,7 +1460,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Education, academy, trading lessons.",
@@ -1368,11 +1498,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -1384,7 +1520,7 @@
       "default_tone": "textMuted",
       "token_binding": {
         "color": "color.icon.secondary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Support center or service contact.",
@@ -1422,11 +1558,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "warning",
@@ -1440,7 +1582,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Identity verification, onboarding KYC, profile document.",
@@ -1474,15 +1616,21 @@
       "source_icon_name": "Info",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 15,
+      "default_size": 24,
       "states": [
         "default",
         "warning",
@@ -1496,7 +1644,7 @@
       "default_tone": "textMuted",
       "token_binding": {
         "color": "color.icon.secondary",
-        "size": "size.icon.xs"
+        "size": "size.icon.md"
       },
       "usage": [
         "Inline help, disclosure, risk explanation.",
@@ -1534,11 +1682,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -1550,7 +1704,7 @@
       "default_tone": "text",
       "token_binding": {
         "color": "color.icon.primary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Watchlist, quote list, list view.",
@@ -1589,11 +1743,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -1606,7 +1766,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Orders, trading journal, task checklist, execution list.",
@@ -1646,11 +1806,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 16,
+      "default_size": 24,
       "states": [
         "default",
         "danger",
@@ -1664,7 +1830,7 @@
       "default_tone": "textDim",
       "token_binding": {
         "color": "color.icon.tertiary",
-        "size": "size.icon.xs"
+        "size": "size.icon.md"
       },
       "usage": [
         "Password, locked field, protected content.",
@@ -1702,11 +1868,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "warning",
@@ -1720,7 +1892,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Password rule validation and credential setup guidance.",
@@ -1754,15 +1926,21 @@
       "source_icon_name": "KeyRound",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "success"
@@ -1774,7 +1952,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "PIN setup, unlock, or access-key semantics.",
@@ -1808,15 +1986,21 @@
       "source_icon_name": "Keyboard",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -1828,7 +2012,7 @@
       "default_tone": "textDim",
       "token_binding": {
         "color": "color.icon.tertiary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Numeric keyboard, OTP input, or PIN keypad hint.",
@@ -1862,15 +2046,21 @@
       "source_icon_name": "Eye",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -1882,7 +2072,7 @@
       "default_tone": "textDim",
       "token_binding": {
         "color": "color.icon.tertiary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Toggle password visibility in credential fields.",
@@ -1916,15 +2106,21 @@
       "source_icon_name": "Search",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 17,
+      "default_size": 24,
       "states": [
         "default",
         "active",
@@ -1937,7 +2133,7 @@
       "default_tone": "text",
       "token_binding": {
         "color": "color.icon.primary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Search entry and field prefix.",
@@ -1976,11 +2172,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "success",
@@ -1994,7 +2196,7 @@
       "default_tone": "down",
       "token_binding": {
         "color": "color.icon.success",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Deposit QR, account QR, scan code.",
@@ -2034,11 +2236,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2051,7 +2259,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Partner network, sharing, referral graph.",
@@ -2089,11 +2297,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "success",
@@ -2107,7 +2321,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Security, fraud prevention, compliance protection.",
@@ -2141,15 +2355,21 @@
       "source_icon_name": "SlidersHorizontal",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2161,7 +2381,7 @@
       "default_tone": "textDim",
       "token_binding": {
         "color": "color.icon.tertiary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Settings, filters, product controls, sort.",
@@ -2199,11 +2419,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2215,7 +2441,7 @@
       "default_tone": "amber",
       "token_binding": {
         "color": "color.icon.warning",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Coupon, promotion, simulated contest badge.",
@@ -2253,11 +2479,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2269,7 +2501,7 @@
       "default_tone": "amber",
       "token_binding": {
         "color": "color.icon.warning",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Challenge, leaderboard, achievement.",
@@ -2307,11 +2539,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 22,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2361,11 +2599,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 22,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2415,11 +2659,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 22,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2465,15 +2715,21 @@
       "source_icon_name": "X",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 16,
+      "default_size": 24,
       "states": [
         "default",
         "active",
@@ -2487,7 +2743,7 @@
       "default_tone": "textDim",
       "token_binding": {
         "color": "color.icon.tertiary",
-        "size": "size.icon.xs"
+        "size": "size.icon.md"
       },
       "usage": [
         "Close, cancel, dismiss, delete when paired with danger tone.",
@@ -2525,11 +2781,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2542,7 +2804,7 @@
       "default_tone": "blue",
       "token_binding": {
         "color": "color.icon.info",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Account balance, available funds, equity snapshot, and wallet balance detail.",
@@ -2576,15 +2838,21 @@
       "source_icon_name": "Archive",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 22,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2630,15 +2898,21 @@
       "source_icon_name": "Trash2",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "danger"
@@ -2650,7 +2924,7 @@
       "default_tone": "danger",
       "token_binding": {
         "color": "color.icon.danger",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Delete, remove, or irreversible destructive action.",
@@ -2684,15 +2958,21 @@
       "source_icon_name": "LogOut",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "danger"
@@ -2705,7 +2985,7 @@
       "default_tone": "danger",
       "token_binding": {
         "color": "color.icon.danger",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Log out of the current session while preserving remembered account identity.",
@@ -2743,11 +3023,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2761,7 +3047,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Trade ticket, market order entry, and order creation flow.",
@@ -2799,11 +3085,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -2816,7 +3108,7 @@
       "default_tone": "textDim",
       "token_binding": {
         "color": "color.icon.tertiary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Sort or group positions by trading symbol.",
@@ -2854,11 +3146,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "danger"
@@ -2870,7 +3168,7 @@
       "default_tone": "danger",
       "token_binding": {
         "color": "color.icon.danger",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Close all positions or cancel an active trading exposure.",
@@ -2908,11 +3206,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "danger"
@@ -2924,7 +3228,7 @@
       "default_tone": "danger",
       "token_binding": {
         "color": "color.icon.danger",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Close losing positions, stop-loss related action, or downside exposure reduction.",
@@ -2962,9 +3266,15 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
       "default_size": 24,
       "states": [
@@ -3017,9 +3327,15 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
       "default_size": 24,
       "states": [
@@ -3068,15 +3384,21 @@
       "source_icon_name": "CircleX",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 18,
+      "default_size": 24,
       "states": [
         "default",
         "danger"
@@ -3088,7 +3410,7 @@
       "default_tone": "danger",
       "token_binding": {
         "color": "color.icon.danger",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Rejected, failed, or blocked status in financial workflows.",
@@ -3126,11 +3448,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -3142,7 +3470,7 @@
       "default_tone": "amber",
       "token_binding": {
         "color": "color.icon.warning",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "App rating or satisfaction scoring entry.",
@@ -3176,15 +3504,21 @@
       "source_icon_name": "CircleQuestionMark",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default"
       ],
@@ -3195,7 +3529,7 @@
       "default_tone": "textMuted",
       "token_binding": {
         "color": "color.icon.secondary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Help center, FAQ, and guided assistance.",
@@ -3233,11 +3567,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default"
       ],
@@ -3248,7 +3588,7 @@
       "default_tone": "textMuted",
       "token_binding": {
         "color": "color.icon.secondary",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "About app, product information, and company information entry.",
@@ -3286,11 +3626,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default",
         "active"
@@ -3302,7 +3648,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Function center, app module dashboard, or shortcut hub.",
@@ -3340,11 +3686,17 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
-      "default_size": 20,
+      "default_size": 24,
       "states": [
         "default"
       ],
@@ -3356,7 +3708,7 @@
       "default_tone": "brand",
       "token_binding": {
         "color": "color.icon.active",
-        "size": "size.icon.sm"
+        "size": "size.icon.md"
       },
       "usage": [
         "Trading volume, analytics volume metric, and aggregated activity size.",
@@ -3394,9 +3746,15 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
       "default_size": 24,
       "states": [
@@ -3447,9 +3805,15 @@
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
       "default_size": 24,
       "states": [
@@ -3497,13 +3861,19 @@
       "source_icon_name": "stock-line",
       "style": {
         "default": "line",
-        "active": "line",
+        "active": "fill",
         "disabled": "line"
       },
       "sizes": [
+        8,
+        12,
         16,
         20,
-        24
+        24,
+        32,
+        40,
+        48,
+        64
       ],
       "default_size": 24,
       "states": [

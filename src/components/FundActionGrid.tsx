@@ -5,7 +5,7 @@ import { getFundingOperationActions, type FundingOperation, type FundingOperatio
 import type { TranslationKey } from '@/src/i18n/translations';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import type { ThemeColors } from '@/src/theme/colors';
-import { lineWidth, layout, spacing } from '@/src/theme/tokens';
+import { lineWidth, layout, radius, size, spacing } from '@/src/theme/tokens';
 
 import { AppIcon, type AppIconName, type IconTone } from './AppIcon';
 import { NativePressable } from './NativePressable';
@@ -92,14 +92,14 @@ const styles = StyleSheet.create({
   },
   tile: {
     alignItems: 'center',
-    borderRadius: 14,
+    borderRadius: radius.lg,
     borderWidth: lineWidth.none,
     flexBasis: '30%',
     flexGrow: 1,
     gap: spacing.xs,
     justifyContent: 'center',
-    minHeight: 74,
-    minWidth: 96,
+    minHeight: size.control.lg + size.icon.sm,
+    minWidth: size.control.lg + size.control.sm,
     padding: spacing.sm,
   },
 });

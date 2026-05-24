@@ -36,7 +36,7 @@ export function SegmentedTabs<T extends string>({ items, onValueChange, style, v
             minTouch={size.tab.itemMinHeight}
             onPress={() => onValueChange(item.value)}
             style={StyleSheet.flatten([styles.item, selected && { backgroundColor: colors.surface.panel, borderColor: colors.border.default }])}>
-            <AppText adjustsFontSizeToFit numberOfLines={1} tone={selected ? 'default' : 'muted'} variant="caption">
+            <AppText adjustsFontSizeToFit numberOfLines={1} tone={selected ? 'default' : 'muted'} variant="label.control">
               {item.label}
             </AppText>
           </NativePressable>

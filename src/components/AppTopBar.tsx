@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { useToast } from '@/src/feedback/Toast';
 import { impactLight } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
-import { lineWidth, typography } from '@/src/theme/tokens';
+import { lineWidth } from '@/src/theme/tokens';
 
 import { type AppIconName } from './AppIcon';
 import { HeaderIconButton, HeaderIconSlot } from './HeaderIconButton';
@@ -79,11 +79,11 @@ export function AppTopBar({ actions, align = 'left', back, backHref, subtitle, t
       </HeaderIconSlot>
 
       <View style={StyleSheet.flatten([styles.titleWrap, align === 'center' && styles.titleCenter, !back && styles.rootTitleWrap])}>
-        <AppText adjustsFontSizeToFit numberOfLines={1} style={back ? styles.navTitle : styles.rootNavTitle} variant={back ? 'subtitle' : 'title'}>
+        <AppText adjustsFontSizeToFit numberOfLines={1} variant={back ? 'title.pageCompact' : 'title.page'}>
           {title}
         </AppText>
         {subtitle ? (
-          <AppText numberOfLines={1} tone="muted" variant="caption">
+          <AppText numberOfLines={1} tone="muted" variant="label.helper">
             {subtitle}
           </AppText>
         ) : null}
@@ -120,12 +120,6 @@ const styles = StyleSheet.create({
     paddingBottom: 9,
     paddingHorizontal: 16,
     paddingTop: 7,
-  },
-  navTitle: {
-    ...typography.titleMd,
-  },
-  rootNavTitle: {
-    ...typography.displayXl,
   },
   side: {
     minWidth: 40,

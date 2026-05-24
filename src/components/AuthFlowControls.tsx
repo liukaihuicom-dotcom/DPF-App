@@ -50,7 +50,7 @@ export function CountryPhoneField({
           <AppText numberOfLines={1} style={styles.countryChipDial} tone="default" variant="titleMd">
             {country.dialCode}
           </AppText>
-          <AppIcon name="icon.system.chevron_down" size={14} tone="text" />
+          <AppIcon name="icon.system.chevron_down" size={14} />
         </NativePressable>
         <AuthTextField
           autoFocus={autoFocus}
@@ -169,7 +169,7 @@ function CountryPickerSheetContent({
               <AppText numberOfLines={1} style={styles.countryName} variant="body">
                 {country.name}
               </AppText>
-              {active ? <AppIcon tone="textMuted" name="icon.status.check" size={14} /> : null}
+              {active ? <AppIcon name="icon.status.check" size={14} /> : null}
             </NativePressable>
           );
         })}

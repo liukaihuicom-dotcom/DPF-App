@@ -89,7 +89,7 @@ function AccountListCard({ profile }: { profile: TradingAccountProfile }) {
       onPress={() => router.push(`/account-details/${profile.id}`)}
       style={StyleSheet.flatten([styles.accountCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
       <View style={StyleSheet.flatten([styles.walletIcon, { backgroundColor: colors.surface.subtle }])}>
-        <AppIcon tone="text" name="icon.account.trading" size={18} />
+        <AppIcon name="icon.account.trading" size={18} />
       </View>
       <View style={styles.accountCardBody}>
         <View style={styles.accountCardTop}>
@@ -105,7 +105,7 @@ function AccountListCard({ profile }: { profile: TradingAccountProfile }) {
               </AppText>
             </View>
           </View>
-          <AppIcon tone="textDim" name="icon.system.chevron_right" size={16} />
+          <AppIcon name="icon.system.chevron_right" size={16} />
         </View>
 
         <View style={StyleSheet.flatten([styles.accountDivider, { backgroundColor: colors.border.subtle }])} />

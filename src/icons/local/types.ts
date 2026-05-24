@@ -5,6 +5,7 @@ export type LocalIconProps = {
   fill?: string;
   height?: number | string;
   size?: number | string;
+  styleVariant?: 'line' | 'fill';
   strokeWidth?: number;
   style?: StyleProp<ViewStyle>;
   width?: number | string;

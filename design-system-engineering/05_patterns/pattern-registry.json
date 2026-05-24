@@ -1,0 +1,62 @@
+{
+  "version": "1.0.0",
+  "source": "design-system/05-patterns",
+  "patterns": {
+    "dashboard": {
+      "documentation": "design-system/05-patterns/dashboard-pattern.md",
+      "platforms": ["app", "h5", "web"],
+      "requiredStructure": ["primaryMetric", "secondaryKpiGroup", "watchlistOrActionList", "statusOrRiskBlock", "nextAction"],
+      "recommendedComponents": ["Screen", "Card", "Metric", "StatusPill", "GlobalMenuList", "FundActionGrid"],
+      "requiredStates": ["loading", "empty", "error", "restricted"],
+      "forbidden": ["Do not build marketing-style hero pages for operational dashboards."]
+    },
+    "form": {
+      "documentation": "design-system/05-patterns/form-pattern.md",
+      "platforms": ["app", "h5", "web"],
+      "requiredStructure": ["goalAndRiskContext", "labeledFields", "inlineValidation", "visibleSubmitAction", "successAndFailureFeedback", "fieldSpec"],
+      "recommendedComponents": ["Screen", "TextField", "ActionButton", "StatusPill"],
+      "requiredStates": ["default", "focused", "error", "disabled", "submitting", "success"],
+      "forbidden": ["Do not hide validation or risk copy to simplify layout."]
+    },
+    "list": {
+      "documentation": "design-system/05-patterns/list-pattern.md",
+      "platforms": ["app", "h5", "web"],
+      "requiredStructure": ["headerWithOptionalFilter", "governedRows", "loadingSkeleton", "emptyState", "errorState"],
+      "recommendedComponents": ["Screen", "Card", "GlobalMenuList", "EmptyState", "SegmentedTabs"],
+      "requiredStates": ["loading", "empty", "error", "filtered", "selected"],
+      "forbidden": ["Do not create page-local row components when a registered row pattern exists."]
+    },
+    "detail": {
+      "documentation": "design-system/05-patterns/detail-pattern.md",
+      "platforms": ["app", "h5", "web"],
+      "requiredStructure": ["identityHeader", "keyValueSummary", "statusHistory", "primaryActions", "riskOrComplianceNotes"],
+      "recommendedComponents": ["Screen", "KeyValueList", "StatusPill", "ActionButton"],
+      "requiredStates": ["loading", "notFound", "restricted", "error"],
+      "forbidden": ["Do not omit status and permission context for financial details."]
+    },
+    "emptyError": {
+      "documentation": "design-system/05-patterns/empty-error-pattern.md",
+      "platforms": ["app", "h5", "web"],
+      "requiredStructure": ["stateIcon", "clearTitle", "recoveryCopy", "nextAction"],
+      "recommendedComponents": ["EmptyState", "ActionButton", "AppIcon"],
+      "requiredStates": ["empty", "error", "offline", "restricted"],
+      "forbidden": ["Do not dead-end the user without a recovery action."]
+    },
+    "onboarding": {
+      "documentation": "design-system/05-patterns/onboarding-pattern.md",
+      "platforms": ["app", "h5"],
+      "requiredStructure": ["progressContext", "singleStepFocus", "riskCopy", "primaryAction", "secondaryExit"],
+      "recommendedComponents": ["AuthShell", "TextField", "ActionButton"],
+      "requiredStates": ["default", "validationError", "submitting", "blocked", "complete"],
+      "forbidden": ["Do not imply account approval before verification is complete."]
+    },
+    "review": {
+      "documentation": "design-system/05-patterns/review-pattern.md",
+      "platforms": ["app", "h5", "web", "admin"],
+      "requiredStructure": ["submittedData", "reviewStatus", "decisionReason", "nextStep", "supportPath"],
+      "recommendedComponents": ["Screen", "StatusPill", "KeyValueList", "ActionButton"],
+      "requiredStates": ["pending", "approved", "rejected", "needsAction"],
+      "forbidden": ["Do not weaken compliance or rejection reasons."]
+    }
+  }
+}

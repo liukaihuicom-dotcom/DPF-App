@@ -26,13 +26,14 @@ const nodeMap = {
   rect: Rect,
 } as const;
 
-export function LucideIconBase({ color = 'currentColor', height, iconNode, size = 24, strokeWidth = 2, style, width }: LucideIconBaseProps) {
+export function LucideIconBase({ color = 'currentColor', fill, height, iconNode, size = 24, strokeWidth = 1.5, style, width }: LucideIconBaseProps) {
   const resolvedWidth = width ?? size;
   const resolvedHeight = height ?? size;
+  const resolvedFill = fill ?? 'none';
 
   return (
     <Svg
-      fill="none"
+      fill={resolvedFill}
       height={resolvedHeight}
       stroke={color}
       strokeLinecap="round"

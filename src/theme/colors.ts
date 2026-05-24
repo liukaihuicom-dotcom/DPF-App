@@ -50,6 +50,18 @@ export type ThemeColors = {
       mid: string;
     };
   };
+  icon: {
+    active: string;
+    danger: string;
+    disabled: string;
+    info: string;
+    inverse: string;
+    primary: string;
+    secondary: string;
+    success: string;
+    tertiary: string;
+    warning: string;
+  };
   market: {
     down: ThemeColorState;
     flat: ThemeColorState;
@@ -328,6 +340,18 @@ export const themeColors: Record<ResolvedThemeMode, ThemeColors> = {
       diverging: { negative: '#FF6478', neutral: '#B8B8B8', positive: '#24C985' },
       sequential: { high: teal['300'], low: '#123337', mid: teal['500'] },
     },
+    icon: {
+      active: '#F8FAFC',
+      danger: '#FF6B7E',
+      disabled: '#B8B8B8',
+      info: '#74A8FF',
+      inverse: white,
+      primary: '#F8FAFC',
+      secondary: '#F8FAFC',
+      success: '#24C985',
+      tertiary: '#F8FAFC',
+      warning: '#F4B000',
+    },
     market: {
       down: state({ bg: colorPrimitives.green['950'], border: colorPrimitives.green['700'], fg: '#24C985', solid: colorPrimitives.green['500'] }),
       flat: state({ bg: '#222222', border: '#444444', fg: '#B8B8B8', solid: '#71717A' }),
@@ -394,6 +418,18 @@ export const themeColors: Record<ResolvedThemeMode, ThemeColors> = {
       diverging: { negative: colorPrimitives.red['700'], neutral: neutral['500'], positive: colorPrimitives.green['600'] },
       sequential: { high: teal['700'], low: teal['100'], mid: teal['500'] },
     },
+    icon: {
+      active: '#0A0B0D',
+      danger: '#CF202F',
+      disabled: '#6D747E',
+      info: colorPrimitives.blue['600'],
+      inverse: white,
+      primary: '#0A0B0D',
+      secondary: '#0A0B0D',
+      success: colorPrimitives.green['600'],
+      tertiary: '#0A0B0D',
+      warning: '#A86D00',
+    },
     market: {
       down: state({ bg: colorPrimitives.green['50'], border: colorPrimitives.green['200'], fg: '#05A66B', solid: colorPrimitives.green['600'] }),
       flat: state({ bg: neutral['100'], border: neutral['300'], fg: neutral['500'], solid: neutral['500'] }),
@@ -459,6 +495,18 @@ export const themeColors: Record<ResolvedThemeMode, ThemeColors> = {
       categorical: [teal['500'], colorPrimitives.blue['400'], colorPrimitives.amber['400'], colorPrimitives.purple['400'], colorPrimitives.green['400'], colorPrimitives.red['400'], colorPrimitives.cyan['400'], colorPrimitives.blue['300'], colorPrimitives.amber['300'], colorPrimitives.purple['300'], colorPrimitives.green['300'], colorPrimitives.red['300']],
       diverging: { negative: '#FF6478', neutral: '#BDBDBD', positive: '#24C985' },
       sequential: { high: teal['300'], low: '#123337', mid: teal['500'] },
+    },
+    icon: {
+      active: '#F8FAFC',
+      danger: '#FF7391',
+      disabled: '#BCBCBC',
+      info: '#7AB8FF',
+      inverse: white,
+      primary: '#F8FAFC',
+      secondary: '#F8FAFC',
+      success: '#24C985',
+      tertiary: '#F8FAFC',
+      warning: '#F4B000',
     },
     market: {
       down: state({ bg: colorPrimitives.green['950'], border: colorPrimitives.green['700'], fg: '#24C985', solid: colorPrimitives.green['500'] }),

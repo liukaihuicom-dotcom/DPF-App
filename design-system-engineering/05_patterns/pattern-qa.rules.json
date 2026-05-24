@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "requiredFiles": [
+    "design-system-engineering/05_patterns/pattern-registry.json",
+    "design-system-engineering/05_patterns/pattern.schema.json"
+  ],
+  "severity": {
+    "missingPatternForPage": "major",
+    "missingRequiredState": "critical",
+    "pageLocalPatternClone": "major",
+    "missingRecoveryAction": "critical"
+  },
+  "releaseDecision": {
+    "blockOnCritical": true,
+    "requiredBeforeUiBuild": true
+  }
+}

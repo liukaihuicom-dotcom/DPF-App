@@ -93,16 +93,16 @@ export function ToastProvider({ children }: PropsWithChildren) {
                 justifyContent: 'center',
                 width: 26,
               }}>
-              <AppText tone={toneText} variant="caption">
+              <AppText tone={toneText} variant="label.status">
                 {tone === 'success' ? '✓' : tone === 'danger' ? '!' : tone === 'warning' ? '!' : 'i'}
               </AppText>
             </View>
             <View style={{ flex: 1, gap: 2, minWidth: 0 }}>
-              <AppText numberOfLines={1} variant="body">
+              <AppText numberOfLines={1} variant="body.primary">
                 {toast.title}
               </AppText>
               {toast.message ? (
-                <AppText numberOfLines={2} tone="muted" variant="caption">
+                <AppText numberOfLines={2} tone="muted" variant="label.helper">
                   {toast.message}
                 </AppText>
               ) : null}

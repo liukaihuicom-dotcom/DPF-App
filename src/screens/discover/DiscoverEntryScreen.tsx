@@ -38,7 +38,7 @@ export default function DiscoverEntryScreen({ entryId }: { entryId?: string } = 
       <Card highlight>
         <View style={styles.heroTop}>
           <View style={StyleSheet.flatten([styles.heroIcon, { backgroundColor: `${colors.brand.fg}12`, borderColor: `${colors.brand.fg}55` }])}>
-            <AppIcon tone="brand" name={entry.icon} size={24} />
+            <AppIcon name={entry.icon} size={24} />
           </View>
           <View style={styles.flex}>
             <View style={styles.titleRow}>

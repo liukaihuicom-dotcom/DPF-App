@@ -117,7 +117,7 @@ function AccountMiniCard({ account, positions }: { account: ReturnType<typeof us
       <View style={styles.accountCardHeader}>
         <NativePressable accessibilityLabel={locale !== 'zh-CN' ? 'Switch trading account' : '切换交易账号'} minTouch={40} onPress={openAccountPicker} style={styles.accountSwitcher}>
           <View style={StyleSheet.flatten([styles.accountAvatar, { backgroundColor: colors.surface.subtle }])}>
-            <AppIcon tone="text" name="icon.account.trading" size={17} />
+            <AppIcon name="icon.account.trading" size={17} />
           </View>
           <View style={styles.accountIdentity}>
             <AppText numberOfLines={1} variant="subtitle">
@@ -130,7 +130,7 @@ function AccountMiniCard({ account, positions }: { account: ReturnType<typeof us
               </AppText>
             </View>
           </View>
-          <AppIcon tone="textDim" name="icon.system.chevron_down" size={15} />
+          <AppIcon name="icon.system.chevron_down" size={15} />
         </NativePressable>
       </View>
 
@@ -203,7 +203,7 @@ function MarketList({ instruments }: { instruments: Instrument[] }) {
               minTouch={38}
               onPress={closeSearch}
               style={StyleSheet.flatten([styles.marketSearchClose, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
-              <AppIcon tone="textDim" name="icon.system.close" size={14} />
+              <AppIcon name="icon.system.close" size={14} />
             </NativePressable>
           </View>
         ) : (
@@ -240,7 +240,7 @@ function MarketList({ instruments }: { instruments: Instrument[] }) {
               minTouch={38}
               onPress={() => setSearchOpen(true)}
               style={StyleSheet.flatten([styles.marketSearchTrigger, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
-              <AppIcon tone="textDim" name="icon.system.search" size={17} />
+              <AppIcon name="icon.system.search" size={17} />
             </NativePressable>
           </>
         )}

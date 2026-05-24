@@ -4,7 +4,7 @@ import type { AppIconName } from '@/src/components/AppIcon';
 import { TabBarIcon } from '@/src/components/navigation';
 import type { DiscoverModuleId } from '@/src/domain/types';
 import { useProductSettings } from '@/src/settings/ProductSettings';
-import { typography } from '@/src/theme/tokens';
+import { titleTypography } from '@/src/theme/tokens';
 
 export default function TabLayout() {
   const { colors, selectedDiscoverModuleId, t } = useProductSettings();
@@ -27,7 +27,7 @@ export default function TabLayout() {
           paddingTop: 6,
         },
         tabBarLabelStyle: {
-          ...typography.microLabel,
+          ...titleTypography.bottomTabs,
         },
       }}>
       <Tabs.Screen

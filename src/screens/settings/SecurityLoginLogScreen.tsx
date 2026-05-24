@@ -169,7 +169,7 @@ export default function SecurityLoginLogScreen() {
       <Card highlight>
         <View style={styles.summaryHeader}>
           <View style={StyleSheet.flatten([styles.summaryIcon, { backgroundColor: `${colors.status.info.fg}14`, borderColor: `${colors.status.info.fg}44` }])}>
-            <AppIcon name="icon.security.risk_shield" size={24} tone="blue" />
+            <AppIcon name="icon.security.risk_shield" size={24} />
           </View>
           <View style={styles.flex}>
             <AppText variant="subtitle">{t('securityLog.summary.title')}</AppText>
@@ -226,7 +226,7 @@ function SecurityDeviceCard({ device, formatDate, onPress }: { device: SecurityD
       onPress={onPress}
       style={StyleSheet.flatten([styles.deviceCard, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
       <View style={StyleSheet.flatten([styles.deviceIcon, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
-        <AppIcon name={deviceIcon(device.deviceType)} size={22} tone={device.riskLevel === 'high' ? 'danger' : device.riskLevel === 'medium' ? 'amber' : 'text'} />
+        <AppIcon name={deviceIcon(device.deviceType)} size={22} tone={device.riskLevel === 'high' ? 'danger' : device.riskLevel === 'medium' ? 'amber' : undefined} />
       </View>
       <View style={styles.deviceBody}>
         <View style={styles.deviceTopRow}>
@@ -253,7 +253,7 @@ function SecurityDeviceCard({ device, formatDate, onPress }: { device: SecurityD
           </AppText>
         </View>
       </View>
-      <AppIcon name="icon.system.chevron_right" size={16} tone="textDim" />
+      <AppIcon name="icon.system.chevron_right" size={16} />
     </NativePressable>
   );
 }
@@ -300,7 +300,7 @@ function DeviceDetailSheet({
         {device.sessions.map((session) => (
           <View key={session.sessionId} style={StyleSheet.flatten([styles.recordRow, { borderColor: colors.border.subtle }])}>
             <View style={styles.recordIcon}>
-              <AppIcon name={session.status === 'revoked' ? 'icon.system.logout' : 'icon.security.lock'} size={18} tone={session.status === 'revoked' ? 'textDim' : 'blue'} />
+              <AppIcon name={session.status === 'revoked' ? 'icon.system.logout' : 'icon.security.lock'} size={18} />
             </View>
             <View style={styles.recordBody}>
               <View style={styles.inlineRow}>
@@ -336,7 +336,7 @@ function DeviceDetailSheet({
         {device.events.map((event) => (
           <View key={event.eventId} style={StyleSheet.flatten([styles.recordRow, { borderColor: colors.border.subtle }])}>
             <View style={styles.recordIcon}>
-              <AppIcon name={event.riskLevel === 'low' ? 'icon.trading.history' : 'icon.security.risk_shield'} size={18} tone={event.riskLevel === 'high' ? 'danger' : event.riskLevel === 'medium' ? 'amber' : 'textDim'} />
+              <AppIcon name={event.riskLevel === 'low' ? 'icon.trading.history' : 'icon.security.risk_shield'} size={18} tone={event.riskLevel === 'high' ? 'danger' : event.riskLevel === 'medium' ? 'amber' : undefined} />
             </View>
             <View style={styles.recordBody}>
               <View style={styles.inlineRow}>
@@ -399,7 +399,7 @@ function ConfirmActionSheet({
   return (
     <View style={styles.confirmContent}>
       <View style={StyleSheet.flatten([styles.confirmIcon, { backgroundColor: colors.surface.subtle, borderColor: colors.border.subtle }])}>
-        <AppIcon name={icon} size={24} tone={confirmTone === 'danger' ? 'danger' : 'brand'} />
+        <AppIcon name={icon} size={24} tone={confirmTone === 'danger' ? 'danger' : undefined} />
       </View>
       <AppText style={styles.centerText} variant="subtitle">
         {title}

@@ -176,7 +176,7 @@ export default function PinSetupScreen() {
                   onPress={deleteDigit}
                   pressedStyle={styles.keyPressed}
                   style={StyleSheet.flatten([styles.key, styles.keyButton, { backgroundColor: colors.surface.panel, borderColor: colors.border.subtle }])}>
-                  <AppIcon tone="textDim" name="icon.system.back" size={22} />
+                  <AppIcon name="icon.system.back" size={22} />
                 </NativePressable>
               );
             }

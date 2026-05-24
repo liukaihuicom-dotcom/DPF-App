@@ -103,7 +103,7 @@ function LatestCampaigns({ campaigns }: { campaigns: DiscoverCampaignDefinition[
               </AppText>
             </View>
             <View style={StyleSheet.flatten([styles.campaignIcon, { backgroundColor: `${colors.brand.fg}16` }])}>
-              <AppIcon name={campaign.icon} size={size.icon.lg} tone="brand" />
+              <AppIcon name={campaign.icon} size={size.icon.lg} />
             </View>
           </NativePressable>
         ))}
@@ -126,7 +126,7 @@ function DiscoverEntryRow({ entry, showDivider }: { entry: DiscoverEntryDefiniti
       }}
       style={StyleSheet.flatten([styles.entryRow, showDivider && { borderBottomColor: colors.border.subtle, borderBottomWidth: lineWidth.hairline }])}>
       <View style={StyleSheet.flatten([styles.entryIcon, { backgroundColor: `${colors.brand.fg}12` }])}>
-        <AppIcon tone="brand" name={entry.icon} size={18} />
+        <AppIcon name={entry.icon} size={18} />
       </View>
       <View style={styles.entryCopy}>
         <View style={styles.entryTitleRow}>
@@ -139,7 +139,7 @@ function DiscoverEntryRow({ entry, showDivider }: { entry: DiscoverEntryDefiniti
           {localizeText(entry.subtitle, locale)}
         </AppText>
       </View>
-      <AppIcon tone="textDim" name="icon.system.chevron_right" size={16} />
+      <AppIcon name="icon.system.chevron_right" size={16} />
     </NativePressable>
   );
 }

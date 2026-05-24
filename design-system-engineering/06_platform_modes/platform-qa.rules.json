@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "requiredFiles": [
+    "design-system-engineering/06_platform_modes/mode-matrix.json",
+    "design-system-engineering/06_platform_modes/app-rules.md",
+    "design-system-engineering/06_platform_modes/h5-rules.md",
+    "design-system-engineering/06_platform_modes/web-rules.md",
+    "design-system-engineering/06_platform_modes/admin-rules.md"
+  ],
+  "severity": {
+    "missingPlatformMode": "blocker",
+    "routeBoundaryViolation": "critical",
+    "missingTouchTarget": "critical",
+    "undocumentedDensityChange": "major"
+  }
+}

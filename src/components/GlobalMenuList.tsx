@@ -64,7 +64,7 @@ export function GlobalMenuList({ contained, items, showChevron = true, variant =
                 ) : null}
               </View>
             </View>
-            {showChevron ? <AppIcon tone="textDim" name="icon.system.chevron_right" size={size.icon.sm} /> : null}
+            {showChevron ? <AppIcon name="icon.system.chevron_right" size={size.icon.sm} /> : null}
           </NativePressable>
         );
       })}
