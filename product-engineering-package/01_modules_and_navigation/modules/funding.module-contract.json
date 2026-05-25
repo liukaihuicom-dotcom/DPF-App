@@ -1,0 +1,39 @@
+{
+  "$schema": "../module-contract.schema.json",
+  "module_id": "funding",
+  "module_name": "Trading Account Funding",
+  "platforms": ["app", "h5", "admin"],
+  "roles": ["trader", "funding_reviewer", "risk_compliance", "internal_operator"],
+  "pages": [
+    "funding_home",
+    "deposit_form",
+    "withdrawal_form",
+    "transfer_form",
+    "funding_transaction_list",
+    "funding_transaction_detail",
+    "admin_funding_review_list",
+    "admin_funding_review_detail",
+    "admin_funding_channel_config",
+    "admin_funding_limit_fee_config",
+    "admin_funding_exception_reconciliation"
+  ],
+  "api_dependencies": [
+    "GET /trading-accounts",
+    "GET /funding/payment-methods",
+    "GET /funding/rules",
+    "POST /funding/deposits",
+    "POST /funding/withdrawals",
+    "POST /funding/transfers",
+    "GET /funding/transactions",
+    "GET /funding/transactions/{id}",
+    "POST /funding/transactions/{id}/cancel",
+    "POST /admin/funding/reviews/{id}/approve",
+    "POST /admin/funding/reviews/{id}/reject"
+  ],
+  "risk_level": "critical",
+  "constraints": [
+    "No live mutation is allowed without API contract, audit logging, idempotency, risk review, and provider reconciliation.",
+    "All user-visible copy must go through i18n and financial copy review before UI implementation.",
+    "Demo balances must not be represented as withdrawable funds."
+  ]
+}

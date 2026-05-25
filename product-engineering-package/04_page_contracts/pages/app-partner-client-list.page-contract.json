@@ -1,0 +1,64 @@
+{
+  "$schema": "../page-contract.schema.json",
+  "page_id": "app_partner_client_list",
+  "platform": "app_h5",
+  "roles": ["partner"],
+  "purpose": "Partner-facing second-level client list for reviewing downline client activity, status, upgrade readiness, and profile entry.",
+  "states": [
+    "default",
+    "loading",
+    "empty",
+    "error",
+    "disabled",
+    "success",
+    "failed",
+    "permission-denied",
+    "restricted",
+    "pending-upgrade",
+    "long-list"
+  ],
+  "pages": [
+    {
+      "id": "partner_client_list",
+      "route": "/trade",
+      "required_content": [
+        "active client count",
+        "client volume summary",
+        "pending upgrade count",
+        "demo data disclosure",
+        "client name",
+        "country",
+        "joined date",
+        "last active time",
+        "client role",
+        "activity status",
+        "upgrade status",
+        "net deposit",
+        "monthly volume",
+        "open positions",
+        "profile review entry",
+        "privacy and audit requirement note",
+        "empty state"
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "open_client_profile",
+      "trigger": "Tap profile review action",
+      "feedback": "Show profile-opening toast and navigate to /client/{id}",
+      "recovery": "If profile is unavailable, show not-found state on profile page"
+    }
+  ],
+  "apis": [
+    "GET /partner/clients",
+    "GET /partner/clients/{id}",
+    "GET /partner/upgrade-requests"
+  ],
+  "rules": [
+    "Partner clients are visible only to partner role users.",
+    "Client data must remain marked as simulated until production permission, privacy, and audit controls exist.",
+    "Upgrade status must not be represented as approved until approval is complete.",
+    "Profile review is required before approving a pending upgrade request."
+  ]
+}

@@ -514,6 +514,18 @@ There are no progressive elevation tiers — the system either has the one shado
 
 **`text-input`** — White surface, 1px hairline outline, `{rounded.sm}` 8px radius, 56px height, 14×12px padding. Stacked label above (in `{typography.caption}` muted), placeholder text in `{typography.body-md}` muted. On focus, the border thickens to 2px ink and the border color flips to `{colors.ink}` — no glow, no ring.
 
+### Global Feedback
+
+**`global-feedback-toast`** — The app-wide transient feedback surface. It is always a dark floating surface and is rendered through the shared `FeedbackToast` visual component hosted by the `ToastProvider` / `useToast()` runtime. Pages must not create local snackbar or toast variants.
+
+Structure is fixed as left status icon, middle copy area, and right close slot. The left icon uses a registered semantic icon inside a circular colored badge. The right close slot always reserves the same width; it shows the close icon when dismissible and remains empty when dismissal is disabled so text layout does not jump across variants.
+
+Content supports two variants. `titleOnly` renders a 16px title that can wrap naturally. `titleBody` renders the same 16px title plus a lower-emphasis body/helper line; both text regions may wrap. The copy area must keep `minWidth: 0` and consume only the space left by the fixed icon slots.
+
+Width is capped by the global toast maximum (`size.viewport.toastMaxWidth`, currently 420px) and shrinks with the safe content width on narrow screens. Toasts are for lightweight feedback only; critical risk, blocking errors, and recovery paths must also be visible in the page flow.
+
+Auth validation is the reference pattern: field-level errors remain inline for recovery, while blocked-submit feedback is surfaced through the same global Toast rather than a page-local sheet or dialog.
+
 ### Footer
 
 **`footer-light`** — White surface (matches the page canvas — Airbnb has no contrast footer), 48×80px padding. Three columns of link blocks (Support / Hosting / Airbnb), separated by generous 24px gutters. Each column heads with a `{typography.title-sm}` ink label and stacks `{component.footer-link}` rows in `{typography.body-sm}` ink.

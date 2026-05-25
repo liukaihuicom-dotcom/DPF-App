@@ -1,0 +1,69 @@
+{
+  "$schema": "../page-contract.schema.json",
+  "page_id": "app_funding_flows",
+  "platform": "app_h5",
+  "roles": ["trader"],
+  "purpose": "Customer-facing funding flows for direct-to-trading-account deposit, withdrawal, transfer, and transaction history.",
+  "states": [
+    "default",
+    "loading",
+    "empty",
+    "error",
+    "disabled",
+    "submitting",
+    "success",
+    "failed",
+    "permission-denied",
+    "restricted"
+  ],
+  "pages": [
+    {
+      "id": "funding_home",
+      "required_content": ["eligible trading accounts", "deposit action", "withdrawal action", "transfer action", "recent transactions", "risk or KYC status"]
+    },
+    {
+      "id": "deposit_form",
+      "required_content": ["target trading account", "IDR amount", "payment method", "fee", "FX quote", "expected USD credit", "risk acknowledgement"]
+    },
+    {
+      "id": "withdrawal_form",
+      "required_content": ["source trading account", "available USD balance", "IDR payout amount", "payout method", "fee", "FX quote", "risk acknowledgement"]
+    },
+    {
+      "id": "transfer_form",
+      "required_content": ["source trading account", "target trading account", "USD amount", "ownership validation", "available balance", "risk acknowledgement"]
+    },
+    {
+      "id": "funding_transaction_list",
+      "required_content": ["filter by operation", "status", "date range", "amount", "trading account", "empty state"]
+    },
+    {
+      "id": "funding_transaction_detail",
+      "required_content": ["operation details", "status history", "amounts", "fees", "FX", "error reason", "support reference"]
+    }
+  ],
+  "apis": [
+    "GET /trading-accounts",
+    "GET /funding/payment-methods",
+    "GET /funding/rules",
+    "POST /funding/deposits",
+    "POST /funding/withdrawals",
+    "POST /funding/transfers",
+    "GET /funding/transactions",
+    "GET /funding/transactions/{id}",
+    "POST /funding/transactions/{id}/cancel"
+  ],
+  "rules": [
+    "BR-FUND-001",
+    "BR-FUND-002",
+    "BR-FUND-004",
+    "BR-FUND-005",
+    "BR-FUND-006",
+    "BR-FUND-007",
+    "BR-FUND-008",
+    "BR-FUND-009",
+    "BR-FUND-010",
+    "BR-FUND-013",
+    "BR-FUND-014"
+  ]
+}

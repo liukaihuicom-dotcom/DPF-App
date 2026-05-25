@@ -1,26 +1,141 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated';
+import {
+  BottomSheetFooter as GorhomBottomSheetFooter,
+  BottomSheetModal,
+  BottomSheetModalProvider,
+  BottomSheetScrollView,
+  BottomSheetView,
+  type BottomSheetBackdropProps,
+  type BottomSheetFooterProps,
+} from '@gorhom/bottom-sheet';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useProductSettings } from '@/src/settings/ProductSettings';
+import { lineWidth, layout, radius, spacing } from '@/src/theme/tokens';
 
-type BottomSheetContextValue = {
-  hide: () => void;
-  show: (content: ReactNode) => void;
+import { ActionButton, type ActionButtonTone, type ActionButtonVariant } from './ActionButton';
+import type { AppIconName } from './AppIcon';
+import { AppIconFrame } from './AppIconFrame';
+import { HeaderIconButton, HeaderIconSlot } from './HeaderIconButton';
+import { AppText } from './Typography';
+
+export type BottomSheetAction = {
+  accessibilityLabel?: string;
+  disabled?: boolean;
+  icon?: AppIconName;
+  label: string;
+  loading?: boolean;
+  onPress: () => boolean | void;
+  tone?: ActionButtonTone;
+  variant?: ActionButtonVariant;
 };
 
+export type BottomSheetHeaderAction = {
+  accessibilityLabel: string;
+  icon: AppIconName;
+  onPress: () => void;
+};
+
+export type BottomSheetHeaderOptions = {
+  leftAction?: BottomSheetHeaderAction;
+  leftIcon?: AppIconName;
+  rightAction?: BottomSheetHeaderAction;
+  /** @deprecated Use `rightAction` for explicit business actions. */
+  onRightPress?: () => void;
+  /** @deprecated Use `rightAction.accessibilityLabel`. */
+  rightAccessibilityLabel?: string;
+  /** @deprecated Use `rightAction.icon`. */
+  rightIcon?: AppIconName;
+  /** @deprecated Put supporting context in the content area by default. */
+  subtitle?: string;
+  title: string;
+};
+
+export type BottomSheetOptions = {
+  content: ReactNode;
+  contentSizing?: 'auto' | 'fill';
+  footer?: ReactNode | BottomSheetAction[];
+  header?: false | BottomSheetHeaderOptions;
+  onDismiss?: () => void;
+  snapPoints?: Array<string | number>;
+  /** @deprecated Use `header.title` or `header: false` so the header mode is explicit. */
+  subtitle?: string;
+  /** @deprecated Use `header.title` or `header: false` so the header mode is explicit. */
+  title?: string;
+};
+
+type BottomSheetPresetBaseOptions = Pick<BottomSheetOptions, 'content' | 'footer' | 'onDismiss' | 'snapPoints'>;
+type BottomSheetHeaderPresetOptions = BottomSheetPresetBaseOptions & BottomSheetHeaderOptions;
+
+export const bottomSheetPresets = {
+  actionMenu(options: BottomSheetPresetBaseOptions): BottomSheetOptions {
+    return {
+      ...options,
+      header: false,
+    };
+  },
+  detail(options: BottomSheetHeaderPresetOptions): BottomSheetOptions {
+    const { content, footer, snapPoints, ...header } = options;
+
+    return {
+      content,
+      footer,
+      header,
+      snapPoints,
+    };
+  },
+  selection(options: BottomSheetHeaderPresetOptions): BottomSheetOptions {
+    const { content, footer, snapPoints, ...header } = options;
+
+    return {
+      content,
+      footer,
+      header,
+      snapPoints,
+    };
+  },
+};
+
+type BottomSheetContextValue = {
+  back: () => void;
+  hide: () => void;
+  push: (options: BottomSheetOptions) => void;
+  show: (options: BottomSheetOptions) => void;
+};
+
+const TOP_RESERVED_SPACE = layout.topReservedSpace;
+const MAX_PAGE_SHEET_WIDTH = layout.appMaxWidth;
+const SHEET_HEADER_HEIGHT = layout.sheetHeaderHeight;
+
 const BottomSheetContext = createContext<BottomSheetContextValue | null>(null);
-const BottomSheetContentContext = createContext<ReactNode | null>(null);
+const BottomSheetOptionsContext = createContext<BottomSheetOptions | null>(null);
+const BottomSheetStackDepthContext = createContext(0);
 
 export function BottomSheetProvider({ children }: PropsWithChildren) {
-  const [content, setContent] = useState<ReactNode | null>(null);
-  const hide = useCallback(() => setContent(null), []);
-  const show = useCallback((nextContent: ReactNode) => setContent(nextContent), []);
-  const value = useMemo(() => ({ hide, show }), [hide, show]);
+  const [stack, setStack] = useState<BottomSheetOptions[]>([]);
+  const hide = useCallback(() => {
+    setStack((current) => {
+      current.at(-1)?.onDismiss?.();
+      return [];
+    });
+  }, []);
+  const show = useCallback((nextOptions: BottomSheetOptions) => setStack([nextOptions]), []);
+  const push = useCallback((nextOptions: BottomSheetOptions) => setStack((current) => [...current, nextOptions]), []);
+  const back = useCallback(() => {
+    setStack((current) => (current.length > 1 ? current.slice(0, -1) : []));
+  }, []);
+  const value = useMemo(() => ({ back, hide, push, show }), [back, hide, push, show]);
+  const options = stack.at(-1) ?? null;
 
   return (
     <BottomSheetContext.Provider value={value}>
-      <BottomSheetContentContext.Provider value={content}>{children}</BottomSheetContentContext.Provider>
+      <BottomSheetStackDepthContext.Provider value={stack.length}>
+        <BottomSheetOptionsContext.Provider value={options}>
+          <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+        </BottomSheetOptionsContext.Provider>
+      </BottomSheetStackDepthContext.Provider>
     </BottomSheetContext.Provider>
   );
 }
@@ -36,67 +151,353 @@ export function useBottomSheet() {
 }
 
 export function GlobalBottomSheetHost() {
-  const content = useContext(BottomSheetContentContext);
-  const { hide } = useBottomSheet();
-  const { locale, palette } = useProductSettings();
+  const options = useContext(BottomSheetOptionsContext);
+  const stackDepth = useContext(BottomSheetStackDepthContext);
+  const { back, hide } = useBottomSheet();
+  const { height, width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const { locale, colors } = useProductSettings();
+  const modalRef = useRef<BottomSheetModal>(null);
+  const [backdropInteractive, setBackdropInteractive] = useState(false);
+  const maxHeight = Math.max(1, height - insets.top - TOP_RESERVED_SPACE);
+  const sheetWidth = Math.min(width, MAX_PAGE_SHEET_WIDTH);
+  const horizontalInset = Math.max(0, (width - sheetWidth) / 2);
+  const backdropColor = colors.overlay.backdrop;
+  const hasFooter = Boolean(options?.footer);
+  const snapPoints = useMemo(() => {
+    if (options?.snapPoints?.length) {
+      return options.snapPoints;
+    }
 
-  if (!content) {
+    return [];
+  }, [options?.snapPoints]);
+  const hasExplicitSnapPoints = snapPoints.length > 0;
+  const footerComponent = useCallback(
+    (props: BottomSheetFooterProps) => (
+      options?.footer ? <AppBottomSheetFooter {...props} footer={options.footer} hide={hide} /> : null
+    ),
+    [hide, options?.footer],
+  );
+
+  useEffect(() => {
+    if (options) {
+      setBackdropInteractive(false);
+      modalRef.current?.present();
+      const timer = setTimeout(() => {
+        setBackdropInteractive(true);
+      }, 250);
+
+      return () => clearTimeout(timer);
+    } else {
+      setBackdropInteractive(false);
+      modalRef.current?.dismiss();
+    }
+  }, [options]);
+
+  const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => <AppBottomSheetBackdrop {...props} backgroundColor={backdropColor} />, [backdropColor]);
+  if (!options) {
     return null;
   }
 
+  const headerOptions = resolveHeaderOptions(options);
+
   return (
-    <View pointerEvents="box-none" style={styles.host}>
+    <>
       <Pressable
-        accessibilityLabel={locale === 'en-US' ? 'Close bottom sheet' : '关闭底部弹框'}
-        accessibilityRole="button"
+        accessibilityElementsHidden
+        accessible={false}
+        disabled={!backdropInteractive}
+        importantForAccessibility="no-hide-descendants"
         onPress={hide}
-        style={styles.backdrop}
+        style={StyleSheet.flatten([styles.hostBackdrop, { backgroundColor: backdropColor, height, width }])}
       />
-      <View pointerEvents="box-none" style={styles.sheetSlot}>
-        <View style={StyleSheet.flatten([styles.sheet, { backgroundColor: palette.bg, borderColor: palette.lineSoft }])}>
-          <SafeAreaView edges={['bottom']} style={styles.sheetSafe}>
-            <View style={StyleSheet.flatten([styles.handle, { backgroundColor: palette.line }])} />
-            {content}
-          </SafeAreaView>
-        </View>
+      <BottomSheetModal
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: colors.surface.canvas }}
+        containerStyle={styles.modalContainer}
+        detached={false}
+        enableContentPanningGesture
+        enableDynamicSizing={!hasExplicitSnapPoints}
+        enablePanDownToClose
+        footerComponent={options.footer ? footerComponent : undefined}
+        handleIndicatorStyle={{ backgroundColor: colors.border.default, width: 40 }}
+        handleStyle={styles.handle}
+        index={0}
+        keyboardBlurBehavior="restore"
+        maxDynamicContentSize={maxHeight}
+        onDismiss={hide}
+        ref={modalRef}
+        snapPoints={snapPoints}
+        style={StyleSheet.flatten([styles.modal, { borderColor: colors.border.subtle, marginLeft: horizontalInset, width: sheetWidth }])}
+        topInset={insets.top + TOP_RESERVED_SPACE}>
+        {headerOptions ? <BottomSheetHeader back={back} header={headerOptions} isNested={stackDepth > 1} locale={locale} /> : null}
+        <BottomSheetContent hasFooter={Boolean(options.footer)}>{options.content}</BottomSheetContent>
+      </BottomSheetModal>
+    </>
+  );
+}
+
+function resolveHeaderOptions(options: BottomSheetOptions): BottomSheetHeaderOptions | null {
+  if (options.header === false) {
+    return null;
+  }
+
+  if (options.header) {
+    return options.header;
+  }
+
+  return {
+    subtitle: options.subtitle,
+    title: options.title ?? '',
+  };
+}
+
+function BottomSheetHeader({
+  back,
+  header,
+  isNested,
+  locale,
+}: {
+  back: () => void;
+  header: BottomSheetHeaderOptions;
+  isNested: boolean;
+  locale: string;
+}) {
+  const { colors } = useProductSettings();
+  const nestedBackAction: BottomSheetHeaderAction = useMemo(
+    () => ({
+      accessibilityLabel: locale !== 'zh-CN' ? 'Back' : '返回',
+      icon: 'icon.system.back',
+      onPress: back,
+    }),
+    [back, locale],
+  );
+  const leftAction = isNested ? nestedBackAction : header.leftAction;
+  const rightAction = resolveHeaderRightAction(header);
+
+  return (
+    <BottomSheetView style={StyleSheet.flatten([styles.header, { backgroundColor: colors.surface.canvas }])}>
+      <HeaderIconSlot>
+        {leftAction ? (
+          <HeaderIconButton
+            accessibilityLabel={leftAction.accessibilityLabel}
+            icon={leftAction.icon}
+            onPress={leftAction.onPress}
+            tone="default"
+          />
+        ) : header.leftIcon ? (
+          <AppIconFrame
+            accessibilityElementsHidden
+            backgroundTone="neutral"
+            iconSize={layout.headerIconSize}
+            importantForAccessibility="no-hide-descendants"
+            name={header.leftIcon}
+            size={layout.headerIconButtonSize}
+          />
+        ) : null}
+      </HeaderIconSlot>
+      <View style={styles.headerCopy}>
+        <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.headerTitle} variant="title.sheet">
+          {header.title}
+        </AppText>
       </View>
-    </View>
+      <HeaderIconSlot>
+        {rightAction ? (
+          <HeaderIconButton
+            accessibilityLabel={rightAction.accessibilityLabel}
+            icon={rightAction.icon}
+            onPress={rightAction.onPress}
+            tone="default"
+          />
+        ) : null}
+      </HeaderIconSlot>
+    </BottomSheetView>
+  );
+}
+
+function resolveHeaderRightAction(header: BottomSheetHeaderOptions): BottomSheetHeaderAction | undefined {
+  if (header.rightAction) {
+    return header.rightAction;
+  }
+
+  if (header.onRightPress && header.rightIcon && header.rightAccessibilityLabel) {
+    return {
+      accessibilityLabel: header.rightAccessibilityLabel,
+      icon: header.rightIcon,
+      onPress: header.onRightPress,
+    };
+  }
+
+  return undefined;
+}
+
+function BottomSheetContent({ children, hasFooter }: { children: ReactNode; hasFooter: boolean }) {
+  const options = useContext(BottomSheetOptionsContext);
+  const hasHeader = Boolean(options && resolveHeaderOptions(options));
+  const contentSizing = options?.contentSizing ?? 'auto';
+
+  return (
+    <BottomSheetScrollView
+      enableFooterMarginAdjustment={hasFooter}
+      contentContainerStyle={StyleSheet.flatten([
+        styles.content,
+        contentSizing === 'fill' && styles.contentFill,
+        hasHeader && styles.contentWithHeader,
+        hasFooter && styles.contentWithFooter,
+      ])}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}>
+      {hasHeader ? <BottomSheetHeaderSpacer /> : null}
+      {children}
+    </BottomSheetScrollView>
+  );
+}
+
+function BottomSheetHeaderSpacer() {
+  return (
+    <View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      pointerEvents="none"
+      style={styles.headerSpacer}
+    />
+  );
+}
+
+function AppBottomSheetFooter({
+  animatedFooterPosition,
+  footer,
+  hide,
+}: {
+  animatedFooterPosition: BottomSheetFooterProps['animatedFooterPosition'];
+  footer: ReactNode | BottomSheetAction[];
+  hide: () => void;
+}) {
+  const insets = useSafeAreaInsets();
+  const { colors } = useProductSettings();
+  const footerStyle = StyleSheet.flatten([styles.footer, { backgroundColor: colors.surface.canvas, borderTopColor: colors.border.subtle, paddingBottom: Math.max(insets.bottom, 14) }]);
+
+  if (!Array.isArray(footer)) {
+    return (
+      <GorhomBottomSheetFooter animatedFooterPosition={animatedFooterPosition}>
+        <View style={footerStyle}>{footer}</View>
+      </GorhomBottomSheetFooter>
+    );
+  }
+
+  return (
+    <GorhomBottomSheetFooter animatedFooterPosition={animatedFooterPosition}>
+      <View style={footerStyle}>
+        {footer.map((action) => (
+          <ActionButton
+            accessibilityLabel={action.accessibilityLabel}
+            disabled={action.disabled}
+            icon={action.icon}
+            key={action.label}
+            label={action.label}
+            loading={action.loading}
+            onPress={() => {
+              const shouldClose = action.onPress();
+
+              if (shouldClose !== false) {
+                hide();
+              }
+            }}
+            tone={action.tone}
+            variant={action.variant}
+          />
+        ))}
+      </View>
+    </GorhomBottomSheetFooter>
+  );
+}
+
+function AppBottomSheetBackdrop({ animatedIndex, backgroundColor }: BottomSheetBackdropProps & {
+  backgroundColor: string;
+}) {
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      opacity: interpolate(animatedIndex.value, [-1, 0], [0, 1], Extrapolation.CLAMP),
+    }),
+    [animatedIndex],
+  );
+
+  return (
+    <Animated.View
+      accessibilityElementsHidden
+      accessibilityRole="none"
+      accessible={false}
+      importantForAccessibility="no-hide-descendants"
+      pointerEvents="none"
+      style={StyleSheet.flatten([styles.backdrop, { backgroundColor }, animatedStyle])}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.46)',
+  },
+  content: {
+    gap: spacing.md,
+    padding: layout.screenPaddingX,
+    paddingTop: spacing.md,
+  },
+  contentFill: {
+    flexGrow: 1,
+  },
+  contentWithHeader: {
+    paddingTop: 0,
+  },
+  contentWithFooter: {
+    paddingBottom: 148,
+  },
+  footer: {
+    borderTopWidth: lineWidth.hairline,
+    gap: 10,
+    paddingHorizontal: layout.screenPaddingX,
+    paddingTop: spacing.md,
   },
   handle: {
-    alignSelf: 'center',
-    borderRadius: 999,
-    height: 4,
-    marginBottom: 10,
-    marginTop: 8,
-    width: 40,
+    paddingBottom: 5,
+    paddingTop: 8,
   },
-  host: {
-    ...StyleSheet.absoluteFillObject,
-    elevation: 1000,
+  hostBackdrop: {
+    left: 0,
+    position: 'absolute',
+    top: 0,
     zIndex: 1000,
   },
-  sheet: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    borderTopWidth: 1,
-    maxHeight: '82%',
+  header: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: spacing.md,
+    height: SHEET_HEADER_HEIGHT,
+    paddingHorizontal: layout.screenPaddingX,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: 2,
+  },
+  headerCopy: {
+    flex: 1,
+    minWidth: 0,
+  },
+  headerTitle: {
+    textAlign: 'center',
+  },
+  headerSpacer: {
+    height: SHEET_HEADER_HEIGHT,
+  },
+  modal: {
+    borderTopLeftRadius: radius.sheet,
+    borderTopRightRadius: radius.sheet,
+    borderTopWidth: lineWidth.hairline,
     overflow: 'hidden',
-    width: '100%',
   },
-  sheetSafe: {
-    flexShrink: 1,
-  },
-  sheetSlot: {
+  modalContainer: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end',
-    paddingTop: 64,
-    width: '100%',
+    zIndex: 1001,
   },
 });

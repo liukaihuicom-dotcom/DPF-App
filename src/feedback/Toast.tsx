@@ -1,17 +1,27 @@
-import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { usePathname } from 'expo-router';
+import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { AccessibilityInfo, StyleSheet, useWindowDimensions, View } from 'react-native';
+import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useThemePalette } from '@/src/settings/ProductSettings';
+import { FeedbackToast, type FeedbackToastTone } from '@/src/components/feedback/FeedbackToast';
+import { useProductSettings } from '@/src/settings/ProductSettings';
+import { size, spacing } from '@/src/theme/tokens';
 
-import { AppText } from '../components/Typography';
-
-type ToastTone = 'danger' | 'default' | 'success' | 'warning';
+type ToastTone = FeedbackToastTone;
 
 type ToastPayload = {
+  dismissible?: boolean;
+  durationMs?: number;
   message?: string;
   title: string;
   tone?: ToastTone;
 };
+
+type ActiveToast = Required<Pick<ToastPayload, 'dismissible' | 'durationMs' | 'tone'>> &
+  Omit<ToastPayload, 'dismissible' | 'durationMs' | 'tone'> & {
+    id: number;
+  };
 
 type ToastContextValue = {
   show: (payload: ToastPayload) => void;
@@ -19,10 +29,16 @@ type ToastContextValue = {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
+const TOAST_TITLE_DURATION_MS = 3000;
+const TOAST_MESSAGE_DURATION_MS = 4500;
+const TOAST_LONG_MESSAGE_DURATION_MS = 6000;
+const TOAST_LONG_MESSAGE_LENGTH = 90;
+const TOAST_ENTER_MS = 180;
+const TOAST_EXIT_MS = 140;
+
 export function ToastProvider({ children }: PropsWithChildren) {
-  const palette = useThemePalette();
-  const [toast, setToast] = useState<ToastPayload | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [toast, setToast] = useState<ActiveToast | null>(null);
+  const nextToastId = useRef(0);
 
   const hide = useCallback(() => {
     setToast(null);
@@ -30,88 +46,120 @@ export function ToastProvider({ children }: PropsWithChildren) {
 
   const show = useCallback(
     (payload: ToastPayload) => {
-      if (timer.current) {
-        clearTimeout(timer.current);
-      }
-
-      setToast({ tone: 'default', ...payload });
-
-      timer.current = setTimeout(hide, 2400);
+      const nextToast: ActiveToast = {
+        id: nextToastId.current + 1,
+        message: payload.message,
+        title: payload.title,
+        dismissible: payload.dismissible ?? true,
+        durationMs: payload.durationMs ?? resolveToastDuration(payload),
+        tone: payload.tone ?? 'default',
+      };
+      nextToastId.current = nextToast.id;
+      setToast(nextToast);
     },
-    [hide],
+    [],
   );
 
   const value = useMemo(() => ({ show }), [show]);
 
-  const tone = toast?.tone ?? 'default';
-  const toneColor =
-    tone === 'success' ? palette.down : tone === 'warning' ? palette.amber : tone === 'danger' ? palette.danger : palette.brand;
-
   return (
     <ToastContext.Provider value={value}>
       {children}
-      {toast ? (
-        <View
-          pointerEvents="box-none"
-          style={{
-            alignItems: 'center',
-            left: 0,
-            paddingHorizontal: 14,
-            paddingTop: 18,
-            position: 'absolute',
-            right: 0,
-            top: 0,
-            zIndex: 90,
-          }}>
-          <View
-            style={{
-              alignItems: 'center',
-              backgroundColor: palette.panelHigh,
-              borderColor: palette.line,
-              borderRadius: 16,
-              borderWidth: 1,
-              elevation: 12,
-              flexDirection: 'row',
-              gap: 10,
-              maxWidth: 420,
-              minHeight: 52,
-              paddingHorizontal: 12,
-              paddingVertical: 10,
-              shadowColor: '#000000',
-              shadowOffset: { width: 0, height: 10 },
-              shadowOpacity: 0.14,
-              shadowRadius: 24,
-              width: '100%',
-            }}>
-            <View
-              style={{
-                alignItems: 'center',
-                backgroundColor: `${toneColor}18`,
-                borderColor: `${toneColor}66`,
-                borderRadius: 999,
-                borderWidth: 1,
-                height: 26,
-                justifyContent: 'center',
-                width: 26,
-              }}>
-              <AppText style={{ color: toneColor }} variant="caption">
-                {tone === 'success' ? '✓' : tone === 'danger' ? '!' : tone === 'warning' ? '!' : 'i'}
-              </AppText>
-            </View>
-            <View style={{ flex: 1, gap: 2, minWidth: 0 }}>
-              <AppText numberOfLines={1} variant="body">
-                {toast.title}
-              </AppText>
-              {toast.message ? (
-                <AppText numberOfLines={2} tone="muted" variant="caption">
-                  {toast.message}
-                </AppText>
-              ) : null}
-            </View>
-          </View>
-        </View>
-      ) : null}
+      <FeedbackToastHost onDismiss={hide} toast={toast} />
     </ToastContext.Provider>
+  );
+}
+
+function resolveToastDuration(payload: ToastPayload) {
+  if (!payload.message) {
+    return TOAST_TITLE_DURATION_MS;
+  }
+
+  return payload.message.length > TOAST_LONG_MESSAGE_LENGTH ? TOAST_LONG_MESSAGE_DURATION_MS : TOAST_MESSAGE_DURATION_MS;
+}
+
+function FeedbackToastHost({ onDismiss, toast }: { onDismiss: () => void; toast: ActiveToast | null }) {
+  const { t } = useProductSettings();
+  const pathname = usePathname();
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const hasTopNavigation = pathname ? !/^\/(?:launch|brand-splash|auth(?:\/|$)|$)/.test(pathname) : true;
+  const top = insets.top + (hasTopNavigation ? size.sheet.headerHeight + spacing.md : spacing.lg);
+
+  return (
+    <View
+      accessibilityElementsHidden={!toast}
+      pointerEvents="box-none"
+      style={StyleSheet.flatten([
+        styles.host,
+        {
+          paddingTop: top,
+          width,
+        },
+      ])}>
+      {toast ? <AnimatedFeedbackToast dismissLabel={t('common.cancel')} onDismiss={onDismiss} toast={toast} /> : null}
+    </View>
+  );
+}
+
+function AnimatedFeedbackToast({
+  dismissLabel,
+  onDismiss,
+  toast,
+}: {
+  dismissLabel: string;
+  onDismiss: () => void;
+  toast: ActiveToast;
+}) {
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(-8);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeWithAnimation = useCallback(() => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+      timer.current = null;
+    }
+
+    opacity.value = withTiming(0, { duration: TOAST_EXIT_MS, easing: Easing.out(Easing.quad) });
+    translateY.value = withTiming(-8, { duration: TOAST_EXIT_MS, easing: Easing.out(Easing.quad) }, (finished) => {
+      if (finished) {
+        runOnJS(onDismiss)();
+      }
+    });
+  }, [onDismiss, opacity, translateY]);
+
+  useEffect(() => {
+    opacity.value = 0;
+    translateY.value = -8;
+    opacity.value = withTiming(1, { duration: TOAST_ENTER_MS, easing: Easing.out(Easing.cubic) });
+    translateY.value = withTiming(0, { duration: TOAST_ENTER_MS, easing: Easing.out(Easing.cubic) });
+    AccessibilityInfo.announceForAccessibility([toast.title, toast.message].filter(Boolean).join('. '));
+    timer.current = setTimeout(closeWithAnimation, toast.durationMs);
+
+    return () => {
+      if (timer.current) {
+        clearTimeout(timer.current);
+        timer.current = null;
+      }
+    };
+  }, [closeWithAnimation, opacity, toast.durationMs, toast.id, toast.message, toast.title, translateY]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <FeedbackToast
+        dismissible={toast.dismissible}
+        dismissLabel={dismissLabel}
+        message={toast.message}
+        onDismiss={closeWithAnimation}
+        title={toast.title}
+        tone={toast.tone}
+      />
+    </Animated.View>
   );
 }
 
@@ -126,3 +174,17 @@ export function useToast() {
 
   return context;
 }
+
+const styles = StyleSheet.create({
+  host: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    left: 0,
+    paddingHorizontal: spacing.lg,
+    pointerEvents: 'box-none',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: 90,
+  },
+});

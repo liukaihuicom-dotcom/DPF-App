@@ -2,13 +2,16 @@ import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { lineWidth } from '@/src/theme/tokens';
+import { getFundingOperationHref } from '@/src/domain/funding';
 import { useToast } from '@/src/feedback/Toast';
-import { impactLight, notifyWarning } from '@/src/feedback/haptics';
+import { impactLight, notifySuccess, notifyWarning } from '@/src/feedback/haptics';
 import { useProductSettings } from '@/src/settings/ProductSettings';
 import { useBroker } from '@/src/state/BrokerStore';
 
 import { NativePressable } from './NativePressable';
-import { PhosphorIcon, type PhosphorIconName } from './PhosphorIcon';
+import { AppIcon, type AppIconName, type IconTone } from './AppIcon';
+import { HeaderIconButton } from './HeaderIconButton';
 import { AppText } from './Typography';
 
 type QuickActionSheetProps = {
@@ -17,8 +20,8 @@ type QuickActionSheetProps = {
 };
 
 export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
-  const { instruments, role, setRole, submitUpgradeRequest, upgradeRequest } = useBroker();
-  const { authStatus, palette, t } = useProductSettings();
+  const { instruments, role, submitUpgradeRequest, upgradeRequest } = useBroker();
+  const { authStatus, colors, t } = useProductSettings();
   const toast = useToast();
   const anchor = instruments.find((instrument) => instrument.symbol === 'EUR/USD') ?? instruments[0];
   const requireSignedIn = () => {
@@ -32,58 +35,85 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
     onClose();
     return false;
   };
+  const runPartnerFlow = () => {
+    if (!requireSignedIn()) {
+      return;
+    }
+
+    if (role === 'partner' || upgradeRequest.status === 'approved') {
+      void impactLight();
+      router.push('/partner-tools');
+      onClose();
+      return;
+    }
+
+    if (upgradeRequest.status === 'pending') {
+      void notifyWarning();
+      toast.show({ message: t('upgrade.pendingHint'), title: t('upgrade.status.pending'), tone: 'warning' });
+      router.push('/accounts');
+      onClose();
+      return;
+    }
+
+    submitUpgradeRequest(t('upgrade.defaultReason'));
+    void notifySuccess();
+    toast.show({ message: t('upgrade.pendingHint'), title: t('upgrade.submitted'), tone: 'success' });
+    router.push('/accounts');
+    onClose();
+  };
+  const partnerLabel =
+    role === 'partner' || upgradeRequest.status === 'approved'
+      ? t('control.simulator.action.partnerOpen')
+      : upgradeRequest.status === 'pending'
+        ? t('control.simulator.action.partnerStatus')
+        : t('control.simulator.action.partnerApply');
   const actions: {
-    icon: PhosphorIconName;
+    icon: AppIconName;
     label: string;
     onPress: () => void;
-    tone: string;
+    tone: IconTone;
   }[] = [
     {
-      icon: 'arrows-left-right',
+      icon: 'icon.trading.order_ticket',
       label: t('quick.trade'),
       onPress: () => {
         if (requireSignedIn()) {
-          router.push(`/order/${anchor.id}?direction=buy`);
+          router.push(`/order/${anchor.id}?direction=buy` as never);
           onClose();
         }
       },
-      tone: palette.up,
+      tone: 'up',
     },
     {
-      icon: 'chart-line-up',
+      icon: 'icon.trading.market',
       label: t('quick.markets'),
       onPress: () => {
-        router.push('/markets');
-        onClose();
+        if (requireSignedIn()) {
+          router.push('/markets');
+          onClose();
+        }
       },
-      tone: palette.brand,
+      tone: 'brand',
     },
     {
-      icon: 'bank',
+      icon: 'icon.wallet.deposit',
       label: t('quick.deposit'),
       onPress: () => {
-        router.push('/accounts');
-        onClose();
-      },
-      tone: palette.blue,
-    },
-    {
-      icon: 'share-network',
-      label: t('quick.referral'),
-      onPress: () => {
-        if (authStatus === 'signedIn') {
-          setRole('partner');
-          router.push('/discover');
+        if (requireSignedIn()) {
+          router.push(getFundingOperationHref('deposit') as never);
           onClose();
-          return;
         }
-
-        requireSignedIn();
       },
-      tone: palette.amber,
+      tone: 'blue',
     },
     {
-      icon: 'chats-circle',
+      icon: 'icon.ib.network',
+      label: partnerLabel,
+      onPress: runPartnerFlow,
+      tone: 'amber',
+    },
+    {
+      icon: 'icon.copy.community',
       label: t('upgrade.applyShort'),
       onPress: () => {
         if (!requireSignedIn()) {
@@ -101,28 +131,19 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
         router.push('/accounts');
         onClose();
       },
-      tone: palette.cyan,
+      tone: 'blue',
     },
     {
-      icon: 'headphones',
+      icon: 'icon.support.headset',
       label: t('quick.support'),
       onPress: () => {
-        void impactLight();
-        toast.show({ message: t('top.placeholderMessage'), title: t('top.placeholderTitle', { action: t('top.support') }) });
-        onClose();
+        if (requireSignedIn()) {
+          void impactLight();
+          toast.show({ message: t('top.placeholderMessage'), title: t('top.placeholderTitle', { action: t('top.support') }) });
+          onClose();
+        }
       },
-      tone: palette.textMuted,
-    },
-    {
-      icon: 'arrow-clockwise',
-      label: t('quick.switchRole'),
-      onPress: () => {
-        setRole(role === 'trader' ? 'partner' : 'trader');
-        void impactLight();
-        toast.show({ title: role === 'trader' ? t('role.partner') : t('role.trader'), message: t('quick.switchRoleDone') });
-        onClose();
-      },
-      tone: palette.cyan,
+      tone: 'textMuted',
     },
   ];
 
@@ -131,39 +152,39 @@ export function QuickActionSheet({ onClose, open }: QuickActionSheetProps) {
   }
 
   return (
-    <View pointerEvents="box-none" style={styles.host}>
-      <NativePressable accessibilityLabel={t('common.cancel')} onPress={onClose} style={styles.scrim} />
-      <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.sheet, { backgroundColor: palette.panelHigh, borderColor: palette.lineSoft }])}>
+    <View style={styles.host}>
+      <NativePressable accessibilityLabel={t('common.cancel')} onPress={onClose} style={StyleSheet.flatten([styles.scrim, { backgroundColor: `${colors.surface.canvas}CC` }])} />
+      <SafeAreaView edges={['bottom']} style={StyleSheet.flatten([styles.sheet, { backgroundColor: colors.surface.raised }])}>
         <View style={styles.handleWrap}>
-          <View style={StyleSheet.flatten([styles.handle, { backgroundColor: palette.line }])} />
+          <View style={StyleSheet.flatten([styles.handle, { backgroundColor: colors.border.default }])} />
         </View>
-        <View style={styles.sheetHead}>
+        <View style={StyleSheet.flatten([styles.sheetHead, { borderBottomColor: colors.border.subtle }])}>
           <View>
             <AppText tone="dim" variant="eyebrow">
               {t('tabs.quick')}
             </AppText>
             <AppText variant="subtitle">{t('quick.title')}</AppText>
           </View>
-          <NativePressable accessibilityLabel={t('common.cancel')} minTouch={44} onPress={onClose} style={styles.closeButton}>
-            <PhosphorIcon color={palette.textMuted} name="x" size={16} />
-          </NativePressable>
+          <HeaderIconButton accessibilityLabel={t('common.cancel')} icon="icon.system.close" onPress={onClose} />
         </View>
-        <View style={styles.actionGrid}>
+        <View style={styles.sheetContent}>
+          <View style={styles.actionGrid}>
           {actions.map((action) => (
             <NativePressable
               accessibilityRole="button"
               key={action.label}
               minTouch={64}
               onPress={action.onPress}
-              style={StyleSheet.flatten([styles.actionItem, { backgroundColor: palette.panel, borderColor: palette.lineSoft }])}>
-              <View style={StyleSheet.flatten([styles.actionIcon, { backgroundColor: `${action.tone}12`, borderColor: `${action.tone}55` }])}>
-                <PhosphorIcon color={action.tone} name={action.icon} size={17} />
+              style={StyleSheet.flatten([styles.actionItem, { backgroundColor: colors.surface.panel }])}>
+              <View style={styles.actionIcon}>
+                <AppIcon name={action.icon} size={16} tone={action.tone} />
               </View>
               <AppText adjustsFontSizeToFit numberOfLines={1} variant="caption">
                 {action.label}
               </AppText>
             </NativePressable>
           ))}
+          </View>
         </View>
       </SafeAreaView>
     </View>
@@ -180,8 +201,6 @@ const styles = StyleSheet.create({
   },
   actionIcon: {
     alignItems: 'center',
-    borderRadius: 999,
-    borderWidth: 1,
     height: 34,
     justifyContent: 'center',
     width: 34,
@@ -189,16 +208,12 @@ const styles = StyleSheet.create({
   actionItem: {
     alignItems: 'center',
     borderRadius: 14,
-    borderWidth: 1,
+    borderWidth: lineWidth.none,
     flexBasis: '30%',
     flexGrow: 1,
     gap: 7,
     minWidth: 88,
     padding: 10,
-  },
-  closeButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   handle: {
     borderRadius: 999,
@@ -212,13 +227,13 @@ const styles = StyleSheet.create({
   host: {
     bottom: 0,
     left: 0,
+    pointerEvents: 'box-none',
     position: 'absolute',
     right: 0,
     top: 0,
     zIndex: 70,
   },
   scrim: {
-    backgroundColor: 'rgba(0,0,0,0.18)',
     bottom: 0,
     left: 0,
     position: 'absolute',
@@ -228,7 +243,6 @@ const styles = StyleSheet.create({
   sheet: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    borderWidth: 1,
     bottom: 0,
     left: 0,
     paddingBottom: 8,
@@ -238,9 +252,16 @@ const styles = StyleSheet.create({
   },
   sheetHead: {
     alignItems: 'center',
+    borderBottomWidth: lineWidth.hairline,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    minHeight: 62,
+    paddingBottom: 12,
     paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingTop: 6,
+  },
+  sheetContent: {
+    minHeight: 194,
+    paddingBottom: 12,
   },
 });

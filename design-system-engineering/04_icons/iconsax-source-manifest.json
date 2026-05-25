@@ -1,0 +1,1827 @@
+{
+  "version": "3.6.0",
+  "generated_at": "2026-05-25",
+  "source_library": "iconsax",
+  "source_repository": "https://github.com/lusaxweb/iconsax",
+  "source_commit": "e5dba15361f69d34d0f3f3f35408a28fe74c5727",
+  "source_zip_url": "https://raw.githubusercontent.com/lusaxweb/iconsax/master/static/Iconsax.zip",
+  "source_zip_sha256": "4887b174be7c05ba6ac4d16bb4e6b5d863f8605389ca07fe08e55940e88287d7",
+  "license": {
+    "name": "Iconsax Free License",
+    "url": "https://docs.iconsax.io/license-and-terms/license",
+    "attribution_required": false,
+    "restrictions": [
+      "Do not resell or redistribute Iconsax as a standalone icon pack.",
+      "Do not claim Iconsax artwork ownership or authorship.",
+      "Project usage is internal/private app asset vendoring, not standalone icon package distribution."
+    ]
+  },
+  "runtime_contract": {
+    "renderer": "src/icons/local/IconsaxIconBase.tsx",
+    "local_asset_module": "src/icons/local/iconsax/iconsaxGeneratedIcons.tsx",
+    "app_icon_style_mapping": {
+      "line": "Iconsax Linear",
+      "fill": "Iconsax Bold"
+    },
+    "runtime_dependency": "none",
+    "blocked_runtime_package": "iconsax-react-native"
+  },
+  "counts": {
+    "source_categories": 32,
+    "source_unique_icons": 1049,
+    "generated_runtime_icons": 993,
+    "skipped_without_linear_and_bold": 56,
+    "source_variant_files_by_style": {
+      "linear": 1028,
+      "bold": 1007,
+      "broken": 1008,
+      "bulk": 1011,
+      "twotone": 1002,
+      "outline": 1006
+    }
+  },
+  "category_counts": {
+    "archive": {
+      "runtime_linear_bold_icons": 12,
+      "source_unique_icons": 12,
+      "source_category": "Archive"
+    },
+    "arrow": {
+      "runtime_linear_bold_icons": 62,
+      "source_unique_icons": 66,
+      "source_category": "Arrow"
+    },
+    "astrology": {
+      "runtime_linear_bold_icons": 6,
+      "source_unique_icons": 6,
+      "source_category": "Astrology"
+    },
+    "building": {
+      "runtime_linear_bold_icons": 11,
+      "source_unique_icons": 11,
+      "source_category": "Building"
+    },
+    "business": {
+      "runtime_linear_bold_icons": 19,
+      "source_unique_icons": 20,
+      "source_category": "Business"
+    },
+    "call": {
+      "runtime_linear_bold_icons": 9,
+      "source_unique_icons": 9,
+      "source_category": "Call"
+    },
+    "car": {
+      "runtime_linear_bold_icons": 17,
+      "source_unique_icons": 17,
+      "source_category": "Car"
+    },
+    "computers_devices_electronics": {
+      "runtime_linear_bold_icons": 48,
+      "source_unique_icons": 48,
+      "source_category": "Computers-Devices-Electronics"
+    },
+    "content_edit": {
+      "runtime_linear_bold_icons": 35,
+      "source_unique_icons": 35,
+      "source_category": "Content-Edit"
+    },
+    "crypto_company": {
+      "runtime_linear_bold_icons": 105,
+      "source_unique_icons": 110,
+      "source_category": "Crypto-Company"
+    },
+    "crypto_currency": {
+      "runtime_linear_bold_icons": 6,
+      "source_unique_icons": 6,
+      "source_category": "Crypto-Currency"
+    },
+    "delivery": {
+      "runtime_linear_bold_icons": 14,
+      "source_unique_icons": 18,
+      "source_category": "Delivery"
+    },
+    "design_tools": {
+      "runtime_linear_bold_icons": 51,
+      "source_unique_icons": 75,
+      "source_category": "Design-Tools"
+    },
+    "emails_messages": {
+      "runtime_linear_bold_icons": 36,
+      "source_unique_icons": 36,
+      "source_category": "Emails-Messages"
+    },
+    "essetional": {
+      "runtime_linear_bold_icons": 97,
+      "source_unique_icons": 104,
+      "source_category": "Essetional"
+    },
+    "files": {
+      "runtime_linear_bold_icons": 8,
+      "source_unique_icons": 8,
+      "source_category": "Files"
+    },
+    "grid": {
+      "runtime_linear_bold_icons": 43,
+      "source_unique_icons": 44,
+      "source_category": "Grid"
+    },
+    "location": {
+      "runtime_linear_bold_icons": 27,
+      "source_unique_icons": 27,
+      "source_category": "Location"
+    },
+    "money": {
+      "runtime_linear_bold_icons": 76,
+      "source_unique_icons": 80,
+      "source_category": "Money"
+    },
+    "notifications": {
+      "runtime_linear_bold_icons": 8,
+      "source_unique_icons": 9,
+      "source_category": "Notifications"
+    },
+    "programing": {
+      "runtime_linear_bold_icons": 27,
+      "source_unique_icons": 27,
+      "source_category": "Programing"
+    },
+    "school_learning": {
+      "runtime_linear_bold_icons": 15,
+      "source_unique_icons": 15,
+      "source_category": "School-Learning"
+    },
+    "search": {
+      "runtime_linear_bold_icons": 10,
+      "source_unique_icons": 10,
+      "source_category": "Search"
+    },
+    "security": {
+      "runtime_linear_bold_icons": 27,
+      "source_unique_icons": 28,
+      "source_category": "Security"
+    },
+    "settings": {
+      "runtime_linear_bold_icons": 17,
+      "source_unique_icons": 17,
+      "source_category": "Settings"
+    },
+    "shop": {
+      "runtime_linear_bold_icons": 14,
+      "source_unique_icons": 14,
+      "source_category": "Shop"
+    },
+    "support_like_question": {
+      "runtime_linear_bold_icons": 26,
+      "source_unique_icons": 26,
+      "source_category": "Support-Like-Question"
+    },
+    "time": {
+      "runtime_linear_bold_icons": 15,
+      "source_unique_icons": 15,
+      "source_category": "Time"
+    },
+    "type_paragraph_character": {
+      "runtime_linear_bold_icons": 35,
+      "source_unique_icons": 35,
+      "source_category": "Type-Paragraph-Character"
+    },
+    "users": {
+      "runtime_linear_bold_icons": 19,
+      "source_unique_icons": 20,
+      "source_category": "Users"
+    },
+    "video_audio_image": {
+      "runtime_linear_bold_icons": 80,
+      "source_unique_icons": 83,
+      "source_category": "Video-Audio-Image"
+    },
+    "weather": {
+      "runtime_linear_bold_icons": 18,
+      "source_unique_icons": 18,
+      "source_category": "Weather"
+    }
+  },
+  "duplicate_base_slugs": {
+    "archive": [
+      "archive",
+      "essetional",
+      "money"
+    ],
+    "bitcoin_card": [
+      "crypto_company",
+      "crypto_currency"
+    ],
+    "bitcoin_convert": [
+      "crypto_company",
+      "crypto_currency"
+    ],
+    "bitcoin_refresh": [
+      "crypto_company",
+      "crypto_currency"
+    ],
+    "buy_crypto": [
+      "crypto_company",
+      "crypto_currency"
+    ],
+    "call": [
+      "call",
+      "car"
+    ],
+    "call_add": [
+      "call",
+      "car"
+    ],
+    "call_calling": [
+      "call",
+      "car"
+    ],
+    "call_incoming": [
+      "call",
+      "car"
+    ],
+    "call_minus": [
+      "call",
+      "car"
+    ],
+    "call_outgoing": [
+      "call",
+      "car"
+    ],
+    "call_received": [
+      "call",
+      "car"
+    ],
+    "call_remove": [
+      "call",
+      "car"
+    ],
+    "call_slash": [
+      "call",
+      "car"
+    ],
+    "card_coin": [
+      "crypto_company",
+      "crypto_currency"
+    ],
+    "chart": [
+      "business",
+      "essetional"
+    ],
+    "clock": [
+      "computers_devices_electronics",
+      "time"
+    ],
+    "devices": [
+      "computers_devices_electronics",
+      "video_audio_image"
+    ],
+    "discover": [
+      "essetional",
+      "location"
+    ],
+    "document": [
+      "content_edit",
+      "money"
+    ],
+    "eraser": [
+      "design_tools",
+      "type_paragraph_character"
+    ],
+    "flash": [
+      "essetional",
+      "weather"
+    ],
+    "flash_circle": [
+      "design_tools",
+      "essetional"
+    ],
+    "glass": [
+      "design_tools",
+      "essetional"
+    ],
+    "hashtag": [
+      "business",
+      "programing"
+    ],
+    "lamp": [
+      "computers_devices_electronics",
+      "essetional"
+    ],
+    "maximize": [
+      "grid",
+      "type_paragraph_character"
+    ],
+    "menu": [
+      "essetional",
+      "settings"
+    ],
+    "mouse": [
+      "computers_devices_electronics",
+      "essetional"
+    ],
+    "note": [
+      "content_edit",
+      "school_learning"
+    ],
+    "radar": [
+      "location",
+      "security"
+    ],
+    "ranking": [
+      "essetional",
+      "support_like_question"
+    ],
+    "rotate_left": [
+      "arrow",
+      "grid"
+    ],
+    "rotate_right": [
+      "arrow",
+      "grid"
+    ],
+    "scissor": [
+      "design_tools",
+      "video_audio_image"
+    ],
+    "send": [
+      "arrow",
+      "essetional"
+    ],
+    "trade": [
+      "crypto_company",
+      "crypto_currency"
+    ],
+    "triangle": [
+      "crypto_company",
+      "essetional"
+    ],
+    "weight": [
+      "computers_devices_electronics",
+      "essetional"
+    ]
+  },
+  "skipped_icons": [
+    {
+      "category_slug": "arrow",
+      "icon_slug": "arrow_circle_up",
+      "available_variants": [
+        "bold",
+        "broken",
+        "bulk",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "arrow",
+      "icon_slug": "arrow_right_4",
+      "available_variants": [
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "arrow",
+      "icon_slug": "arrow_swap",
+      "available_variants": [
+        "bold",
+        "broken",
+        "bulk",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "arrow",
+      "icon_slug": "import_3",
+      "available_variants": [
+        "bold"
+      ]
+    },
+    {
+      "category_slug": "business",
+      "icon_slug": "chart_fail",
+      "available_variants": [
+        "bold",
+        "broken",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "crypto_company",
+      "icon_slug": "bootstrap",
+      "available_variants": [
+        "broken",
+        "bulk",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "crypto_company",
+      "icon_slug": "google_drive",
+      "available_variants": [
+        "broken",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "crypto_company",
+      "icon_slug": "google_paly",
+      "available_variants": [
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "crypto_company",
+      "icon_slug": "group",
+      "available_variants": [
+        "linear",
+        "broken",
+        "bulk"
+      ]
+    },
+    {
+      "category_slug": "crypto_company",
+      "icon_slug": "javascript",
+      "available_variants": [
+        "broken"
+      ]
+    },
+    {
+      "category_slug": "delivery",
+      "icon_slug": "group",
+      "available_variants": [
+        "linear",
+        "broken",
+        "bulk"
+      ]
+    },
+    {
+      "category_slug": "delivery",
+      "icon_slug": "group_1",
+      "available_variants": [
+        "linear",
+        "bulk"
+      ]
+    },
+    {
+      "category_slug": "delivery",
+      "icon_slug": "truck",
+      "available_variants": [
+        "bold",
+        "broken",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "delivery",
+      "icon_slug": "truck_fast",
+      "available_variants": [
+        "bold",
+        "broken",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "backward_item_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "bezier_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "blur_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "brush_4",
+      "available_variants": [
+        "bold",
+        "broken",
+        "bulk",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "bucket",
+      "available_variants": [
+        "bold",
+        "broken",
+        "bulk",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "bucket_circle_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "bucket_square_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "colors_square_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "component_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "forward_item_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "group",
+      "available_variants": [
+        "linear",
+        "broken",
+        "bulk"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "group_1",
+      "available_variants": [
+        "linear",
+        "bulk"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "group_2",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "group_3",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "main_component_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "mask_3",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "omega_circle_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "omega_square_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "pen_add_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "pen_close_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "pen_remove_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "pen_tool_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "pen_tool_2_1",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "design_tools",
+      "icon_slug": "shapes_2",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "essetional",
+      "icon_slug": "3full",
+      "available_variants": []
+    },
+    {
+      "category_slug": "essetional",
+      "icon_slug": "forbidden",
+      "available_variants": [
+        "bold",
+        "broken",
+        "bulk",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "essetional",
+      "icon_slug": "forbidden_2",
+      "available_variants": [
+        "bold",
+        "broken",
+        "bulk",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "essetional",
+      "icon_slug": "group",
+      "available_variants": [
+        "linear",
+        "broken",
+        "bulk"
+      ]
+    },
+    {
+      "category_slug": "essetional",
+      "icon_slug": "group_1",
+      "available_variants": [
+        "linear",
+        "bulk"
+      ]
+    },
+    {
+      "category_slug": "essetional",
+      "icon_slug": "group_2",
+      "available_variants": [
+        "linear"
+      ]
+    },
+    {
+      "category_slug": "essetional",
+      "icon_slug": "home_1",
+      "available_variants": [
+        "bold",
+        "broken",
+        "bulk",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "grid",
+      "icon_slug": "element_1",
+      "available_variants": [
+        "linear",
+        "bulk",
+        "twotone"
+      ]
+    },
+    {
+      "category_slug": "money",
+      "icon_slug": "convert_card",
+      "available_variants": [
+        "bold",
+        "broken",
+        "bulk",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "money",
+      "icon_slug": "group",
+      "available_variants": [
+        "linear",
+        "broken",
+        "bulk"
+      ]
+    },
+    {
+      "category_slug": "money",
+      "icon_slug": "group_1",
+      "available_variants": [
+        "linear",
+        "bulk"
+      ]
+    },
+    {
+      "category_slug": "money",
+      "icon_slug": "percentage_circle",
+      "available_variants": [
+        "bold",
+        "broken",
+        "bulk",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "notifications",
+      "icon_slug": "notification_circle",
+      "available_variants": [
+        "linear",
+        "broken",
+        "bulk",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "security",
+      "icon_slug": "shield",
+      "available_variants": [
+        "linear",
+        "bulk",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "users",
+      "icon_slug": "profile",
+      "available_variants": [
+        "linear",
+        "bulk",
+        "twotone"
+      ]
+    },
+    {
+      "category_slug": "video_audio_image",
+      "icon_slug": "group",
+      "available_variants": [
+        "linear",
+        "broken",
+        "bulk"
+      ]
+    },
+    {
+      "category_slug": "video_audio_image",
+      "icon_slug": "shuffle",
+      "available_variants": [
+        "bold",
+        "broken",
+        "bulk",
+        "twotone",
+        "outline"
+      ]
+    },
+    {
+      "category_slug": "video_audio_image",
+      "icon_slug": "volume",
+      "available_variants": [
+        "twotone"
+      ]
+    }
+  ],
+  "generated_icon_keys": [
+    "icon.iconsax.archive.archive",
+    "icon.iconsax.archive.archive_add",
+    "icon.iconsax.archive.archive_minus",
+    "icon.iconsax.archive.archive_slash",
+    "icon.iconsax.archive.archive_tick",
+    "icon.iconsax.archive.book_saved",
+    "icon.iconsax.archive.book_square",
+    "icon.iconsax.archive.receipt_square",
+    "icon.iconsax.archive.save_2",
+    "icon.iconsax.archive.save_add",
+    "icon.iconsax.archive.save_minus",
+    "icon.iconsax.archive.save_remove",
+    "icon.iconsax.arrow.arrange_circle",
+    "icon.iconsax.arrow.arrange_circle_2",
+    "icon.iconsax.arrow.arrange_square",
+    "icon.iconsax.arrow.arrange_square_2",
+    "icon.iconsax.arrow.arrow_2",
+    "icon.iconsax.arrow.arrow_3",
+    "icon.iconsax.arrow.arrow_bottom",
+    "icon.iconsax.arrow.arrow_circle_down",
+    "icon.iconsax.arrow.arrow_circle_left",
+    "icon.iconsax.arrow.arrow_circle_right",
+    "icon.iconsax.arrow.arrow_down",
+    "icon.iconsax.arrow.arrow_down_1",
+    "icon.iconsax.arrow.arrow_down_2",
+    "icon.iconsax.arrow.arrow_left",
+    "icon.iconsax.arrow.arrow_left_1",
+    "icon.iconsax.arrow.arrow_left_2",
+    "icon.iconsax.arrow.arrow_left_3",
+    "icon.iconsax.arrow.arrow_right",
+    "icon.iconsax.arrow.arrow_right_1",
+    "icon.iconsax.arrow.arrow_right_2",
+    "icon.iconsax.arrow.arrow_right_3",
+    "icon.iconsax.arrow.arrow_square_down",
+    "icon.iconsax.arrow.arrow_square_left",
+    "icon.iconsax.arrow.arrow_square_right",
+    "icon.iconsax.arrow.arrow_square_up",
+    "icon.iconsax.arrow.arrow_swap_horizontal",
+    "icon.iconsax.arrow.arrow_up",
+    "icon.iconsax.arrow.arrow_up_1",
+    "icon.iconsax.arrow.arrow_up_2",
+    "icon.iconsax.arrow.arrow_up_3",
+    "icon.iconsax.arrow.back_square",
+    "icon.iconsax.arrow.convert",
+    "icon.iconsax.arrow.export",
+    "icon.iconsax.arrow.export_1",
+    "icon.iconsax.arrow.export_2",
+    "icon.iconsax.arrow.export_3",
+    "icon.iconsax.arrow.forward_square",
+    "icon.iconsax.arrow.import",
+    "icon.iconsax.arrow.import_1",
+    "icon.iconsax.arrow.import_2",
+    "icon.iconsax.arrow.login",
+    "icon.iconsax.arrow.login_1",
+    "icon.iconsax.arrow.logout",
+    "icon.iconsax.arrow.logout_1",
+    "icon.iconsax.arrow.receive_square",
+    "icon.iconsax.arrow.receive_square_2",
+    "icon.iconsax.arrow.received",
+    "icon.iconsax.arrow.redo",
+    "icon.iconsax.arrow.refresh",
+    "icon.iconsax.arrow.refresh_2",
+    "icon.iconsax.arrow.refresh_circle",
+    "icon.iconsax.arrow.refresh_left_square",
+    "icon.iconsax.arrow.refresh_right_square",
+    "icon.iconsax.arrow.refresh_square_2",
+    "icon.iconsax.arrow.repeat",
+    "icon.iconsax.arrow.repeat_circle",
+    "icon.iconsax.arrow.rotate_left",
+    "icon.iconsax.arrow.rotate_right",
+    "icon.iconsax.arrow.send",
+    "icon.iconsax.arrow.send_sqaure_2",
+    "icon.iconsax.arrow.send_square",
+    "icon.iconsax.arrow.undo",
+    "icon.iconsax.astrology.aquarius",
+    "icon.iconsax.astrology.gemini",
+    "icon.iconsax.astrology.gemini_2",
+    "icon.iconsax.astrology.man",
+    "icon.iconsax.astrology.sagittarius",
+    "icon.iconsax.astrology.woman",
+    "icon.iconsax.building.bank",
+    "icon.iconsax.building.building",
+    "icon.iconsax.building.building_3",
+    "icon.iconsax.building.building_4",
+    "icon.iconsax.building.buildings",
+    "icon.iconsax.building.buildings_2",
+    "icon.iconsax.building.buliding",
+    "icon.iconsax.building.courthouse",
+    "icon.iconsax.building.hospital",
+    "icon.iconsax.building.house",
+    "icon.iconsax.building.house_2",
+    "icon.iconsax.business.activity",
+    "icon.iconsax.business.chart",
+    "icon.iconsax.business.chart_1",
+    "icon.iconsax.business.chart_2",
+    "icon.iconsax.business.chart_21",
+    "icon.iconsax.business.chart_success",
+    "icon.iconsax.business.diagram",
+    "icon.iconsax.business.favorite_chart",
+    "icon.iconsax.business.graph",
+    "icon.iconsax.business.hashtag",
+    "icon.iconsax.business.health",
+    "icon.iconsax.business.home_hashtag",
+    "icon.iconsax.business.home_trend_down",
+    "icon.iconsax.business.home_trend_up",
+    "icon.iconsax.business.personalcard",
+    "icon.iconsax.business.presention_chart",
+    "icon.iconsax.business.status_up",
+    "icon.iconsax.business.trend_down",
+    "icon.iconsax.business.trend_up",
+    "icon.iconsax.call.call",
+    "icon.iconsax.call.call_add",
+    "icon.iconsax.call.call_calling",
+    "icon.iconsax.call.call_incoming",
+    "icon.iconsax.call.call_minus",
+    "icon.iconsax.call.call_outgoing",
+    "icon.iconsax.call.call_received",
+    "icon.iconsax.call.call_remove",
+    "icon.iconsax.call.call_slash",
+    "icon.iconsax.car.airplane",
+    "icon.iconsax.car.airplane_square",
+    "icon.iconsax.car.bus",
+    "icon.iconsax.car.call",
+    "icon.iconsax.car.call_add",
+    "icon.iconsax.car.call_calling",
+    "icon.iconsax.car.call_incoming",
+    "icon.iconsax.car.call_minus",
+    "icon.iconsax.car.call_outgoing",
+    "icon.iconsax.car.call_received",
+    "icon.iconsax.car.call_remove",
+    "icon.iconsax.car.call_slash",
+    "icon.iconsax.car.car",
+    "icon.iconsax.car.driving",
+    "icon.iconsax.car.gas_station",
+    "icon.iconsax.car.ship",
+    "icon.iconsax.car.smart_car",
+    "icon.iconsax.computers_devices_electronics.airdrop",
+    "icon.iconsax.computers_devices_electronics.airpod",
+    "icon.iconsax.computers_devices_electronics.airpods",
+    "icon.iconsax.computers_devices_electronics.bluetooth",
+    "icon.iconsax.computers_devices_electronics.bluetooth_2",
+    "icon.iconsax.computers_devices_electronics.bluetooth_circle",
+    "icon.iconsax.computers_devices_electronics.bluetooth_rectangle",
+    "icon.iconsax.computers_devices_electronics.clock",
+    "icon.iconsax.computers_devices_electronics.cloud_add",
+    "icon.iconsax.computers_devices_electronics.cloud_change",
+    "icon.iconsax.computers_devices_electronics.cloud_connection",
+    "icon.iconsax.computers_devices_electronics.cloud_remove",
+    "icon.iconsax.computers_devices_electronics.cpu",
+    "icon.iconsax.computers_devices_electronics.cpu_charge",
+    "icon.iconsax.computers_devices_electronics.cpu_setting",
+    "icon.iconsax.computers_devices_electronics.devices",
+    "icon.iconsax.computers_devices_electronics.driver",
+    "icon.iconsax.computers_devices_electronics.driver_2",
+    "icon.iconsax.computers_devices_electronics.driver_refresh",
+    "icon.iconsax.computers_devices_electronics.electricity",
+    "icon.iconsax.computers_devices_electronics.external_drive",
+    "icon.iconsax.computers_devices_electronics.folder_connection",
+    "icon.iconsax.computers_devices_electronics.game",
+    "icon.iconsax.computers_devices_electronics.gameboy",
+    "icon.iconsax.computers_devices_electronics.headphone",
+    "icon.iconsax.computers_devices_electronics.headphones",
+    "icon.iconsax.computers_devices_electronics.keyboard",
+    "icon.iconsax.computers_devices_electronics.keyboard_open",
+    "icon.iconsax.computers_devices_electronics.lamp",
+    "icon.iconsax.computers_devices_electronics.microscope",
+    "icon.iconsax.computers_devices_electronics.mirroring_screen",
+    "icon.iconsax.computers_devices_electronics.mobile",
+    "icon.iconsax.computers_devices_electronics.monitor",
+    "icon.iconsax.computers_devices_electronics.monitor_mobbile",
+    "icon.iconsax.computers_devices_electronics.monitor_recorder",
+    "icon.iconsax.computers_devices_electronics.mouse",
+    "icon.iconsax.computers_devices_electronics.music_play",
+    "icon.iconsax.computers_devices_electronics.printer",
+    "icon.iconsax.computers_devices_electronics.printer_slash",
+    "icon.iconsax.computers_devices_electronics.ram",
+    "icon.iconsax.computers_devices_electronics.ram_2",
+    "icon.iconsax.computers_devices_electronics.simcard",
+    "icon.iconsax.computers_devices_electronics.simcard_1",
+    "icon.iconsax.computers_devices_electronics.simcard_2",
+    "icon.iconsax.computers_devices_electronics.speaker",
+    "icon.iconsax.computers_devices_electronics.watch",
+    "icon.iconsax.computers_devices_electronics.watch_status",
+    "icon.iconsax.computers_devices_electronics.weight",
+    "icon.iconsax.content_edit.archive_book",
+    "icon.iconsax.content_edit.bill",
+    "icon.iconsax.content_edit.clipboard_close",
+    "icon.iconsax.content_edit.clipboard_export",
+    "icon.iconsax.content_edit.clipboard_import",
+    "icon.iconsax.content_edit.clipboard_text",
+    "icon.iconsax.content_edit.clipboard_tick",
+    "icon.iconsax.content_edit.copyright",
+    "icon.iconsax.content_edit.creative_commons",
+    "icon.iconsax.content_edit.document",
+    "icon.iconsax.content_edit.document_cloud",
+    "icon.iconsax.content_edit.document_copy",
+    "icon.iconsax.content_edit.document_download",
+    "icon.iconsax.content_edit.document_favorite",
+    "icon.iconsax.content_edit.document_filter",
+    "icon.iconsax.content_edit.document_forward",
+    "icon.iconsax.content_edit.document_like",
+    "icon.iconsax.content_edit.document_normal",
+    "icon.iconsax.content_edit.document_previous",
+    "icon.iconsax.content_edit.document_sketch",
+    "icon.iconsax.content_edit.document_text",
+    "icon.iconsax.content_edit.document_text_1",
+    "icon.iconsax.content_edit.document_upload",
+    "icon.iconsax.content_edit.edit",
+    "icon.iconsax.content_edit.edit_2",
+    "icon.iconsax.content_edit.menu_board",
+    "icon.iconsax.content_edit.note",
+    "icon.iconsax.content_edit.note_1",
+    "icon.iconsax.content_edit.note_add",
+    "icon.iconsax.content_edit.note_favorite",
+    "icon.iconsax.content_edit.note_remove",
+    "icon.iconsax.content_edit.note_text",
+    "icon.iconsax.content_edit.stickynote",
+    "icon.iconsax.content_edit.task",
+    "icon.iconsax.content_edit.task_square",
+    "icon.iconsax.crypto_company.aave_aave",
+    "icon.iconsax.crypto_company.android",
+    "icon.iconsax.crypto_company.ankr_ankr",
+    "icon.iconsax.crypto_company.apple",
+    "icon.iconsax.crypto_company.augur_rep",
+    "icon.iconsax.crypto_company.autonio_niox",
+    "icon.iconsax.crypto_company.avalanche_avax",
+    "icon.iconsax.crypto_company.be",
+    "icon.iconsax.crypto_company.binance_coin_bnb",
+    "icon.iconsax.crypto_company.binance_usd_busd",
+    "icon.iconsax.crypto_company.bitcoin_btc",
+    "icon.iconsax.crypto_company.bitcoin_card",
+    "icon.iconsax.crypto_company.bitcoin_convert",
+    "icon.iconsax.crypto_company.bitcoin_refresh",
+    "icon.iconsax.crypto_company.blogger",
+    "icon.iconsax.crypto_company.bootsrap",
+    "icon.iconsax.crypto_company.buy_crypto",
+    "icon.iconsax.crypto_company.card_coin",
+    "icon.iconsax.crypto_company.cardano_ada",
+    "icon.iconsax.crypto_company.celo_celo",
+    "icon.iconsax.crypto_company.celsius_cel",
+    "icon.iconsax.crypto_company.chainlink_link",
+    "icon.iconsax.crypto_company.civic_cvc",
+    "icon.iconsax.crypto_company.dai_dai",
+    "icon.iconsax.crypto_company.dash_dash",
+    "icon.iconsax.crypto_company.decred_dcr",
+    "icon.iconsax.crypto_company.dent_dent",
+    "icon.iconsax.crypto_company.dribbble",
+    "icon.iconsax.crypto_company.dropbox",
+    "icon.iconsax.crypto_company.educare_ekt",
+    "icon.iconsax.crypto_company.emercoin_emc",
+    "icon.iconsax.crypto_company.enjin_coin_enj",
+    "icon.iconsax.crypto_company.eos_eos",
+    "icon.iconsax.crypto_company.ethereum_classic_etc",
+    "icon.iconsax.crypto_company.ethereum_eth",
+    "icon.iconsax.crypto_company.facebook",
+    "icon.iconsax.crypto_company.figma",
+    "icon.iconsax.crypto_company.figma_1",
+    "icon.iconsax.crypto_company.framer",
+    "icon.iconsax.crypto_company.ftx_token_ftt",
+    "icon.iconsax.crypto_company.google",
+    "icon.iconsax.crypto_company.google_1",
+    "icon.iconsax.crypto_company.google_play",
+    "icon.iconsax.crypto_company.harmony_one",
+    "icon.iconsax.crypto_company.hedera_hashgraph_hbar",
+    "icon.iconsax.crypto_company.hex_hex",
+    "icon.iconsax.crypto_company.html_3",
+    "icon.iconsax.crypto_company.html_5",
+    "icon.iconsax.crypto_company.huobi_token_ht",
+    "icon.iconsax.crypto_company.icon_icx",
+    "icon.iconsax.crypto_company.illustrator",
+    "icon.iconsax.crypto_company.iost_iost",
+    "icon.iconsax.crypto_company.java_script",
+    "icon.iconsax.crypto_company.js",
+    "icon.iconsax.crypto_company.kyber_network_knc",
+    "icon.iconsax.crypto_company.litecoin_ltc",
+    "icon.iconsax.crypto_company.maker_mkr",
+    "icon.iconsax.crypto_company.messenger",
+    "icon.iconsax.crypto_company.monero_xmr",
+    "icon.iconsax.crypto_company.nebulas_nas",
+    "icon.iconsax.crypto_company.nem_xem",
+    "icon.iconsax.crypto_company.nexo_nexo",
+    "icon.iconsax.crypto_company.ocean_protocol_ocean",
+    "icon.iconsax.crypto_company.okb_okb",
+    "icon.iconsax.crypto_company.ontology_ont",
+    "icon.iconsax.crypto_company.paypal",
+    "icon.iconsax.crypto_company.photoshop",
+    "icon.iconsax.crypto_company.polkadot_dot",
+    "icon.iconsax.crypto_company.polygon_matic",
+    "icon.iconsax.crypto_company.polyswarm_nct",
+    "icon.iconsax.crypto_company.python",
+    "icon.iconsax.crypto_company.quant_qnt",
+    "icon.iconsax.crypto_company.siacoin_sc",
+    "icon.iconsax.crypto_company.slack",
+    "icon.iconsax.crypto_company.snapchat",
+    "icon.iconsax.crypto_company.solana_sol",
+    "icon.iconsax.crypto_company.spotify",
+    "icon.iconsax.crypto_company.stacks_stx",
+    "icon.iconsax.crypto_company.stellar_xlm",
+    "icon.iconsax.crypto_company.tenx_pay",
+    "icon.iconsax.crypto_company.tether_usdt",
+    "icon.iconsax.crypto_company.the_graph_grt",
+    "icon.iconsax.crypto_company.theta_theta",
+    "icon.iconsax.crypto_company.thorchain_rune",
+    "icon.iconsax.crypto_company.trade",
+    "icon.iconsax.crypto_company.trello",
+    "icon.iconsax.crypto_company.triangle",
+    "icon.iconsax.crypto_company.trontron_trx",
+    "icon.iconsax.crypto_company.twitch",
+    "icon.iconsax.crypto_company.ui8",
+    "icon.iconsax.crypto_company.usd_coin_usdc",
+    "icon.iconsax.crypto_company.velas_vlx",
+    "icon.iconsax.crypto_company.vibe_vibe",
+    "icon.iconsax.crypto_company.vuesax",
+    "icon.iconsax.crypto_company.wanchain_wan",
+    "icon.iconsax.crypto_company.wanchain_wan_1",
+    "icon.iconsax.crypto_company.whatsapp",
+    "icon.iconsax.crypto_company.windows",
+    "icon.iconsax.crypto_company.wing_wing",
+    "icon.iconsax.crypto_company.xd",
+    "icon.iconsax.crypto_company.xiaomi",
+    "icon.iconsax.crypto_company.xrp_xrp",
+    "icon.iconsax.crypto_company.youtube",
+    "icon.iconsax.crypto_company.zel_zel",
+    "icon.iconsax.crypto_company.zoom",
+    "icon.iconsax.crypto_currency.bitcoin_card",
+    "icon.iconsax.crypto_currency.bitcoin_convert",
+    "icon.iconsax.crypto_currency.bitcoin_refresh",
+    "icon.iconsax.crypto_currency.buy_crypto",
+    "icon.iconsax.crypto_currency.card_coin",
+    "icon.iconsax.crypto_currency.trade",
+    "icon.iconsax.delivery.3d_cube_scan",
+    "icon.iconsax.delivery.3d_rotate",
+    "icon.iconsax.delivery.3d_square",
+    "icon.iconsax.delivery.box",
+    "icon.iconsax.delivery.box_1",
+    "icon.iconsax.delivery.box_add",
+    "icon.iconsax.delivery.box_remove",
+    "icon.iconsax.delivery.box_search",
+    "icon.iconsax.delivery.box_tick",
+    "icon.iconsax.delivery.box_time",
+    "icon.iconsax.delivery.convert_3d_cube",
+    "icon.iconsax.delivery.truck_remove",
+    "icon.iconsax.delivery.truck_tick",
+    "icon.iconsax.delivery.truck_time",
+    "icon.iconsax.design_tools.additem",
+    "icon.iconsax.design_tools.backward_item",
+    "icon.iconsax.design_tools.bezier",
+    "icon.iconsax.design_tools.blend",
+    "icon.iconsax.design_tools.blend_2",
+    "icon.iconsax.design_tools.blur",
+    "icon.iconsax.design_tools.brush",
+    "icon.iconsax.design_tools.brush_1",
+    "icon.iconsax.design_tools.brush_2",
+    "icon.iconsax.design_tools.brush_3",
+    "icon.iconsax.design_tools.bucket_circle",
+    "icon.iconsax.design_tools.bucket_square",
+    "icon.iconsax.design_tools.color_swatch",
+    "icon.iconsax.design_tools.colorfilter",
+    "icon.iconsax.design_tools.colors_square",
+    "icon.iconsax.design_tools.component",
+    "icon.iconsax.design_tools.copy",
+    "icon.iconsax.design_tools.copy_success",
+    "icon.iconsax.design_tools.designtools",
+    "icon.iconsax.design_tools.eraser",
+    "icon.iconsax.design_tools.eraser_1",
+    "icon.iconsax.design_tools.flash_circle",
+    "icon.iconsax.design_tools.flash_circle_1",
+    "icon.iconsax.design_tools.forward_item",
+    "icon.iconsax.design_tools.glass",
+    "icon.iconsax.design_tools.layer",
+    "icon.iconsax.design_tools.lifebuoy",
+    "icon.iconsax.design_tools.magicpen",
+    "icon.iconsax.design_tools.main_component",
+    "icon.iconsax.design_tools.mask",
+    "icon.iconsax.design_tools.mask_1",
+    "icon.iconsax.design_tools.mask_2",
+    "icon.iconsax.design_tools.omega_circle",
+    "icon.iconsax.design_tools.omega_square",
+    "icon.iconsax.design_tools.paintbucket",
+    "icon.iconsax.design_tools.path",
+    "icon.iconsax.design_tools.path_2",
+    "icon.iconsax.design_tools.path_square",
+    "icon.iconsax.design_tools.pen_add",
+    "icon.iconsax.design_tools.pen_close",
+    "icon.iconsax.design_tools.pen_remove",
+    "icon.iconsax.design_tools.pen_tool",
+    "icon.iconsax.design_tools.pen_tool_2",
+    "icon.iconsax.design_tools.recovery_convert",
+    "icon.iconsax.design_tools.ruler",
+    "icon.iconsax.design_tools.ruler_and_pen",
+    "icon.iconsax.design_tools.scissor",
+    "icon.iconsax.design_tools.scissor_1",
+    "icon.iconsax.design_tools.shapes",
+    "icon.iconsax.design_tools.shapes_1",
+    "icon.iconsax.design_tools.size",
+    "icon.iconsax.emails_messages.device_message",
+    "icon.iconsax.emails_messages.direct",
+    "icon.iconsax.emails_messages.direct_inbox",
+    "icon.iconsax.emails_messages.direct_normal",
+    "icon.iconsax.emails_messages.direct_notification",
+    "icon.iconsax.emails_messages.direct_send",
+    "icon.iconsax.emails_messages.directbox_default",
+    "icon.iconsax.emails_messages.directbox_notif",
+    "icon.iconsax.emails_messages.directbox_receive",
+    "icon.iconsax.emails_messages.directbox_send",
+    "icon.iconsax.emails_messages.message",
+    "icon.iconsax.emails_messages.message_2",
+    "icon.iconsax.emails_messages.message_add",
+    "icon.iconsax.emails_messages.message_add_1",
+    "icon.iconsax.emails_messages.message_circle",
+    "icon.iconsax.emails_messages.message_edit",
+    "icon.iconsax.emails_messages.message_favorite",
+    "icon.iconsax.emails_messages.message_minus",
+    "icon.iconsax.emails_messages.message_notif",
+    "icon.iconsax.emails_messages.message_remove",
+    "icon.iconsax.emails_messages.message_search",
+    "icon.iconsax.emails_messages.message_square",
+    "icon.iconsax.emails_messages.message_text",
+    "icon.iconsax.emails_messages.message_text_1",
+    "icon.iconsax.emails_messages.message_tick",
+    "icon.iconsax.emails_messages.message_time",
+    "icon.iconsax.emails_messages.messages",
+    "icon.iconsax.emails_messages.messages_1",
+    "icon.iconsax.emails_messages.messages_2",
+    "icon.iconsax.emails_messages.messages_3",
+    "icon.iconsax.emails_messages.sms",
+    "icon.iconsax.emails_messages.sms_edit",
+    "icon.iconsax.emails_messages.sms_notification",
+    "icon.iconsax.emails_messages.sms_search",
+    "icon.iconsax.emails_messages.sms_star",
+    "icon.iconsax.emails_messages.sms_tracking",
+    "icon.iconsax.essetional.3dcube",
+    "icon.iconsax.essetional.add",
+    "icon.iconsax.essetional.add_circle",
+    "icon.iconsax.essetional.add_square",
+    "icon.iconsax.essetional.archive",
+    "icon.iconsax.essetional.autobrightness",
+    "icon.iconsax.essetional.battery_charging",
+    "icon.iconsax.essetional.battery_disable",
+    "icon.iconsax.essetional.battery_empty",
+    "icon.iconsax.essetional.battery_empty_1",
+    "icon.iconsax.essetional.battery_full",
+    "icon.iconsax.essetional.box_2",
+    "icon.iconsax.essetional.broom",
+    "icon.iconsax.essetional.bubble",
+    "icon.iconsax.essetional.cake",
+    "icon.iconsax.essetional.cd",
+    "icon.iconsax.essetional.chart",
+    "icon.iconsax.essetional.chrome",
+    "icon.iconsax.essetional.close_circle",
+    "icon.iconsax.essetional.close_square",
+    "icon.iconsax.essetional.coffee",
+    "icon.iconsax.essetional.computing",
+    "icon.iconsax.essetional.crown",
+    "icon.iconsax.essetional.crown_1",
+    "icon.iconsax.essetional.cup",
+    "icon.iconsax.essetional.danger",
+    "icon.iconsax.essetional.diamonds",
+    "icon.iconsax.essetional.discover",
+    "icon.iconsax.essetional.emoji_happy",
+    "icon.iconsax.essetional.emoji_normal",
+    "icon.iconsax.essetional.emoji_sad",
+    "icon.iconsax.essetional.filter",
+    "icon.iconsax.essetional.filter_add",
+    "icon.iconsax.essetional.filter_edit",
+    "icon.iconsax.essetional.filter_remove",
+    "icon.iconsax.essetional.filter_search",
+    "icon.iconsax.essetional.filter_square",
+    "icon.iconsax.essetional.filter_tick",
+    "icon.iconsax.essetional.flag",
+    "icon.iconsax.essetional.flag_2",
+    "icon.iconsax.essetional.flash",
+    "icon.iconsax.essetional.flash_circle",
+    "icon.iconsax.essetional.flash_slash",
+    "icon.iconsax.essetional.ghost",
+    "icon.iconsax.essetional.glass",
+    "icon.iconsax.essetional.grammerly",
+    "icon.iconsax.essetional.happyemoji",
+    "icon.iconsax.essetional.home",
+    "icon.iconsax.essetional.home_2",
+    "icon.iconsax.essetional.home_wifi",
+    "icon.iconsax.essetional.info_circle",
+    "icon.iconsax.essetional.information",
+    "icon.iconsax.essetional.instagram",
+    "icon.iconsax.essetional.judge",
+    "icon.iconsax.essetional.lamp",
+    "icon.iconsax.essetional.level",
+    "icon.iconsax.essetional.menu",
+    "icon.iconsax.essetional.milk",
+    "icon.iconsax.essetional.minus",
+    "icon.iconsax.essetional.minus_cirlce",
+    "icon.iconsax.essetional.minus_square",
+    "icon.iconsax.essetional.mirror",
+    "icon.iconsax.essetional.more_circle",
+    "icon.iconsax.essetional.more_square",
+    "icon.iconsax.essetional.mouse",
+    "icon.iconsax.essetional.mouse_circle",
+    "icon.iconsax.essetional.mouse_square",
+    "icon.iconsax.essetional.pet",
+    "icon.iconsax.essetional.ranking",
+    "icon.iconsax.essetional.reserve",
+    "icon.iconsax.essetional.safe_home",
+    "icon.iconsax.essetional.send",
+    "icon.iconsax.essetional.send_2",
+    "icon.iconsax.essetional.share",
+    "icon.iconsax.essetional.signpost",
+    "icon.iconsax.essetional.slash",
+    "icon.iconsax.essetional.slider",
+    "icon.iconsax.essetional.smart_home",
+    "icon.iconsax.essetional.sort",
+    "icon.iconsax.essetional.sound",
+    "icon.iconsax.essetional.speedometer",
+    "icon.iconsax.essetional.status",
+    "icon.iconsax.essetional.sticker",
+    "icon.iconsax.essetional.story",
+    "icon.iconsax.essetional.tag_cross",
+    "icon.iconsax.essetional.tag_right",
+    "icon.iconsax.essetional.tick_circle",
+    "icon.iconsax.essetional.tick_square",
+    "icon.iconsax.essetional.trash",
+    "icon.iconsax.essetional.tree",
+    "icon.iconsax.essetional.triangle",
+    "icon.iconsax.essetional.trush_square",
+    "icon.iconsax.essetional.verify",
+    "icon.iconsax.essetional.warning_2",
+    "icon.iconsax.essetional.weight",
+    "icon.iconsax.essetional.wifi",
+    "icon.iconsax.essetional.wifi_square",
+    "icon.iconsax.files.folder",
+    "icon.iconsax.files.folder_2",
+    "icon.iconsax.files.folder_add",
+    "icon.iconsax.files.folder_cloud",
+    "icon.iconsax.files.folder_cross",
+    "icon.iconsax.files.folder_favorite",
+    "icon.iconsax.files.folder_minus",
+    "icon.iconsax.files.folder_open",
+    "icon.iconsax.grid.3square",
+    "icon.iconsax.grid.align_bottom",
+    "icon.iconsax.grid.align_horizontally",
+    "icon.iconsax.grid.align_left",
+    "icon.iconsax.grid.align_right",
+    "icon.iconsax.grid.align_vertically",
+    "icon.iconsax.grid.convertshape",
+    "icon.iconsax.grid.convertshape_2",
+    "icon.iconsax.grid.crop",
+    "icon.iconsax.grid.element_2",
+    "icon.iconsax.grid.element_3",
+    "icon.iconsax.grid.element_4",
+    "icon.iconsax.grid.element_equal",
+    "icon.iconsax.grid.element_plus",
+    "icon.iconsax.grid.fatrows",
+    "icon.iconsax.grid.format_circle",
+    "icon.iconsax.grid.format_square",
+    "icon.iconsax.grid.grid_1",
+    "icon.iconsax.grid.grid_2",
+    "icon.iconsax.grid.grid_3",
+    "icon.iconsax.grid.grid_4",
+    "icon.iconsax.grid.grid_5",
+    "icon.iconsax.grid.grid_6",
+    "icon.iconsax.grid.grid_7",
+    "icon.iconsax.grid.grid_8",
+    "icon.iconsax.grid.grid_9",
+    "icon.iconsax.grid.grid_edit",
+    "icon.iconsax.grid.grid_eraser",
+    "icon.iconsax.grid.grid_lock",
+    "icon.iconsax.grid.kanban",
+    "icon.iconsax.grid.maximize",
+    "icon.iconsax.grid.maximize_1",
+    "icon.iconsax.grid.maximize_2",
+    "icon.iconsax.grid.maximize_3",
+    "icon.iconsax.grid.maximize_4",
+    "icon.iconsax.grid.rotate_left",
+    "icon.iconsax.grid.rotate_right",
+    "icon.iconsax.grid.row_horizontal",
+    "icon.iconsax.grid.row_vertical",
+    "icon.iconsax.grid.slider_horizontal",
+    "icon.iconsax.grid.slider_horizontal_1",
+    "icon.iconsax.grid.slider_vertical",
+    "icon.iconsax.grid.slider_vertical_1",
+    "icon.iconsax.location.arrow",
+    "icon.iconsax.location.arrow_square",
+    "icon.iconsax.location.direct_down",
+    "icon.iconsax.location.direct_left",
+    "icon.iconsax.location.direct_right",
+    "icon.iconsax.location.direct_up",
+    "icon.iconsax.location.discover",
+    "icon.iconsax.location.global",
+    "icon.iconsax.location.global_edit",
+    "icon.iconsax.location.global_refresh",
+    "icon.iconsax.location.global_search",
+    "icon.iconsax.location.gps",
+    "icon.iconsax.location.gps_slash",
+    "icon.iconsax.location.location",
+    "icon.iconsax.location.location_add",
+    "icon.iconsax.location.location_cross",
+    "icon.iconsax.location.location_minus",
+    "icon.iconsax.location.location_slash",
+    "icon.iconsax.location.location_tick",
+    "icon.iconsax.location.map",
+    "icon.iconsax.location.map_1",
+    "icon.iconsax.location.picture_frame",
+    "icon.iconsax.location.radar",
+    "icon.iconsax.location.radar_2",
+    "icon.iconsax.location.route_square",
+    "icon.iconsax.location.routing",
+    "icon.iconsax.location.routing_2",
+    "icon.iconsax.money.archive",
+    "icon.iconsax.money.card",
+    "icon.iconsax.money.card_add",
+    "icon.iconsax.money.card_edit",
+    "icon.iconsax.money.card_pos",
+    "icon.iconsax.money.card_receive",
+    "icon.iconsax.money.card_remove",
+    "icon.iconsax.money.card_remove_1",
+    "icon.iconsax.money.card_send",
+    "icon.iconsax.money.card_slash",
+    "icon.iconsax.money.card_tick",
+    "icon.iconsax.money.card_tick_1",
+    "icon.iconsax.money.cards",
+    "icon.iconsax.money.chart_square",
+    "icon.iconsax.money.coin",
+    "icon.iconsax.money.coin_1",
+    "icon.iconsax.money.discount_circle",
+    "icon.iconsax.money.discount_shape",
+    "icon.iconsax.money.document",
+    "icon.iconsax.money.dollar_circle",
+    "icon.iconsax.money.dollar_square",
+    "icon.iconsax.money.empty_wallet",
+    "icon.iconsax.money.empty_wallet_add",
+    "icon.iconsax.money.empty_wallet_change",
+    "icon.iconsax.money.empty_wallet_remove",
+    "icon.iconsax.money.empty_wallet_tick",
+    "icon.iconsax.money.empty_wallet_time",
+    "icon.iconsax.money.math",
+    "icon.iconsax.money.money",
+    "icon.iconsax.money.money_2",
+    "icon.iconsax.money.money_3",
+    "icon.iconsax.money.money_4",
+    "icon.iconsax.money.money_add",
+    "icon.iconsax.money.money_change",
+    "icon.iconsax.money.money_forbidden",
+    "icon.iconsax.money.money_recive",
+    "icon.iconsax.money.money_remove",
+    "icon.iconsax.money.money_send",
+    "icon.iconsax.money.money_tick",
+    "icon.iconsax.money.money_time",
+    "icon.iconsax.money.moneys",
+    "icon.iconsax.money.percentage_square",
+    "icon.iconsax.money.receipt",
+    "icon.iconsax.money.receipt_1",
+    "icon.iconsax.money.receipt_2",
+    "icon.iconsax.money.receipt_2_1",
+    "icon.iconsax.money.receipt_add",
+    "icon.iconsax.money.receipt_discount",
+    "icon.iconsax.money.receipt_disscount",
+    "icon.iconsax.money.receipt_edit",
+    "icon.iconsax.money.receipt_item",
+    "icon.iconsax.money.receipt_minus",
+    "icon.iconsax.money.receipt_search",
+    "icon.iconsax.money.receipt_text",
+    "icon.iconsax.money.security_card",
+    "icon.iconsax.money.strongbox",
+    "icon.iconsax.money.strongbox_2",
+    "icon.iconsax.money.tag",
+    "icon.iconsax.money.tag_2",
+    "icon.iconsax.money.ticket",
+    "icon.iconsax.money.ticket_2",
+    "icon.iconsax.money.ticket_discount",
+    "icon.iconsax.money.ticket_expired",
+    "icon.iconsax.money.ticket_star",
+    "icon.iconsax.money.transaction_minus",
+    "icon.iconsax.money.wallet",
+    "icon.iconsax.money.wallet_1",
+    "icon.iconsax.money.wallet_2",
+    "icon.iconsax.money.wallet_3",
+    "icon.iconsax.money.wallet_add",
+    "icon.iconsax.money.wallet_add_1",
+    "icon.iconsax.money.wallet_check",
+    "icon.iconsax.money.wallet_minus",
+    "icon.iconsax.money.wallet_money",
+    "icon.iconsax.money.wallet_remove",
+    "icon.iconsax.money.wallet_search",
+    "icon.iconsax.notifications.lamp_charge",
+    "icon.iconsax.notifications.lamp_on",
+    "icon.iconsax.notifications.lamp_slash",
+    "icon.iconsax.notifications.notification",
+    "icon.iconsax.notifications.notification_1",
+    "icon.iconsax.notifications.notification_bing",
+    "icon.iconsax.notifications.notification_favorite",
+    "icon.iconsax.notifications.notification_status",
+    "icon.iconsax.programing.code",
+    "icon.iconsax.programing.code_1",
+    "icon.iconsax.programing.code_circle",
+    "icon.iconsax.programing.command",
+    "icon.iconsax.programing.command_square",
+    "icon.iconsax.programing.data",
+    "icon.iconsax.programing.data_2",
+    "icon.iconsax.programing.document_code",
+    "icon.iconsax.programing.document_code_2",
+    "icon.iconsax.programing.hashtag",
+    "icon.iconsax.programing.hashtag_down",
+    "icon.iconsax.programing.hashtag_up",
+    "icon.iconsax.programing.hierarchy",
+    "icon.iconsax.programing.hierarchy_2",
+    "icon.iconsax.programing.hierarchy_3",
+    "icon.iconsax.programing.hierarchy_square",
+    "icon.iconsax.programing.hierarchy_square_2",
+    "icon.iconsax.programing.hierarchy_square_3",
+    "icon.iconsax.programing.message_programming",
+    "icon.iconsax.programing.mobile_programming",
+    "icon.iconsax.programing.programming_arrow",
+    "icon.iconsax.programing.programming_arrows",
+    "icon.iconsax.programing.scroll",
+    "icon.iconsax.programing.sidebar_bottom",
+    "icon.iconsax.programing.sidebar_left",
+    "icon.iconsax.programing.sidebar_right",
+    "icon.iconsax.programing.sidebar_top",
+    "icon.iconsax.school_learning.award",
+    "icon.iconsax.school_learning.book",
+    "icon.iconsax.school_learning.book_1",
+    "icon.iconsax.school_learning.bookmark",
+    "icon.iconsax.school_learning.bookmark_2",
+    "icon.iconsax.school_learning.briefcase",
+    "icon.iconsax.school_learning.brifecase_cross",
+    "icon.iconsax.school_learning.brifecase_tick",
+    "icon.iconsax.school_learning.brifecase_timer",
+    "icon.iconsax.school_learning.calculator",
+    "icon.iconsax.school_learning.clipboard",
+    "icon.iconsax.school_learning.gift",
+    "icon.iconsax.school_learning.note",
+    "icon.iconsax.school_learning.note_2",
+    "icon.iconsax.school_learning.teacher",
+    "icon.iconsax.search.search_favorite",
+    "icon.iconsax.search.search_favorite_1",
+    "icon.iconsax.search.search_normal",
+    "icon.iconsax.search.search_normal_1",
+    "icon.iconsax.search.search_status",
+    "icon.iconsax.search.search_status_1",
+    "icon.iconsax.search.search_zoom_in",
+    "icon.iconsax.search.search_zoom_in_1",
+    "icon.iconsax.search.search_zoom_out",
+    "icon.iconsax.search.search_zoom_out_1",
+    "icon.iconsax.security.alarm",
+    "icon.iconsax.security.check",
+    "icon.iconsax.security.eye",
+    "icon.iconsax.security.eye_slash",
+    "icon.iconsax.security.finger_cricle",
+    "icon.iconsax.security.finger_scan",
+    "icon.iconsax.security.key",
+    "icon.iconsax.security.key_square",
+    "icon.iconsax.security.lock",
+    "icon.iconsax.security.lock_1",
+    "icon.iconsax.security.lock_circle",
+    "icon.iconsax.security.lock_slash",
+    "icon.iconsax.security.password_check",
+    "icon.iconsax.security.radar",
+    "icon.iconsax.security.scan",
+    "icon.iconsax.security.scan_barcode",
+    "icon.iconsax.security.scanner",
+    "icon.iconsax.security.scanning",
+    "icon.iconsax.security.security",
+    "icon.iconsax.security.security_safe",
+    "icon.iconsax.security.security_user",
+    "icon.iconsax.security.shield_cross",
+    "icon.iconsax.security.shield_search",
+    "icon.iconsax.security.shield_security",
+    "icon.iconsax.security.shield_slash",
+    "icon.iconsax.security.shield_tick",
+    "icon.iconsax.security.unlock",
+    "icon.iconsax.settings.candle",
+    "icon.iconsax.settings.candle_2",
+    "icon.iconsax.settings.category",
+    "icon.iconsax.settings.category_2",
+    "icon.iconsax.settings.menu",
+    "icon.iconsax.settings.more",
+    "icon.iconsax.settings.more_2",
+    "icon.iconsax.settings.setting",
+    "icon.iconsax.settings.setting_2",
+    "icon.iconsax.settings.setting_3",
+    "icon.iconsax.settings.setting_4",
+    "icon.iconsax.settings.setting_5",
+    "icon.iconsax.settings.settings",
+    "icon.iconsax.settings.toggle_off",
+    "icon.iconsax.settings.toggle_off_circle",
+    "icon.iconsax.settings.toggle_on",
+    "icon.iconsax.settings.toggle_on_circle",
+    "icon.iconsax.shop.bag",
+    "icon.iconsax.shop.bag_2",
+    "icon.iconsax.shop.bag_cross",
+    "icon.iconsax.shop.bag_cross_1",
+    "icon.iconsax.shop.bag_happy",
+    "icon.iconsax.shop.bag_tick",
+    "icon.iconsax.shop.bag_tick_2",
+    "icon.iconsax.shop.bag_timer",
+    "icon.iconsax.shop.barcode",
+    "icon.iconsax.shop.shop",
+    "icon.iconsax.shop.shop_add",
+    "icon.iconsax.shop.shop_remove",
+    "icon.iconsax.shop.shopping_bag",
+    "icon.iconsax.shop.shopping_cart",
+    "icon.iconsax.support_like_question.24_support",
+    "icon.iconsax.support_like_question.dislike",
+    "icon.iconsax.support_like_question.heart",
+    "icon.iconsax.support_like_question.heart_add",
+    "icon.iconsax.support_like_question.heart_circle",
+    "icon.iconsax.support_like_question.heart_edit",
+    "icon.iconsax.support_like_question.heart_remove",
+    "icon.iconsax.support_like_question.heart_search",
+    "icon.iconsax.support_like_question.heart_slash",
+    "icon.iconsax.support_like_question.heart_tick",
+    "icon.iconsax.support_like_question.like",
+    "icon.iconsax.support_like_question.like_1",
+    "icon.iconsax.support_like_question.like_dislike",
+    "icon.iconsax.support_like_question.like_shapes",
+    "icon.iconsax.support_like_question.like_tag",
+    "icon.iconsax.support_like_question.lovely",
+    "icon.iconsax.support_like_question.magic_star",
+    "icon.iconsax.support_like_question.medal",
+    "icon.iconsax.support_like_question.medal_star",
+    "icon.iconsax.support_like_question.message_question",
+    "icon.iconsax.support_like_question.ranking",
+    "icon.iconsax.support_like_question.smileys",
+    "icon.iconsax.support_like_question.star",
+    "icon.iconsax.support_like_question.star_1",
+    "icon.iconsax.support_like_question.star_slash",
+    "icon.iconsax.support_like_question.unlimited",
+    "icon.iconsax.time.calendar",
+    "icon.iconsax.time.calendar_1",
+    "icon.iconsax.time.calendar_2",
+    "icon.iconsax.time.calendar_add",
+    "icon.iconsax.time.calendar_circle",
+    "icon.iconsax.time.calendar_edit",
+    "icon.iconsax.time.calendar_remove",
+    "icon.iconsax.time.calendar_search",
+    "icon.iconsax.time.calendar_tick",
+    "icon.iconsax.time.clock",
+    "icon.iconsax.time.security_time",
+    "icon.iconsax.time.timer",
+    "icon.iconsax.time.timer_1",
+    "icon.iconsax.time.timer_pause",
+    "icon.iconsax.time.timer_start",
+    "icon.iconsax.type_paragraph_character.attach_circle",
+    "icon.iconsax.type_paragraph_character.attach_square",
+    "icon.iconsax.type_paragraph_character.eraser",
+    "icon.iconsax.type_paragraph_character.firstline",
+    "icon.iconsax.type_paragraph_character.language_circle",
+    "icon.iconsax.type_paragraph_character.language_square",
+    "icon.iconsax.type_paragraph_character.link",
+    "icon.iconsax.type_paragraph_character.link_1",
+    "icon.iconsax.type_paragraph_character.link_2",
+    "icon.iconsax.type_paragraph_character.link_21",
+    "icon.iconsax.type_paragraph_character.link_circle",
+    "icon.iconsax.type_paragraph_character.link_square",
+    "icon.iconsax.type_paragraph_character.maximize",
+    "icon.iconsax.type_paragraph_character.paperclip",
+    "icon.iconsax.type_paragraph_character.paperclip_2",
+    "icon.iconsax.type_paragraph_character.pharagraphspacing",
+    "icon.iconsax.type_paragraph_character.quote_down",
+    "icon.iconsax.type_paragraph_character.quote_down_circle",
+    "icon.iconsax.type_paragraph_character.quote_down_square",
+    "icon.iconsax.type_paragraph_character.quote_up",
+    "icon.iconsax.type_paragraph_character.quote_up_circle",
+    "icon.iconsax.type_paragraph_character.quote_up_square",
+    "icon.iconsax.type_paragraph_character.smallcaps",
+    "icon.iconsax.type_paragraph_character.text",
+    "icon.iconsax.type_paragraph_character.text_block",
+    "icon.iconsax.type_paragraph_character.text_bold",
+    "icon.iconsax.type_paragraph_character.text_italic",
+    "icon.iconsax.type_paragraph_character.text_underline",
+    "icon.iconsax.type_paragraph_character.textalign_center",
+    "icon.iconsax.type_paragraph_character.textalign_justifycenter",
+    "icon.iconsax.type_paragraph_character.textalign_justifyleft",
+    "icon.iconsax.type_paragraph_character.textalign_justifyright",
+    "icon.iconsax.type_paragraph_character.textalign_left",
+    "icon.iconsax.type_paragraph_character.textalign_right",
+    "icon.iconsax.type_paragraph_character.translate",
+    "icon.iconsax.users.people",
+    "icon.iconsax.users.profile_2user",
+    "icon.iconsax.users.profile_add",
+    "icon.iconsax.users.profile_circle",
+    "icon.iconsax.users.profile_delete",
+    "icon.iconsax.users.profile_remove",
+    "icon.iconsax.users.profile_tick",
+    "icon.iconsax.users.tag_user",
+    "icon.iconsax.users.user",
+    "icon.iconsax.users.user_add",
+    "icon.iconsax.users.user_cirlce_add",
+    "icon.iconsax.users.user_edit",
+    "icon.iconsax.users.user_minus",
+    "icon.iconsax.users.user_octagon",
+    "icon.iconsax.users.user_remove",
+    "icon.iconsax.users.user_search",
+    "icon.iconsax.users.user_square",
+    "icon.iconsax.users.user_tag",
+    "icon.iconsax.users.user_tick",
+    "icon.iconsax.video_audio_image.audio_square",
+    "icon.iconsax.video_audio_image.backward",
+    "icon.iconsax.video_audio_image.backward_10_seconds",
+    "icon.iconsax.video_audio_image.backward_15_seconds",
+    "icon.iconsax.video_audio_image.backward_5_seconds",
+    "icon.iconsax.video_audio_image.camera",
+    "icon.iconsax.video_audio_image.camera_slash",
+    "icon.iconsax.video_audio_image.devices",
+    "icon.iconsax.video_audio_image.forward",
+    "icon.iconsax.video_audio_image.forward_10_seconds",
+    "icon.iconsax.video_audio_image.forward_15_seconds",
+    "icon.iconsax.video_audio_image.forward_5_seconds",
+    "icon.iconsax.video_audio_image.gallery",
+    "icon.iconsax.video_audio_image.gallery_add",
+    "icon.iconsax.video_audio_image.gallery_edit",
+    "icon.iconsax.video_audio_image.gallery_export",
+    "icon.iconsax.video_audio_image.gallery_favorite",
+    "icon.iconsax.video_audio_image.gallery_import",
+    "icon.iconsax.video_audio_image.gallery_remove",
+    "icon.iconsax.video_audio_image.gallery_slash",
+    "icon.iconsax.video_audio_image.gallery_tick",
+    "icon.iconsax.video_audio_image.image",
+    "icon.iconsax.video_audio_image.maximize_circle",
+    "icon.iconsax.video_audio_image.microphone",
+    "icon.iconsax.video_audio_image.microphone_2",
+    "icon.iconsax.video_audio_image.microphone_slash",
+    "icon.iconsax.video_audio_image.microphone_slash_1",
+    "icon.iconsax.video_audio_image.mini_music_sqaure",
+    "icon.iconsax.video_audio_image.music",
+    "icon.iconsax.video_audio_image.music_circle",
+    "icon.iconsax.video_audio_image.music_dashboard",
+    "icon.iconsax.video_audio_image.music_filter",
+    "icon.iconsax.video_audio_image.music_library_2",
+    "icon.iconsax.video_audio_image.music_playlist",
+    "icon.iconsax.video_audio_image.music_square",
+    "icon.iconsax.video_audio_image.music_square_add",
+    "icon.iconsax.video_audio_image.music_square_remove",
+    "icon.iconsax.video_audio_image.music_square_search",
+    "icon.iconsax.video_audio_image.musicnote",
+    "icon.iconsax.video_audio_image.next",
+    "icon.iconsax.video_audio_image.note_square",
+    "icon.iconsax.video_audio_image.pause",
+    "icon.iconsax.video_audio_image.pause_circle",
+    "icon.iconsax.video_audio_image.play",
+    "icon.iconsax.video_audio_image.play_add",
+    "icon.iconsax.video_audio_image.play_circle",
+    "icon.iconsax.video_audio_image.play_cricle",
+    "icon.iconsax.video_audio_image.play_remove",
+    "icon.iconsax.video_audio_image.previous",
+    "icon.iconsax.video_audio_image.radio",
+    "icon.iconsax.video_audio_image.record",
+    "icon.iconsax.video_audio_image.record_circle",
+    "icon.iconsax.video_audio_image.repeate_music",
+    "icon.iconsax.video_audio_image.repeate_one",
+    "icon.iconsax.video_audio_image.scissor",
+    "icon.iconsax.video_audio_image.screenmirroring",
+    "icon.iconsax.video_audio_image.stop",
+    "icon.iconsax.video_audio_image.stop_circle",
+    "icon.iconsax.video_audio_image.subtitle",
+    "icon.iconsax.video_audio_image.video",
+    "icon.iconsax.video_audio_image.video_add",
+    "icon.iconsax.video_audio_image.video_circle",
+    "icon.iconsax.video_audio_image.video_horizontal",
+    "icon.iconsax.video_audio_image.video_octagon",
+    "icon.iconsax.video_audio_image.video_play",
+    "icon.iconsax.video_audio_image.video_remove",
+    "icon.iconsax.video_audio_image.video_slash",
+    "icon.iconsax.video_audio_image.video_square",
+    "icon.iconsax.video_audio_image.video_tick",
+    "icon.iconsax.video_audio_image.video_time",
+    "icon.iconsax.video_audio_image.video_vertical",
+    "icon.iconsax.video_audio_image.voice_cricle",
+    "icon.iconsax.video_audio_image.voice_square",
+    "icon.iconsax.video_audio_image.volume_cross",
+    "icon.iconsax.video_audio_image.volume_high",
+    "icon.iconsax.video_audio_image.volume_low",
+    "icon.iconsax.video_audio_image.volume_low_1",
+    "icon.iconsax.video_audio_image.volume_mute",
+    "icon.iconsax.video_audio_image.volume_slash",
+    "icon.iconsax.video_audio_image.volume_up",
+    "icon.iconsax.weather.cloud",
+    "icon.iconsax.weather.cloud_cross",
+    "icon.iconsax.weather.cloud_drizzle",
+    "icon.iconsax.weather.cloud_fog",
+    "icon.iconsax.weather.cloud_lightning",
+    "icon.iconsax.weather.cloud_minus",
+    "icon.iconsax.weather.cloud_notif",
+    "icon.iconsax.weather.cloud_plus",
+    "icon.iconsax.weather.cloud_snow",
+    "icon.iconsax.weather.cloud_sunny",
+    "icon.iconsax.weather.drop",
+    "icon.iconsax.weather.flash",
+    "icon.iconsax.weather.moon",
+    "icon.iconsax.weather.sun",
+    "icon.iconsax.weather.sun_1",
+    "icon.iconsax.weather.sun_fog",
+    "icon.iconsax.weather.wind",
+    "icon.iconsax.weather.wind_2"
+  ]
+}

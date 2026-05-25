@@ -1,0 +1,142 @@
+{
+  "version": "3.6.1",
+  "sourcePolicy": {
+    "allowedLibraries": ["phosphor", "remix", "lucide", "iconsax", "custom"],
+    "blockedLibraries": ["hugeicons-free-stroke-rounded", "hugeicons-pro-duotone-rounded", "@hugeicons/core-free-icons", "@hugeicons/react-native"],
+    "primaryLibrary": "phosphor",
+    "supplementLibraries": ["remix", "lucide", "iconsax"],
+    "libraryAssetScope": "registry_scope=library_asset allows full-source assets to remain unused until semantically promoted",
+    "semanticIconsaxScope": "registry_scope=semantic allows approved product icon.* names to render local Iconsax glyphs while preserving the semantic API"
+  },
+  "severity": {
+    "blocker": [
+      "blocked-icon-provider-dependency",
+      "hugeicons-code-reference",
+      "icon-registry-invalid-shape",
+      "registry-glyph-missing-from-source",
+      "registry-glyph-not-mapped",
+      "iconsax-source-manifest-count-mismatch",
+      "low-level-icon-import-outside-app-icon",
+      "unapproved-local-svg-functional-icon",
+      "blocked-or-unapproved-source-library"
+    ],
+    "critical": [
+      "semantic-icon-missing-required-metadata",
+      "license-metadata-missing",
+      "iconsax-source-metadata-missing",
+      "token-binding-invalid",
+      "default-icon-size-invalid",
+      "default-icon-canvas-invalid",
+      "default-icon-glyph-invalid",
+      "icon-safe-area-invalid",
+      "icon-shape-fit-invalid",
+      "icon-style-contract-invalid",
+      "icon-stroke-width-invalid",
+      "legacy-icon-name-used",
+      "migration-target-missing",
+      "brand-launcher-icon-not-1024-png"
+    ],
+    "major": [
+      "unused-registry-icon",
+      "market-tone-used-for-non-market-icon",
+      "icon-container-background-token-invalid",
+      "non-grey-icon-container-background",
+      "hardcoded-icon-foreground-or-background",
+      "hardcoded-size-outside-size-token"
+    ],
+    "minor": [
+      "icon-description-too-short",
+      "icon-forbidden-rule-missing-specificity"
+    ]
+  },
+  "requiredMetadata": [
+    "icon_key",
+    "legacy_names",
+    "category",
+    "meaning",
+    "source_library",
+    "source_icon_name",
+    "style",
+    "sizes",
+    "default_size",
+    "default_canvas_size",
+    "default_glyph_size",
+    "view_box",
+    "safe_area_inset",
+    "shape_fit",
+    "states",
+    "tone_tokens",
+    "default_tone",
+    "token_binding",
+    "usage",
+    "forbidden",
+    "platforms",
+    "license",
+    "modified",
+    "status"
+  ],
+  "libraryAssetRules": {
+    "iconsax": {
+      "requiredScope": "library_asset",
+      "sourceManifest": "design-system-engineering/04_icons/iconsax-source-manifest.json",
+      "renderer": "src/icons/local/IconsaxIconBase.tsx",
+      "assetModule": "src/icons/local/iconsax/iconsaxGeneratedIcons.tsx",
+      "runtimeDependency": "none",
+      "blockedRuntimePackage": "iconsax-react-native",
+      "styleMapping": {
+        "line": "Linear",
+        "fill": "Bold"
+      },
+      "unusedRegistrySeverity": "allowed"
+    }
+  },
+  "semanticAssetRules": {
+    "iconsax": {
+      "requiredScope": "semantic",
+      "appliesTo": "approved product semantic icon.* keys that do not start with icon.iconsax.",
+      "assetModule": "src/icons/local/iconsax/iconsaxGeneratedIcons.tsx",
+      "license": "Iconsax Free License",
+      "styleMapping": {
+        "line": "Linear",
+        "fill": "Bold"
+      }
+    }
+  },
+  "tokenRules": {
+    "backgroundColorPattern": "^color\\.iconBg\\.",
+    "backgroundRuntimePattern": "^colors\\.iconBg\\.",
+    "colorPattern": "^color\\.icon\\.",
+    "runtimeColorPattern": "^colors\\.icon\\.",
+    "sizePattern": "^size\\.icon\\.",
+    "glyphSizePattern": "^size\\.iconGlyph\\.",
+    "allowedSizes": [8, 12, 16, 20, 24, 32, 40, 48, 64],
+    "defaultSize": 24,
+    "defaultCanvasSize": 24,
+    "defaultGlyphSize": 21,
+    "defaultSafeAreaInset": 1.5,
+    "glyphToCanvasRatio": 0.875,
+    "allowedShapeFits": ["square", "rectangle", "circle", "balanced"],
+    "lineStrokeWidth": 1.5,
+    "containerRadiusToken": "radius.full",
+    "containerBorderWidth": 0,
+    "defaultBackgroundFamily": "neutral-grey",
+    "semanticBackgroundPolicy": "Icon container backgrounds must resolve to grey iconBg tokens by default. Discover entry menu rows are the approved exception and may pair color.icon.* foreground tones with matching color.overlay.*.subtle backgrounds through an explicit helper mapping."
+  },
+  "iconBackgroundTokens": [
+    "color.iconBg.neutral",
+    "color.iconBg.subtle",
+    "color.iconBg.active",
+    "color.iconBg.info",
+    "color.iconBg.success",
+    "color.iconBg.warning",
+    "color.iconBg.danger",
+    "color.iconBg.marketUp",
+    "color.iconBg.marketDown",
+    "color.iconBg.inverse"
+  ],
+  "brandAssetRules": {
+    "launcherIcon": { "requiredPixels": 1024, "format": "png" },
+    "adaptiveIcon": { "requiredPixels": 1024, "format": "png" },
+    "splashIcon": { "requiredPixels": 1024, "format": "png" }
+  }
+}

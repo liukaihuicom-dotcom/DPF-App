@@ -1,0 +1,691 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Keyboard, Modal, StyleSheet, TextInput, View } from 'react-native';
+
+import { countryOptions, getPasswordChecks, sanitizeOtp, type CountryOption } from '@/src/auth/authFlow';
+import { layout, lineWidth, radius, size, spacing } from '@/src/theme/tokens';
+import { useProductSettings } from '@/src/settings/ProductSettings';
+import { useToast } from '@/src/feedback/Toast';
+
+import { ActionButton } from './ActionButton';
+import { AppIcon } from './AppIcon';
+import { AuthTextField } from './AuthShell';
+import { bottomSheetPresets, useBottomSheet } from './BottomSheet';
+import { FlagIcon } from './FlagIcon';
+import { NativePressable } from './NativePressable';
+import { AppText } from './Typography';
+
+const phoneFieldVisibleHeight = size.input.floatingMinHeight + lineWidth.selected * 2;
+
+export function CountryPhoneField({
+  autoFocus,
+  country,
+  error,
+  onChangeCountry,
+  onChangePhone,
+  phone,
+}: {
+  autoFocus?: boolean;
+  country: CountryOption;
+  error?: string;
+  onChangeCountry: (country: CountryOption) => void;
+  onChangePhone: (phone: string) => void;
+  phone: string;
+}) {
+  const { colors, t } = useProductSettings();
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const openCountryPicker = () => {
+    Keyboard.dismiss();
+    setPickerOpen(true);
+  };
+
+  return (
+    <>
+      <View style={styles.phoneRow}>
+        <NativePressable
+          accessibilityLabel={t('auth.country.select')}
+          accessibilityRole="button"
+          minTouch={56}
+          onPress={openCountryPicker}
+          style={StyleSheet.flatten([styles.countryChip, { backgroundColor: colors.surface.panel, borderColor: colors.border.default }])}>
+          <FlagBadge code={country.flag} />
+          <AppText numberOfLines={1} style={styles.countryChipDial} tone="default" variant="titleMd">
+            {country.dialCode}
+          </AppText>
+          <AppIcon name="icon.system.chevron_down" size={14} />
+        </NativePressable>
+        <AuthTextField
+          autoFocus={autoFocus}
+          containerStyle={styles.phoneInput}
+          error={error}
+          inputMode="tel"
+          keyboardType="phone-pad"
+          label={t('auth.phone')}
+          onChangeText={onChangePhone}
+          placeholder={t('auth.phonePlaceholder')}
+          textContentType="telephoneNumber"
+          value={phone}
+        />
+      </View>
+      <CountryPickerModal
+        onClose={() => setPickerOpen(false)}
+        onSelect={(next) => {
+          onChangeCountry(next);
+          setPickerOpen(false);
+        }}
+        open={pickerOpen}
+        selected={country}
+      />
+    </>
+  );
+}
+
+export function CountryPickerModal({
+  onClose,
+  onSelect,
+  open,
+  selected,
+}: {
+  onClose: () => void;
+  onSelect: (country: CountryOption) => void;
+  open: boolean;
+  selected: CountryOption;
+}) {
+  const { colors, t } = useProductSettings();
+  const bottomSheet = useBottomSheet();
+
+  useEffect(() => {
+    if (!open) {
+      return undefined;
+    }
+
+    bottomSheet.show(bottomSheetPresets.selection({
+      content: (
+        <CountryPickerSheetContent
+          onSelect={(country) => {
+            onSelect(country);
+            bottomSheet.hide();
+          }}
+          selected={selected}
+        />
+      ),
+      onDismiss: onClose,
+      title: t('auth.country.select'),
+    }));
+
+    return undefined;
+  }, [bottomSheet, onClose, onSelect, open, selected, t]);
+
+  return null;
+}
+
+function CountryPickerSheetContent({
+  onSelect,
+  selected,
+}: {
+  onSelect: (country: CountryOption) => void;
+  selected: CountryOption;
+}) {
+  const { colors, t } = useProductSettings();
+  const [query, setQuery] = useState('');
+  const filtered = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    if (!normalized) {
+      return countryOptions;
+    }
+
+    return countryOptions.filter((item) => `${item.name} ${item.dialCode} ${item.code}`.toLowerCase().includes(normalized));
+  }, [query]);
+
+  return (
+    <View style={styles.countryPickerContent}>
+      <AuthTextField
+        accessibilityLabel={t('auth.country.search')}
+        icon="icon.system.search"
+        label={t('auth.country.search')}
+        labelHidden
+        onChangeText={setQuery}
+        placeholder={t('auth.country.search')}
+        returnKeyType="search"
+        shape="pill"
+        sizePreset="sm"
+        value={query}
+      />
+      <View style={styles.countryList}>
+        {filtered.map((country) => {
+          const active = country.code === selected.code;
+
+          return (
+            <NativePressable
+              accessibilityLabel={`${country.name} ${country.dialCode}`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: active }}
+              key={country.code}
+              minTouch={44}
+              onPress={() => onSelect(country)}
+              style={styles.countryRow}>
+              <FlagBadge code={country.flag} />
+              <AppText style={styles.countryDial} tone="muted" variant="body">
+                {country.dialCode}
+              </AppText>
+              <AppText numberOfLines={1} style={styles.countryName} variant="body">
+                {country.name}
+              </AppText>
+              {active ? <AppIcon name="icon.status.check" size={14} /> : null}
+            </NativePressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+export function OtpInput({
+  autoFocus,
+  error,
+  onChange,
+  value,
+}: {
+  autoFocus?: boolean;
+  error?: string;
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  const { colors, t } = useProductSettings();
+  const inputRef = useRef<TextInput>(null);
+  const [focused, setFocused] = useState(false);
+  const digits = Array.from({ length: 6 }, (_, index) => value[index] ?? '');
+
+  useEffect(() => {
+    if (!autoFocus) {
+      return undefined;
+    }
+
+    const timer = setTimeout(() => inputRef.current?.focus(), 120);
+    return () => clearTimeout(timer);
+  }, [autoFocus]);
+
+  return (
+    <NativePressable
+      accessibilityLabel={t('auth.verify.code')}
+      accessibilityRole="button"
+      minTouch={56}
+      onPress={() => inputRef.current?.focus()}
+      style={styles.otpWrap}>
+      <TextInput
+        ref={inputRef}
+        autoComplete="one-time-code"
+        autoFocus={autoFocus}
+        inputMode="numeric"
+        keyboardType="number-pad"
+        maxLength={6}
+        onChangeText={(next) => onChange(sanitizeOtp(next))}
+        onBlur={() => setFocused(false)}
+        onFocus={() => setFocused(true)}
+        style={styles.hiddenOtpInput}
+        textContentType="oneTimeCode"
+        value={value}
+      />
+      <View style={styles.otpCells}>
+        {digits.map((digit, index) => {
+          const active = focused && index === value.length;
+          const completed = Boolean(digit);
+
+          return (
+            <View
+              key={index}
+              style={StyleSheet.flatten([
+                styles.otpCell,
+                {
+                  backgroundColor: colors.surface.panel,
+                  borderColor: error ? colors.status.danger.fg : active || completed ? colors.text.primary : colors.border.subtle,
+                  borderWidth: error || active || completed ? lineWidth.selected : lineWidth.strong,
+                },
+              ])}>
+              <AppText variant="titleSm">
+                {digit ? '•' : index === value.length ? '|' : ''}
+              </AppText>
+            </View>
+          );
+        })}
+      </View>
+      {error ? (
+        <AppText tone="danger" variant="caption">
+          {error}
+        </AppText>
+      ) : null}
+    </NativePressable>
+  );
+}
+
+export function OtpRecoveryActions({
+  canResend,
+  changeTargetLabel,
+  maxResends,
+  onChangeTarget,
+  onOpenHelp,
+  onResend,
+  resendCount,
+  secondsLeft,
+}: {
+  canResend: boolean;
+  changeTargetLabel: string;
+  maxResends: number;
+  onChangeTarget: () => void;
+  onOpenHelp: () => void;
+  onResend: () => void;
+  resendCount: number;
+  secondsLeft: number;
+}) {
+  const { t } = useProductSettings();
+  const time = `00:${String(secondsLeft).padStart(2, '0')}`;
+  const resendLocked = secondsLeft > 0;
+  const resendLimitReached = resendCount >= maxResends;
+
+  if (resendLocked) {
+    return (
+      <View style={styles.otpRecoveryStack}>
+        <AppText style={styles.leftText} tone="muted" variant="caption">
+          {t('auth.verify.resendCountdownV2', { time })}
+        </AppText>
+        <NativePressable accessibilityRole="button" minTouch={36} onPress={onOpenHelp} style={styles.leftLink}>
+          <AppText tone="brand" variant="caption">
+            {t('auth.verify.noCode')}
+          </AppText>
+        </NativePressable>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.otpRecoveryStack}>
+      <NativePressable accessibilityRole="button" minTouch={36} onPress={onOpenHelp} style={styles.leftLink}>
+        <AppText tone="brand" variant="caption">
+          {t('auth.verify.noCode')}
+        </AppText>
+      </NativePressable>
+      <AppText style={styles.leftText} tone="muted" variant="caption">
+        {resendLimitReached ? t('auth.verify.resendLimitBody') : t('auth.verify.noCodeBody')}
+      </AppText>
+      <View style={styles.otpRecoveryActions}>
+        {!resendLimitReached ? (
+          <ActionButton
+            disabled={!canResend}
+            label={t('auth.verify.resend')}
+            onPress={onResend}
+            style={styles.otpRecoveryAction}
+            tone="brand"
+            variant="outline"
+          />
+        ) : null}
+        <ActionButton
+          label={changeTargetLabel}
+          onPress={onChangeTarget}
+          style={styles.otpRecoveryAction}
+          tone="neutral"
+          variant="filled"
+        />
+      </View>
+    </View>
+  );
+}
+
+export function AuthContactConfirmDialog({
+  channel,
+  countryFlag,
+  onCancel,
+  onConfirm,
+  open,
+  target,
+}: {
+  channel: 'email' | 'phone';
+  countryFlag?: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+  open: boolean;
+  target: string;
+}) {
+  const { colors, resolvedThemeMode, t } = useProductSettings();
+  const accessibilityLabel = channel === 'phone'
+    ? t('auth.confirmContact.phoneAccessibility', { target })
+    : t('auth.confirmContact.emailAccessibility', { target });
+  const scrimColor = `${resolvedThemeMode === 'darkTerminal' || resolvedThemeMode === 'midnightBlue' ? colors.surface.canvas : colors.text.primary}99`;
+
+  if (!open) {
+    return null;
+  }
+
+  return (
+    <Modal animationType="fade" onRequestClose={onCancel} transparent visible>
+      <View style={StyleSheet.flatten([styles.confirmBackdrop, { backgroundColor: scrimColor }])}>
+        <View style={styles.confirmStage}>
+          <View
+            accessibilityLabel={accessibilityLabel}
+            accessibilityRole="alert"
+            style={StyleSheet.flatten([styles.confirmDialog, { backgroundColor: colors.surface.raised }])}>
+            <View style={styles.confirmCopyStack}>
+              <View style={styles.confirmTargetRow}>
+                {channel === 'phone' && countryFlag ? <FlagBadge code={countryFlag} /> : null}
+                <AppText adjustsFontSizeToFit numberOfLines={1} style={styles.confirmTargetText} variant="titleMd">
+                  {target}
+                </AppText>
+              </View>
+              <AppText style={styles.centerText} tone="muted" variant="bodyMd">
+                {t(channel === 'phone' ? 'auth.confirmContact.phoneBody' : 'auth.confirmContact.emailBody')}
+              </AppText>
+            </View>
+            <View style={styles.confirmActions}>
+              <ActionButton label={t('auth.confirmContact.confirm')} onPress={onConfirm} tone="brand" variant="filled" />
+              <ActionButton label={t('auth.confirmContact.goBack')} onPress={onCancel} tone="neutral" variant="filled" />
+            </View>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+export function AuthLeaveVerifiedStepDialog({
+  body,
+  onCancel,
+  onConfirm,
+  open,
+  title,
+}: {
+  body: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+  open: boolean;
+  title: string;
+}) {
+  const { colors, resolvedThemeMode, t } = useProductSettings();
+  const scrimColor = `${resolvedThemeMode === 'darkTerminal' || resolvedThemeMode === 'midnightBlue' ? colors.surface.canvas : colors.text.primary}99`;
+
+  if (!open) {
+    return null;
+  }
+
+  return (
+    <Modal animationType="fade" onRequestClose={onCancel} transparent visible>
+      <View style={StyleSheet.flatten([styles.confirmBackdrop, { backgroundColor: scrimColor }])}>
+        <View style={styles.confirmStage}>
+          <View
+            accessibilityLabel={`${title} ${body}`}
+            accessibilityRole="alert"
+            style={StyleSheet.flatten([styles.confirmDialog, { backgroundColor: colors.surface.raised }])}>
+            <View style={styles.errorCopy}>
+              <AppText style={styles.centerText} variant="subtitle">
+                {title}
+              </AppText>
+              <AppText style={styles.centerText} tone="muted" variant="bodyMd">
+                {body}
+              </AppText>
+            </View>
+            <View style={styles.confirmActions}>
+              <ActionButton label={t('auth.register.leaveStay')} onPress={onCancel} tone="brand" variant="filled" />
+              <ActionButton label={t('auth.register.leaveConfirm')} onPress={onConfirm} tone="neutral" variant="outline" />
+            </View>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+export function PasswordRuleList({ password }: { password: string }) {
+  const { colors, t } = useProductSettings();
+  const checks = getPasswordChecks(password);
+  const rules = [
+    ['length', t('auth.password.rule.length')],
+    ['letterCase', t('auth.password.rule.case')],
+    ['number', t('auth.password.rule.number')],
+    ['symbol', t('auth.password.rule.symbol')],
+  ] as const;
+
+  return (
+    <View style={styles.ruleList}>
+      {rules.map(([key, label]) => {
+        const passed = checks[key];
+
+        return (
+          <View key={key} style={styles.ruleRow}>
+            <View style={StyleSheet.flatten([styles.ruleIcon, { backgroundColor: passed ? colors.market.down.fg : colors.text.secondary }])}>
+              <AppIcon tone="white" name="icon.status.check" size={10} />
+            </View>
+            <AppText tone={passed ? 'default' : 'muted'} variant="caption">
+              {label}
+            </AppText>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+export function AuthErrorSheet({
+  body,
+  onClose,
+  open,
+  title,
+}: {
+  body: string;
+  onClose: () => void;
+  open: boolean;
+  title: string;
+}) {
+  const toast = useToast();
+
+  useEffect(() => {
+    if (!open) {
+      return undefined;
+    }
+
+    toast.show({ message: body, title, tone: 'danger' });
+    onClose();
+
+    return undefined;
+  }, [body, onClose, open, title, toast]);
+
+  return null;
+}
+
+export function AuthErrorDialog({
+  body,
+  onClose,
+  open,
+  title,
+}: {
+  body: string;
+  onClose: () => void;
+  open: boolean;
+  title: string;
+}) {
+  const toast = useToast();
+
+  useEffect(() => {
+    if (!open) {
+      return undefined;
+    }
+
+    toast.show({ message: body, title, tone: 'danger' });
+    onClose();
+
+    return undefined;
+  }, [body, onClose, open, title, toast]);
+
+  return null;
+}
+
+export function FlagBadge({ code }: { code: string }) {
+  return <FlagIcon code={code} size={30} style={styles.flagBadge} />;
+}
+
+export function useCountdown(seconds: number) {
+  const [secondsLeft, setSecondsLeft] = useState(seconds);
+
+  useEffect(() => {
+    if (secondsLeft <= 0) {
+      return undefined;
+    }
+
+    const timer = setTimeout(() => setSecondsLeft((value) => Math.max(value - 1, 0)), 1000);
+    return () => clearTimeout(timer);
+  }, [secondsLeft]);
+
+  return {
+    reset: () => setSecondsLeft(seconds),
+    secondsLeft,
+  };
+}
+
+const styles = StyleSheet.create({
+  centerText: {
+    textAlign: 'center',
+  },
+  confirmActions: {
+    alignSelf: 'stretch',
+    gap: spacing.md,
+  },
+  confirmBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  confirmCopyStack: {
+    alignItems: 'center',
+    gap: spacing.xs,
+    width: '100%',
+  },
+  confirmDialog: {
+    alignItems: 'center',
+    borderRadius: radius.sheet,
+    gap: spacing.xl,
+    padding: spacing.xl,
+    width: '100%',
+  },
+  confirmStage: {
+    maxWidth: layout.appMaxWidth,
+    paddingHorizontal: spacing.xxl,
+    width: '100%',
+  },
+  confirmTargetRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: spacing.sm,
+    justifyContent: 'center',
+    minHeight: size.control.sm,
+    minWidth: 0,
+  },
+  confirmTargetText: {
+    flexShrink: 1,
+    minWidth: 0,
+  },
+  countryChip: {
+    alignItems: 'center',
+    borderRadius: radius.md,
+    borderWidth: lineWidth.strong,
+    flexDirection: 'row',
+    gap: spacing.sm,
+    height: phoneFieldVisibleHeight,
+    minHeight: size.input.phoneChipMinHeight,
+    paddingHorizontal: spacing.md,
+  },
+  countryChipDial: {
+    flexShrink: 0,
+  },
+  countryDial: {
+    width: size.input.countryDialWidth,
+  },
+  countryList: {
+    gap: spacing.xs,
+  },
+  countryName: {
+    flex: 1,
+  },
+  countryPickerContent: {
+    gap: spacing.md,
+  },
+  countryRow: {
+    alignItems: 'center',
+    borderRadius: radius.md,
+    flexDirection: 'row',
+    gap: spacing.md,
+    minHeight: size.control.md,
+    paddingHorizontal: spacing.md,
+  },
+  errorCopy: {
+    gap: spacing.sm,
+  },
+  flagBadge: {
+    alignItems: 'center',
+    borderRadius: radius.full,
+    borderWidth: lineWidth.hairline,
+    height: size.input.countryBadge,
+    justifyContent: 'center',
+    width: size.input.countryBadge,
+  },
+  hiddenOtpInput: {
+    height: size.input.hiddenInput,
+    opacity: 0,
+    position: 'absolute',
+    width: size.input.hiddenInput,
+  },
+  otpCell: {
+    alignItems: 'center',
+    borderRadius: radius.md,
+    height: size.input.authOtpCellHeight,
+    justifyContent: 'center',
+    width: size.input.authOtpCellWidth,
+  },
+  otpCells: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  otpWrap: {
+    gap: spacing.sm,
+  },
+  leftLink: {
+    alignItems: 'flex-start',
+    alignSelf: 'flex-start',
+    justifyContent: 'center',
+    paddingHorizontal: 0,
+  },
+  leftText: {
+    alignSelf: 'stretch',
+    textAlign: 'left',
+  },
+  otpRecoveryAction: {
+    flex: 1,
+  },
+  otpRecoveryActions: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  otpRecoveryStack: {
+    alignItems: 'flex-start',
+    alignSelf: 'stretch',
+    gap: spacing.sm,
+  },
+  phoneInput: {
+    flex: 1,
+  },
+  phoneRow: {
+    alignItems: 'stretch',
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  ruleIcon: {
+    alignItems: 'center',
+    borderRadius: radius.full,
+    height: size.input.badgeSm,
+    justifyContent: 'center',
+    width: size.input.badgeSm,
+  },
+  ruleList: {
+    gap: spacing.sm,
+  },
+  ruleRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+});

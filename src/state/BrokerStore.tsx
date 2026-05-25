@@ -1,9 +1,12 @@
-import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 import { initialAccount, initialUpgradeRequest, instruments as initialInstruments, partnerClients as initialPartnerClients } from '@/src/domain/mockData';
 import {
   applyQuote,
+  calculateMargin,
+  calculatePositionPnl,
   createOrder,
   createPosition,
   recalculateAccount,
@@ -13,8 +16,12 @@ import type { Account, Direction, Instrument, Order, OrderType, PartnerClient, P
 import { useProductSettings } from '@/src/settings/ProductSettings';
 
 const UPGRADE_STORAGE_KEY = 'broker-fx-upgrade-state';
-const QUOTE_WS_URL = 'wss://ws.dupoin.co.id/api/webtrade/v2/ws?login=0&sid=0';
-const QUOTE_SYMBOLS = ['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD', 'USDJPY', 'USDCAD', 'USDCHF'];
+const LOCAL_QUOTE_PROXY_PORT = 8091;
+const QUOTE_CONNECTION_TIMEOUT_MS = 8000;
+const QUOTE_RECONNECT_DELAY_MS = 2500;
+const SPARKLINE_SAMPLE_INTERVAL_MS = 30_000;
+const QUOTE_SYMBOLS = ['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD', 'USDJPY', 'USDCAD', 'USDCHF', 'XAUUSD'];
+const PUBLIC_QUOTE_WS_URL = process.env.EXPO_PUBLIC_QUOTE_WS_URL?.trim();
 
 type PlaceOrderInput = {
   instrumentId: string;
@@ -34,6 +41,7 @@ type BrokerStore = {
   positions: Position[];
   orders: Order[];
   quoteStatus: 'connecting' | 'connected' | 'failed';
+  resetBrokerDemoState: () => void;
   submitUpgradeRequest: (reason: string) => void;
   approveUpgradeRequest: (clientId: string) => void;
   rejectUpgradeRequest: (clientId: string) => void;
@@ -49,6 +57,8 @@ const BrokerContext = createContext<BrokerStore | null>(null);
 
 type DupoinQuoteMessage = {
   t?: number;
+  type?: string;
+  status?: 'connecting' | 'connected' | 'failed';
   d?: {
     m?: string;
     s?: string;
@@ -65,6 +75,25 @@ function isSubscribedQuoteSymbol(instrument: Instrument) {
   return QUOTE_SYMBOLS.includes(normalizeQuoteSymbol(instrument.symbol));
 }
 
+function getQuoteSocketUrl() {
+  if (PUBLIC_QUOTE_WS_URL) {
+    return PUBLIC_QUOTE_WS_URL;
+  }
+
+  if (Platform.OS === 'web' && typeof window !== 'undefined' && window.location?.hostname) {
+    return `ws://${window.location.hostname}:${LOCAL_QUOTE_PROXY_PORT}`;
+  }
+
+  const hostUri = Constants.expoConfig?.hostUri ?? Constants.manifest2?.extra?.expoClient?.hostUri ?? Constants.manifest?.debuggerHost;
+  const host = typeof hostUri === 'string' ? hostUri.split(':')[0] : null;
+
+  if (host) {
+    return `ws://${host}:${LOCAL_QUOTE_PROXY_PORT}`;
+  }
+
+  return `ws://localhost:${LOCAL_QUOTE_PROXY_PORT}`;
+}
+
 function readStoredUpgradeState() {
   if (Platform.OS !== 'web' || typeof window === 'undefined' || !window.localStorage) {
     return null;
@@ -78,8 +107,118 @@ function readStoredUpgradeState() {
   }
 }
 
+function getSeedInstrument(id: string) {
+  return initialInstruments.find((instrument) => instrument.id === id) ?? initialInstruments[0];
+}
+
+function getPricePrecision(instrument: Instrument) {
+  return instrument.pipSize >= 0.01 ? 3 : 5;
+}
+
+function buildSamplePosition(params: {
+  direction: Direction;
+  id: string;
+  instrument: Instrument;
+  lots: number;
+  openPriceOffset: number;
+  openedAt: string;
+}): Position {
+  const precision = getPricePrecision(params.instrument);
+  const openPriceSource = params.direction === 'buy' ? params.instrument.ask : params.instrument.bid;
+  const openPrice = Number((openPriceSource + params.openPriceOffset).toFixed(precision));
+  const currentPrice = params.direction === 'buy' ? params.instrument.bid : params.instrument.ask;
+
+  return {
+    id: params.id,
+    instrumentId: params.instrument.id,
+    symbol: params.instrument.symbol,
+    direction: params.direction,
+    lots: params.lots,
+    openPrice,
+    currentPrice,
+    marginUsed: calculateMargin(params.instrument, params.lots, openPrice),
+    unrealizedPnl: calculatePositionPnl(params.instrument, params.direction, params.lots, openPrice),
+    openedAt: params.openedAt,
+  };
+}
+
+function buildSamplePositions(): Position[] {
+  const eurUsd = getSeedInstrument('eur-usd');
+  const xauUsd = getSeedInstrument('xau-usd');
+
+  return [
+    buildSamplePosition({
+      direction: 'buy',
+      id: 'dev-pos-eur-usd',
+      instrument: eurUsd,
+      lots: 0.4,
+      openedAt: '05/22 10:08',
+      openPriceOffset: -eurUsd.pipSize * 18,
+    }),
+    buildSamplePosition({
+      direction: 'sell',
+      id: 'dev-pos-xau-usd',
+      instrument: xauUsd,
+      lots: 0.18,
+      openedAt: '05/22 11:34',
+      openPriceOffset: xauUsd.pipSize * 96,
+    }),
+  ];
+}
+
+function buildSamplePendingOrder(params: {
+  direction: Direction;
+  id: string;
+  instrument: Instrument;
+  lots: number;
+  priceOffset: number;
+  createdAt: string;
+}): Order {
+  const precision = getPricePrecision(params.instrument);
+  const priceSource = params.direction === 'buy' ? params.instrument.bid : params.instrument.ask;
+  const price = Number((priceSource + params.priceOffset).toFixed(precision));
+
+  return {
+    id: params.id,
+    instrumentId: params.instrument.id,
+    symbol: params.instrument.symbol,
+    direction: params.direction,
+    type: 'limit',
+    lots: params.lots,
+    requestedPrice: price,
+    filledPrice: price,
+    marginRequired: calculateMargin(params.instrument, params.lots, price),
+    status: 'pending',
+    createdAt: params.createdAt,
+  };
+}
+
+function buildSamplePendingOrders(): Order[] {
+  const gbpUsd = getSeedInstrument('gbp-usd');
+  const usdJpy = getSeedInstrument('usd-jpy');
+
+  return [
+    buildSamplePendingOrder({
+      createdAt: '05/22 12:10',
+      direction: 'buy',
+      id: 'dev-pending-gbp-usd',
+      instrument: gbpUsd,
+      lots: 0.25,
+      priceOffset: -gbpUsd.pipSize * 22,
+    }),
+    buildSamplePendingOrder({
+      createdAt: '05/22 12:26',
+      direction: 'sell',
+      id: 'dev-pending-usd-jpy',
+      instrument: usdJpy,
+      lots: 0.12,
+      priceOffset: usdJpy.pipSize * 18,
+    }),
+  ];
+}
+
 export function BrokerProvider({ children }: PropsWithChildren) {
-  const { role, setRole } = useProductSettings();
+  const { pendingOrderDataPreset, positionDataPreset, role, setRole } = useProductSettings();
   const storedUpgradeState = readStoredUpgradeState();
   const [instruments, setInstruments] = useState(initialInstruments);
   const [baseAccount, setBaseAccount] = useState(initialAccount);
@@ -88,6 +227,7 @@ export function BrokerProvider({ children }: PropsWithChildren) {
   const [positions, setPositions] = useState<Position[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [quoteStatus, setQuoteStatus] = useState<'connecting' | 'connected' | 'failed'>('connecting');
+  const sparklineSampledAtRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
     if (typeof WebSocket === 'undefined') {
@@ -95,53 +235,170 @@ export function BrokerProvider({ children }: PropsWithChildren) {
       return;
     }
 
-    const socket = new WebSocket(QUOTE_WS_URL);
-    const failureTimer = setTimeout(() => {
-      setQuoteStatus('failed');
-    }, 8000);
+    let socket: WebSocket | null = null;
+    let failureTimer: ReturnType<typeof setTimeout> | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let closedByCleanup = false;
 
-    socket.onopen = () => {
-      setQuoteStatus('connecting');
-      socket.send(JSON.stringify({ action: 3, data: { symbols: QUOTE_SYMBOLS }, type: 2 }));
-    };
-
-    socket.onmessage = (event) => {
-      try {
-        const message = JSON.parse(String(event.data)) as DupoinQuoteMessage;
-        const symbol = message.d?.s ?? message.d?.m;
-        const bid = message.d?.b?.[0]?.p;
-        const ask = message.d?.a?.[0]?.p;
-
-        if (message.t !== 2 || !symbol || typeof bid !== 'number' || typeof ask !== 'number') {
-          return;
-        }
-
-        setQuoteStatus('connected');
-        setInstruments((current) =>
-          current.map((instrument) => (normalizeQuoteSymbol(instrument.symbol) === normalizeQuoteSymbol(symbol) ? applyQuote(instrument, bid, ask) : instrument)),
-        );
-      } catch {
-        // Ignore malformed quote payloads and keep the last known quote.
+    const clearFailureTimer = () => {
+      if (failureTimer) {
+        clearTimeout(failureTimer);
+        failureTimer = null;
       }
     };
 
-    socket.onerror = () => {
-      setQuoteStatus('failed');
+    const startFailureTimer = () => {
+      clearFailureTimer();
+      failureTimer = setTimeout(() => {
+        failureTimer = null;
+        setQuoteStatus('failed');
+        closeCurrentSocket();
+        scheduleReconnect();
+      }, QUOTE_CONNECTION_TIMEOUT_MS);
     };
 
-    socket.onclose = () => {
-      setQuoteStatus('failed');
+    const clearReconnectTimer = () => {
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
     };
+
+    const scheduleReconnect = () => {
+      if (closedByCleanup || reconnectTimer) {
+        return;
+      }
+
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        connectQuoteSocket();
+      }, QUOTE_RECONNECT_DELAY_MS);
+    };
+
+    const closeCurrentSocket = () => {
+      const currentSocket = socket;
+      socket = null;
+
+      if (!currentSocket) {
+        return;
+      }
+
+      currentSocket.onopen = null;
+      currentSocket.onmessage = null;
+      currentSocket.onerror = null;
+      currentSocket.onclose = null;
+
+      if (currentSocket.readyState === WebSocket.CONNECTING || currentSocket.readyState === WebSocket.OPEN) {
+        currentSocket.close();
+      }
+    };
+
+    const handleQuoteMessage = (symbol: string, bid: number, ask: number) => {
+      clearFailureTimer();
+      clearReconnectTimer();
+      setQuoteStatus('connected');
+
+      const quoteSymbol = normalizeQuoteSymbol(symbol);
+      const sampledAt = Date.now();
+      const lastSampledAt = sparklineSampledAtRef.current[quoteSymbol] ?? 0;
+      const updateSparkline = sampledAt - lastSampledAt >= SPARKLINE_SAMPLE_INTERVAL_MS;
+
+      if (updateSparkline) {
+        sparklineSampledAtRef.current[quoteSymbol] = sampledAt;
+      }
+
+      setInstruments((current) =>
+        current.map((instrument) => (normalizeQuoteSymbol(instrument.symbol) === quoteSymbol ? applyQuote(instrument, bid, ask, { updateSparkline }) : instrument)),
+      );
+    };
+
+    function connectQuoteSocket() {
+      closeCurrentSocket();
+      setQuoteStatus('connecting');
+      startFailureTimer();
+
+      const nextSocket = new WebSocket(getQuoteSocketUrl());
+      socket = nextSocket;
+
+      nextSocket.onopen = () => {
+        setQuoteStatus('connecting');
+        startFailureTimer();
+      };
+
+      nextSocket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(String(event.data)) as DupoinQuoteMessage;
+
+          if (message.type === 'quote-status') {
+            if (message.status === 'failed') {
+              clearFailureTimer();
+              setQuoteStatus('failed');
+            } else if (message.status === 'connecting') {
+              setQuoteStatus('connecting');
+              startFailureTimer();
+            } else if (message.status === 'connected') {
+              clearFailureTimer();
+              clearReconnectTimer();
+              setQuoteStatus('connected');
+            }
+            return;
+          }
+
+          const symbol = message.d?.s ?? message.d?.m;
+          const bid = message.d?.b?.[0]?.p;
+          const ask = message.d?.a?.[0]?.p;
+
+          if (message.t !== 2 || !symbol || typeof bid !== 'number' || typeof ask !== 'number') {
+            return;
+          }
+
+          handleQuoteMessage(symbol, bid, ask);
+        } catch {
+          // Ignore malformed quote payloads and keep the last known quote.
+        }
+      };
+
+      nextSocket.onerror = () => {
+        setQuoteStatus('failed');
+        scheduleReconnect();
+      };
+
+      nextSocket.onclose = () => {
+        if (socket === nextSocket) {
+          socket = null;
+        }
+
+        clearFailureTimer();
+
+        if (!closedByCleanup) {
+          setQuoteStatus('failed');
+          scheduleReconnect();
+        }
+      };
+    }
+
+    connectQuoteSocket();
 
     return () => {
-      clearTimeout(failureTimer);
-      socket.close();
+      closedByCleanup = true;
+      clearFailureTimer();
+      clearReconnectTimer();
+
+      closeCurrentSocket();
     };
   }, []);
 
   useEffect(() => {
     setPositions((current) => refreshPositions(current, instruments));
   }, [instruments]);
+
+  useEffect(() => {
+    setPositions(positionDataPreset === 'sample' ? buildSamplePositions() : []);
+  }, [positionDataPreset]);
+
+  useEffect(() => {
+    setOrders(pendingOrderDataPreset === 'sample' ? buildSamplePendingOrders() : []);
+  }, [pendingOrderDataPreset]);
 
   useEffect(() => {
     if (Platform.OS !== 'web' || typeof window === 'undefined' || !window.localStorage) {
@@ -314,6 +571,18 @@ export function BrokerProvider({ children }: PropsWithChildren) {
     }
   };
 
+  const resetBrokerDemoState = () => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.removeItem(UPGRADE_STORAGE_KEY);
+    }
+
+    setBaseAccount(initialAccount);
+    setOrders([]);
+    setPartnerClients(initialPartnerClients);
+    setPositions([]);
+    setUpgradeRequest(initialUpgradeRequest);
+  };
+
   const value = useMemo(
     () => ({
       role,
@@ -325,6 +594,7 @@ export function BrokerProvider({ children }: PropsWithChildren) {
       positions,
       orders,
       quoteStatus,
+      resetBrokerDemoState,
       submitUpgradeRequest,
       approveUpgradeRequest,
       rejectUpgradeRequest,

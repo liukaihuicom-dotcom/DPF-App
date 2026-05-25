@@ -1,0 +1,18 @@
+{
+  "route_policy": "Implemented app/H5 routes must match Expo Router files under app/. Admin routes remain product-contract only until an admin runtime exists.",
+  "app_h5_routes": {
+    "funding_home": "/funding",
+    "deposit_form": "/funding/deposit",
+    "withdrawal_form": "/funding/withdrawal",
+    "transfer_form": "/funding/transfer",
+    "funding_transaction_list": "/funding/transactions",
+    "funding_transaction_detail": "/funding/transactions/:id"
+  },
+  "admin_routes": {
+    "admin_funding_review_list": "/admin/funding/reviews",
+    "admin_funding_review_detail": "/admin/funding/reviews/:id",
+    "admin_funding_channel_config": "/admin/funding/channels",
+    "admin_funding_limit_fee_config": "/admin/funding/rules",
+    "admin_funding_exception_reconciliation": "/admin/funding/exceptions"
+  }
+}
